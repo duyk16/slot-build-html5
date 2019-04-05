@@ -1,0 +1,1 @@
+{"__type__":"cc.AnimationClip","_name":"LineAni","_duration":1.5,"wrapMode":"0","curveData":{"props":{"opacity":[{"frame":0,"value":255},{"frame":0.3333333333333333,"value":255},{"frame":0.75,"value":0},{"frame":1.1666666666666667,"value":255},{"frame":1.5,"value":255}]},"comps":{"cc.Sprite":{"spriteFrame":[]}}}}
