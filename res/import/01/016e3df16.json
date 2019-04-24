@@ -710,7 +710,8 @@
       },
       "_position": {
         "__type__": "cc.Vec3",
-        "y": 257.7
+        "x": 11,
+        "y": 258
       },
       "_scale": {
         "__type__": "cc.Vec3",
