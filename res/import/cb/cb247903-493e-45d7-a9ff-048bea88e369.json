@@ -1,1 +1,27 @@
-{"__type__":"cc.SpriteFrame","content":{"name":"item-demo-6","texture":"1ebb00950","rect":[454,218,212,238],"offset":[0,0],"originalSize":[212,238],"capInsets":[0,0,0,0]}}
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "item-demo-6",
+    "texture": "1ebb00950",
+    "rect": [
+      454,
+      218,
+      212,
+      238
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      212,
+      238
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

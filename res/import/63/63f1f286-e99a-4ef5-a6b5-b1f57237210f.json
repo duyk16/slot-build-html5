@@ -1,1 +1,27 @@
-{"__type__":"cc.SpriteFrame","content":{"name":"btn-mini-game","texture":"d0IHT+eGVIi5zSVq5auPu5","rect":[0,0,95,95],"offset":[0,0],"originalSize":[95,95],"capInsets":[0,0,0,0]}}
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "btn-mini-game",
+    "texture": "d0IHT+eGVIi5zSVq5auPu5",
+    "rect": [
+      0,
+      0,
+      95,
+      95
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      95,
+      95
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

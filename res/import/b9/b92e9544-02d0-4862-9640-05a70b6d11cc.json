@@ -1,1 +1,27 @@
-{"__type__":"cc.SpriteFrame","content":{"name":"bg-btn-level-hover","texture":"02MgPgf1VIHKPPweu2M1qk","rect":[6,6,172,54],"offset":[0,0],"originalSize":[184,66],"capInsets":[0,0,0,0]}}
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "bg-btn-level-hover",
+    "texture": "02MgPgf1VIHKPPweu2M1qk",
+    "rect": [
+      6,
+      6,
+      172,
+      54
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      184,
+      66
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

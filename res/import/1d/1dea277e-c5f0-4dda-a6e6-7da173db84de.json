@@ -1,1 +1,27 @@
-{"__type__":"cc.SpriteFrame","content":{"name":"gem_minigame_bonus_item_white_fail","texture":"ecIY4l6NFB5LZT6E7fhAQt","rect":[0,0,137,126],"offset":[0,0],"originalSize":[137,126],"capInsets":[0,0,0,0]}}
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "gem_minigame_bonus_item_white_fail",
+    "texture": "ecIY4l6NFB5LZT6E7fhAQt",
+    "rect": [
+      0,
+      0,
+      137,
+      126
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      137,
+      126
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

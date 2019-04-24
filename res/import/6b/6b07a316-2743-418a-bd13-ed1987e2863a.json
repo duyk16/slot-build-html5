@@ -1,1 +1,27 @@
-{"__type__":"cc.SpriteFrame","content":{"name":"item-casino-wild","texture":"bdZ4wwUhVOg59DA4eTj2VC","rect":[1,0,159,136],"offset":[-2,0],"originalSize":[165,136],"capInsets":[0,0,0,0]}}
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "item-casino-wild",
+    "texture": "bdZ4wwUhVOg59DA4eTj2VC",
+    "rect": [
+      1,
+      0,
+      159,
+      136
+    ],
+    "offset": [
+      -2,
+      0
+    ],
+    "originalSize": [
+      165,
+      136
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

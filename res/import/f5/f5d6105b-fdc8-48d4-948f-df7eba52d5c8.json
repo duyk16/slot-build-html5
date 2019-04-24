@@ -1,1 +1,5 @@
-{"__type__":"cc.Asset","_name":"anim_7_1","_native":".webm"}
+{
+  "__type__": "cc.Asset",
+  "_name": "anim_7_1",
+  "_native": ".webm"
+}
