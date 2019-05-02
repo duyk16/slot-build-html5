@@ -351,7 +351,7 @@
           "node": {
             "__id__": 5
           },
-          "spritesFrame": {
+          "mainItemSprite": {
             "__id__": 8
           },
           "slotsController": {
@@ -394,7 +394,7 @@
     },
     {
       "__type__": "cc.Node",
-      "_name": "BorderItem",
+      "_name": "border-item",
       "_parent": {
         "__id__": 5
       },
@@ -435,7 +435,7 @@
     },
     {
       "__type__": "cc.Node",
-      "_name": "MainItem",
+      "_name": "main-item",
       "_parent": {
         "__id__": 5
       },

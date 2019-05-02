@@ -1024,7 +1024,7 @@
           "node": {
             "__id__": 14
           },
-          "spritesFrame": {
+          "mainItemSprite": {
             "__id__": 16
           },
           "slotsController": {

@@ -6413,7 +6413,7 @@ window.__require = function e(t, n, r) {
             switch (_a.label) {
              case 0:
               _a.trys.push([ 0, 2, , 3 ]);
-              return [ 4, this.getToken("12345678911") ];
+              return [ 4, this.getToken("12345678913") ];
 
              case 1:
               tokenReq = _a.sent();
@@ -8326,19 +8326,48 @@ window.__require = function e(t, n, r) {
     });
     var Api_1 = require("../../../../scripts/Api");
     var Concos_1 = require("../../../../scripts/Concos");
+    var Util_1 = require("../../../../scripts/lib/Util");
+    var CoinLabel_1 = require("../../../../scripts/Components/CoinLabel");
     var _a = cc._decorator, ccclass = _a.ccclass, property = _a.property;
     var MiniGameController1 = function(_super) {
       __extends(MiniGameController1, _super);
       function MiniGameController1() {
         var _this = null !== _super && _super.apply(this, arguments) || this;
         _this.collectBonus = null;
+        _this.itemsContainer = null;
+        _this.multipleLabel = null;
+        _this.baseScoreLabel = null;
+        _this.gameResult = null;
+        _this.mainGame = null;
+        _this.scoreLabel = null;
+        _this._slotController = null;
+        _this.listItem = [];
+        _this.playArray = [];
+        _this.baseScore = 0;
+        _this.totalMultiple = 0;
+        _this._isLock = false;
+        _this._time = 0;
         return _this;
       }
-      MiniGameController1.prototype.startMiniGame = function(mul, w) {
+      MiniGameController1.prototype.startMiniGame = function(mul, mulArr, w) {
         return __awaiter(this, void 0, void 0, function() {
+          var _this = this;
           return __generator(this, function(_a) {
             switch (_a.label) {
              case 0:
+              cc.log(mulArr, w);
+              window["game"] = this;
+              this.playArray = mulArr;
+              this.baseScore = w;
+              this.baseScoreLabel.string = "$ " + Util_1.default.formatMoney(this.baseScore);
+              this.coinController = new CoinLabel_1.default(this.scoreLabel);
+              this.coinController.updateUserBalance(0);
+              this.listItem = this.itemsContainer.children;
+              this.listItem.forEach(function(item) {
+                item.once(cc.Node.EventType.TOUCH_END, function(e) {
+                  _this.selectItem(e.currentTarget);
+                });
+              });
               return [ 4, this.loadResource() ];
 
              case 1:
@@ -8355,21 +8384,100 @@ window.__require = function e(t, n, r) {
           });
         });
       };
-      MiniGameController1.prototype.getBonus = function() {
-        var _this = this;
-        Api_1.default.sendGDPromise({
-          e: "slotgetbonus",
-          gtype: "sm2003"
-        }).then(function(data) {
-          _this.node.runAction(cc.sequence(cc.fadeOut(.3), cc.callFunc(function() {
-            Concos_1.default.emit(Concos_1.Event.UPDATE_USER_BALANCE, window.GameController.userBalance, 0);
-            setTimeout(function() {
-              _this.node.destroy();
-            }, 10);
-          })));
+      MiniGameController1.prototype.selectItem = function(node) {
+        return __awaiter(this, void 0, void 0, function() {
+          var num;
+          return __generator(this, function(_a) {
+            switch (_a.label) {
+             case 0:
+              cc.log("Touch");
+              if (this._isLock) return [ 2 ];
+              this._isLock = true;
+              num = this.playArray[this._time];
+              this.updateTotalMultiple(num);
+              this.itemAction(node, num);
+              this._time++;
+              if (!(this._time == this.playArray.length)) return [ 3, 2 ];
+              node.children[2].active = false;
+              return [ 4, this.showEndGame() ];
+
+             case 1:
+              _a.sent();
+              _a.label = 2;
+
+             case 2:
+              this._isLock = false;
+              return [ 2 ];
+            }
+          });
         });
       };
+      MiniGameController1.prototype.updateTotalMultiple = function(num) {
+        var _this = this;
+        this.totalMultiple += num;
+        this.multipleLabel.node.runAction(cc.sequence(cc.scaleTo(.2, 1.2), cc.callFunc(function() {
+          _this.multipleLabel.string = _this.totalMultiple + "X";
+        }), cc.scaleTo(.3, 1)));
+      };
+      MiniGameController1.prototype.itemAction = function(node, num) {
+        node.children[1].active = true;
+        node.children[2].active = true;
+        node.children[1].scale = .3;
+        node.children[2].scale = .3;
+        node.children[1].getComponent(cc.Label).string = "X" + num;
+        node.children[0].runAction(cc.sequence(cc.fadeOut(.2), cc.callFunc(function() {
+          node.children[1].runAction(cc.sequence(cc.scaleTo(.3, 1.3), cc.scaleTo(.3, 1)));
+          node.children[2].runAction(cc.sequence(cc.scaleTo(.3, 1.3), cc.scaleTo(.3, 1)));
+        })));
+      };
+      MiniGameController1.prototype.showEndGame = function() {
+        var _this = this;
+        return new Promise(function(res, rej) {
+          return __awaiter(_this, void 0, void 0, function() {
+            var _this = this;
+            return __generator(this, function(_a) {
+              switch (_a.label) {
+               case 0:
+                this.gameResult.active = true;
+                this.gameResult.opacity = 0;
+                return [ 4, Util_1.default.delay(1e3) ];
+
+               case 1:
+                _a.sent();
+                this.mainGame.runAction(cc.fadeOut(.3));
+                this.gameResult.runAction(cc.sequence([ cc.fadeIn(.5), cc.callFunc(function() {
+                  _this.coinController.updateUserBalance(_this.totalMultiple * _this.baseScore);
+                  Api_1.default.sendGD({
+                    e: "slotgetbonus",
+                    gtype: "sm2003"
+                  }, function(err, data) {
+                    cc.log(data);
+                  });
+                }) ]));
+                res();
+                return [ 2 ];
+              }
+            });
+          });
+        });
+      };
+      MiniGameController1.prototype.backToSlot = function() {
+        var _this = this;
+        this.node.runAction(cc.sequence([ cc.fadeOut(.5), cc.callFunc(function() {
+          Concos_1.default.emit(Concos_1.Event.UPDATE_USER_BALANCE, window.GameController.userBalance, 0);
+          _this.node.destroy();
+        }) ]));
+      };
+      MiniGameController1.prototype.update = function(dt) {
+        this.coinController._updateUserBalance(dt);
+      };
       __decorate([ property(cc.Button) ], MiniGameController1.prototype, "collectBonus", void 0);
+      __decorate([ property(cc.Node) ], MiniGameController1.prototype, "itemsContainer", void 0);
+      __decorate([ property(cc.Label) ], MiniGameController1.prototype, "multipleLabel", void 0);
+      __decorate([ property(cc.Label) ], MiniGameController1.prototype, "baseScoreLabel", void 0);
+      __decorate([ property(cc.Node) ], MiniGameController1.prototype, "gameResult", void 0);
+      __decorate([ property(cc.Node) ], MiniGameController1.prototype, "mainGame", void 0);
+      __decorate([ property(cc.Label) ], MiniGameController1.prototype, "scoreLabel", void 0);
       MiniGameController1 = __decorate([ ccclass ], MiniGameController1);
       return MiniGameController1;
     }(cc.Component);
@@ -8377,7 +8485,9 @@ window.__require = function e(t, n, r) {
     cc._RF.pop();
   }, {
     "../../../../scripts/Api": "Api",
-    "../../../../scripts/Concos": "Concos"
+    "../../../../scripts/Components/CoinLabel": "CoinLabel",
+    "../../../../scripts/Concos": "Concos",
+    "../../../../scripts/lib/Util": "Util"
   } ],
   MinigameController5: [ function(require, module, exports) {
     "use strict";
@@ -8749,8 +8859,10 @@ window.__require = function e(t, n, r) {
             9: "img/item/item-egypt-14"
           },
           subItem: {
-            cg: "img/item/egypt-coin-3",
-            coin: "img/item/coin-egypt-ingame"
+            coinGray: "img/item/egypt-coin-3",
+            coin: "img/item/egypt-coin-1",
+            coinBar: "img/item/coin-egypt-ingame",
+            wildBorder: "img/item/wild-border"
           }
         };
         _this.resPathTotal = "4_gameScene/1_Slot1/img";
@@ -9366,6 +9478,7 @@ window.__require = function e(t, n, r) {
         _this.resourceController = new ResourceController1_1.default();
         _this.coinBonus = 0;
         _this.coinBonusController = null;
+        _this.stickyList = [];
         return _this;
       }
       SlotController1.prototype.startSlot = function() {
@@ -9392,9 +9505,12 @@ window.__require = function e(t, n, r) {
                 _this.accumilatedBar.updateProgress(_this.dataStatus.collect.c / _this.dataStatus.collect.tc);
                 _this.coinBonus = _this.dataStatus.collect.w;
                 _this.coinBonusController.updateUserBalance(_this.coinBonus);
-                _this.dataStatus.freeSpin.c > 0 && setTimeout(function() {
-                  _this.accumilatedBar.node.runAction(cc.fadeOut(.4));
-                }, 200);
+                if (_this.dataStatus.freeSpin.c > 0) {
+                  setTimeout(function() {
+                    _this.accumilatedBar.node.runAction(cc.fadeOut(.4));
+                  }, 200);
+                  _this.handleStickyWild(_this.dataStatus.lastmat);
+                }
               }, 200);
               this.dataStatus.bonus;
               return [ 2 ];
@@ -9423,12 +9539,12 @@ window.__require = function e(t, n, r) {
               var coinPosition = item.node.convertToWorldSpaceAR(cc.v2(0, 0));
               coin.addComponent(cc.Sprite);
               front.addComponent(cc.Sprite);
-              coin.getComponent(cc.Sprite).spriteFrame = _this.resourceController.loadRes("egypt-coin-1");
-              front.getComponent(cc.Sprite).spriteFrame = _this.resourceController.loadRes("egypt-coin-2");
-              item.getComponent(cc.Sprite).spriteFrame = _this.resourceController.loadRes("egypt-coin-3");
+              coin.getComponent(cc.Sprite).spriteFrame = _this.resourceController.loadRes(_this.resourceController.list.subItem.coin.split("/").pop());
+              front.getComponent(cc.Sprite).spriteFrame = _this.resourceController.loadRes(_this.resourceController.list.item.c.split("/").pop());
+              item.mainItem.getComponent(cc.Sprite).spriteFrame = _this.resourceController.loadRes(_this.resourceController.list.subItem.coinGray.split("/").pop());
               front.parent = item.node;
               front.setPosition(0, 0);
-              front.zIndex = -1;
+              item.node.getComponentInChildren(cc.Label).node.zIndex = 2;
               front.runAction(cc.sequence(cc.fadeOut(.6), cc.callFunc(function() {
                 front.destroy();
                 coin.parent = _this.originalCoin.parent;
@@ -9463,15 +9579,68 @@ window.__require = function e(t, n, r) {
           return __generator(this, function(_a) {
             dataSpin.freeSpin.c > 0 ? this.accumilatedBar.node.opacity && this.accumilatedBar.node.runAction(cc.fadeOut(.3)) : 0 === this.accumilatedBar.node.opacity && this.accumilatedBar.node.runAction(cc.fadeIn(.3));
             _super.prototype.handleFreeSpin.call(this, dataSpin);
+            this.handleStickyWild(dataSpin.mat);
+            0 == dataSpin.freeSpin.c && this.destroyStickyWild();
             return [ 2 ];
           });
         });
+      };
+      SlotController1.prototype.handleStickyWild = function(mat) {
+        var swPosition = mat.split(",").reduce(function(arr, item, index) {
+          return "sw" === item ? arr.concat([ index ]) : arr;
+        }, []);
+        swPosition = swPosition.map(function(item, index) {
+          return {
+            x: item / 6 | 0,
+            y: item % 6,
+            index: item
+          };
+        });
+        swPosition.length && this.showStickyWild(swPosition);
+      };
+      SlotController1.prototype.showStickyWild = function(swPosition) {
+        var _this = this;
+        var listItem = this._listItem.slice(1);
+        var list = swPosition.map(function(item) {
+          return {
+            index: item.index,
+            slotItem: listItem[item.x][item.y]
+          };
+        });
+        list.forEach(function(item) {
+          if (_this.stickyList.map(function(item) {
+            return item.index;
+          }).indexOf(item.index) >= 0) return;
+          var newNode = new cc.Node("sticky");
+          newNode.addComponent(cc.Sprite);
+          newNode.getComponent(cc.Sprite).spriteFrame = item.slotItem.mainItemSprite.spriteFrame;
+          var mainNode = new cc.Node("borderSticky");
+          mainNode.addComponent(cc.Sprite);
+          mainNode.getComponent(cc.Sprite).spriteFrame = _this.resourceController.loadRes(_this.resourceController.list.subItem.wildBorder.split("/").pop());
+          var targetPosition = _this.stickyWildContainer.convertToWorldSpaceAR(cc.v2(0, 0));
+          var wildPosition = item.slotItem.node.convertToWorldSpaceAR(cc.v2(0, 0));
+          mainNode.parent = _this.stickyWildContainer;
+          mainNode.setPosition(wildPosition.sub(targetPosition));
+          newNode.parent = mainNode;
+          _this.stickyList.push({
+            index: item.index,
+            node: mainNode
+          });
+        });
+      };
+      SlotController1.prototype.destroyStickyWild = function() {
+        this.stickyList.forEach(function(item) {
+          item.node.runAction(cc.sequence(cc.fadeOut(.3), cc.callFunc(function() {
+            item.node.destroy();
+          })));
+        });
+        this.stickyList = [];
       };
       SlotController1.prototype.handleBonus = function(dataSpin) {
         this.playBonus(dataSpin.score.sum[2]);
       };
       SlotController1.prototype.playBonus = function(_a) {
-        var mul = _a.mul, w = _a.w;
+        var mul = _a.mul, mulArr = _a.mulArr, w = _a.w;
         return __awaiter(this, void 0, void 0, function() {
           var canvas, miniGameNode, miniGameController;
           return __generator(this, function(_b) {
@@ -9480,9 +9649,10 @@ window.__require = function e(t, n, r) {
               canvas = cc.find("Canvas");
               miniGameNode = cc.instantiate(this.miniGame);
               miniGameController = miniGameNode.getComponent("MinigameController1");
+              miniGameController._slotController = this;
               miniGameNode.opacity = 0;
               miniGameNode.parent = canvas;
-              return [ 4, miniGameController.startMiniGame(mul, w) ];
+              return [ 4, miniGameController.startMiniGame(mul, mulArr, w) ];
 
              case 1:
               _b.sent();
@@ -10006,18 +10176,15 @@ window.__require = function e(t, n, r) {
       }
       SlotItem1.prototype.setItemSprite = function(item, first) {
         _super.prototype.setItemSprite.call(this, item);
-        var coinLabel = this.node.children[0].getComponent(cc.Label);
-        if (this.slotsController.dataSpin) {
-          if ("c" == this.id) {
-            this.node.children[0].active = true;
-            coinLabel.string = "$" + this.slotsController.dataSpin.totalbet / 100;
-          } else this.node.children[0].active = false;
-          return;
-        }
+        var coinLabel = this.node.children[2].getComponent(cc.Label);
         if ("c" == this.id) {
-          this.spritesFrame.spriteFrame = this.slotsController.resourceController.loadRes("egypt-coin-3");
-          coinLabel.string = "$" + this.slotsController.dataStatus.lastBet / 100;
-        }
+          this.node.children[2].active = true;
+          this.mainItemSprite.spriteFrame = this.slotsController.resourceController.loadRes("egypt-coin-3");
+        } else this.node.children[2].active = false;
+        if (this.slotsController.dataSpin) {
+          "c" == this.id && (this.mainItemSprite.spriteFrame = this.slotsController.resourceController.loadRes("egypt-coin-2"));
+          coinLabel.string = "$" + this.slotsController.dataSpin.totalbet / 100;
+        } else coinLabel.string = "$" + this.slotsController.dataStatus.lastBet / 100;
       };
       __decorate([ property({
         override: true
@@ -10116,7 +10283,7 @@ window.__require = function e(t, n, r) {
       __extends(SlotsItem, _super);
       function SlotsItem() {
         var _this = null !== _super && _super.apply(this, arguments) || this;
-        _this.spritesFrame = null;
+        _this.mainItemSprite = null;
         _this.slotsController = null;
         _this.border = null;
         _this.zoomAni = null;
@@ -10141,7 +10308,7 @@ window.__require = function e(t, n, r) {
       };
       SlotsItem.prototype.setItemInfo = function(item, x, y) {
         this.id = item.id;
-        this.spritesFrame.spriteFrame = item.spritesFrame;
+        this.mainItemSprite.spriteFrame = item.spritesFrame;
         this.x = x;
         this.y = y;
         if (this.slotsController._listBorderImg.length > 0) if (this.checkSpecialItem(item.id)) {
@@ -10156,7 +10323,7 @@ window.__require = function e(t, n, r) {
         var _this = this;
         if (item) {
           item = this.slotsController.getRandomItem();
-          this.spritesFrame.spriteFrame = item.spritesFrame;
+          this.mainItemSprite.spriteFrame = item.spritesFrame;
         } else {
           item = this.slotsController.getRandomItem();
           if (null != this.arrResult && this.y <= this.slotsController.maxRow - 1) {
@@ -10165,7 +10332,7 @@ window.__require = function e(t, n, r) {
               return x.id == _this.arrResult[index_1];
             });
             this.id = item.id;
-            this.spritesFrame.spriteFrame = item.spritesFrame;
+            this.mainItemSprite.spriteFrame = item.spritesFrame;
           }
         }
         if (this.slotsController._listBorderImg.length > 0) if (this.checkSpecialItem(item.id)) {
@@ -10250,7 +10417,7 @@ window.__require = function e(t, n, r) {
           }
         }
       };
-      __decorate([ property(cc.Sprite) ], SlotsItem.prototype, "spritesFrame", void 0);
+      __decorate([ property(cc.Sprite) ], SlotsItem.prototype, "mainItemSprite", void 0);
       __decorate([ property(SlotController_1.default) ], SlotsItem.prototype, "slotsController", void 0);
       __decorate([ property(cc.Node) ], SlotsItem.prototype, "border", void 0);
       __decorate([ property(cc.AnimationClip) ], SlotsItem.prototype, "zoomAni", void 0);

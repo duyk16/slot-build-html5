@@ -720,24 +720,6 @@ window._CCSettings = {
                 "4_gameScene/1_Slot1/img/item/item-egypt-1.png",
                 "cc.Texture2D"
             ],
-            "16jkPLijFAqqyJntYTSoty": [
-                "4_gameScene/1_Slot1/img/item/item-egypt-10",
-                "cc.SpriteFrame",
-                1
-            ],
-            be4FYrgb9ONrV1x5FJ7Ed9: [
-                "4_gameScene/1_Slot1/img/item/item-egypt-10-gray",
-                "cc.SpriteFrame",
-                1
-            ],
-            "06oAXtHUdNbptTvgHRwak4": [
-                "4_gameScene/1_Slot1/img/item/item-egypt-10-gray.png",
-                "cc.Texture2D"
-            ],
-            "5eEznpIYBA9q+HDrP5so3q": [
-                "4_gameScene/1_Slot1/img/item/item-egypt-10.png",
-                "cc.Texture2D"
-            ],
             "32oTJlgk9Pa4/U2Bkv5SLh": [
                 "4_gameScene/1_Slot1/img/item/item-egypt-11",
                 "cc.SpriteFrame",
@@ -846,6 +828,33 @@ window._CCSettings = {
                 "4_gameScene/1_Slot1/img/item/item-egypt-9.png",
                 "cc.Texture2D"
             ],
+            "b22AXQy+9NbrrUM5LTy/bv": [
+                "4_gameScene/1_Slot1/img/item/wild-border",
+                "cc.SpriteFrame",
+                1
+            ],
+            e1jmpxrbVKMrXEDVp3fzFU: [
+                "4_gameScene/1_Slot1/img/item/wild-border-1",
+                "cc.SpriteFrame",
+                1
+            ],
+            "70y9rXjYlDFoIPqealc67k": [
+                "4_gameScene/1_Slot1/img/item/wild-border-1.png",
+                "cc.Texture2D"
+            ],
+            "24yCfTMCtLIbWcR22qnb0d": [
+                "4_gameScene/1_Slot1/img/item/wild-border-2",
+                "cc.SpriteFrame",
+                1
+            ],
+            "1ddixse41PYZnVFRB10neS": [
+                "4_gameScene/1_Slot1/img/item/wild-border-2.png",
+                "cc.Texture2D"
+            ],
+            "96xclc6t1ON63whepU2MH6": [
+                "4_gameScene/1_Slot1/img/item/wild-border.png",
+                "cc.Texture2D"
+            ],
             "94xtaS8nFHsLtJtyhiEkAu": [
                 "4_gameScene/1_Slot1/img/line-game-egypt",
                 "cc.SpriteFrame",
@@ -862,6 +871,105 @@ window._CCSettings = {
             ],
             e0MpfORuJK5aVa7ebp6JrD: [
                 "4_gameScene/1_Slot1/img/number-line-game-egypt.png",
+                "cc.Texture2D"
+            ],
+            "48ZiaNWm5Fxp/TOBJ1ydeJ": [
+                "4_gameScene/1_Slot1/minigame/Egypt-Screen-bonus-game-",
+                "cc.SpriteFrame",
+                1
+            ],
+            "11gkc7LM1EeLcBsDv5tUjs": [
+                "4_gameScene/1_Slot1/minigame/Egypt-Screen-bonus-game-.png",
+                "cc.Texture2D"
+            ],
+            "86Jn4+BEpAx4YEJRAuNREr": [
+                "4_gameScene/1_Slot1/minigame/Screen-bonus-game",
+                "cc.SpriteFrame",
+                1
+            ],
+            b3GjRGqF1L55xPu1IRLMoM: [
+                "4_gameScene/1_Slot1/minigame/Screen-bonus-game.png",
+                "cc.Texture2D"
+            ],
+            c7F2CQeGBBpayPfXNasD5v: [
+                "4_gameScene/1_Slot1/minigame/egypt-bonus-bg-ingame",
+                "cc.SpriteFrame",
+                1
+            ],
+            "a7+vTgS5NLKJjpbZVft/c+": [
+                "4_gameScene/1_Slot1/minigame/egypt-bonus-bg-ingame.png",
+                "cc.Texture2D"
+            ],
+            "0a3tyeIthCRLL0PaBJw3DL": [
+                "4_gameScene/1_Slot1/minigame/egypt-bonus-coin-active",
+                "cc.SpriteFrame",
+                1
+            ],
+            d2HrR2T4FATrF7pwAXNClz: [
+                "4_gameScene/1_Slot1/minigame/egypt-bonus-coin-active.png",
+                "cc.Texture2D"
+            ],
+            "e7rGNNxD1F6qx3KiDv6x+w": [
+                "4_gameScene/1_Slot1/minigame/egypt-bonus-hide",
+                "cc.SpriteFrame",
+                1
+            ],
+            "edZvoGhKlMb6mCwG5jhg/4": [
+                "4_gameScene/1_Slot1/minigame/egypt-bonus-hide.png",
+                "cc.Texture2D"
+            ],
+            "cbj/89fQJKoIb5XC1OrqZ7": [
+                "4_gameScene/1_Slot1/minigame/egypt-bonus-normal",
+                "cc.SpriteFrame",
+                1
+            ],
+            "91WIqy5zxBqLJ1gZ6O+IVj": [
+                "4_gameScene/1_Slot1/minigame/egypt-bonus-normal.png",
+                "cc.Texture2D"
+            ],
+            "54Mw0y5X5LTp/1ZAzkpbaX": [
+                "4_gameScene/1_Slot1/minigame/egypt-bonus-paper-money",
+                "cc.SpriteFrame",
+                1
+            ],
+            fa8FJAyUpL4oee7jJ1PjJi: [
+                "4_gameScene/1_Slot1/minigame/egypt-bonus-paper-money.png",
+                "cc.Texture2D"
+            ],
+            "7cSdY5oVBFBoztL1Cne6JY": [
+                "4_gameScene/1_Slot1/minigame/egypt-bonus-txt-pick",
+                "cc.SpriteFrame",
+                1
+            ],
+            "80W2w9fFFDWJqduhUnXeJH": [
+                "4_gameScene/1_Slot1/minigame/egypt-bonus-txt-pick.png",
+                "cc.Texture2D"
+            ],
+            e7pPshlJZDGZ5Bar1ybTio: [
+                "4_gameScene/1_Slot1/minigame/egypt-end-bonusgame",
+                "cc.SpriteFrame",
+                1
+            ],
+            "4fwFlBxi1DxqILb4pOnz3R": [
+                "4_gameScene/1_Slot1/minigame/egypt-end-bonusgame.png",
+                "cc.Texture2D"
+            ],
+            "c1NpHWGpZJpYVPwaQ7k+Dn": [
+                "4_gameScene/1_Slot1/minigame/egypt-txt-congrat",
+                "cc.SpriteFrame",
+                1
+            ],
+            "93vUdxacVLZrtZrq2zAEP/": [
+                "4_gameScene/1_Slot1/minigame/egypt-txt-congrat.png",
+                "cc.Texture2D"
+            ],
+            "5djq/5nx9ATKQe6GI/jgRi": [
+                "4_gameScene/1_Slot1/minigame/end-bonus-game",
+                "cc.SpriteFrame",
+                1
+            ],
+            a8IdIQbnBKlIoj6HnKN6TO: [
+                "4_gameScene/1_Slot1/minigame/end-bonus-game.png",
                 "cc.Texture2D"
             ],
             "3aP5lAnwtLoYKxMroQfCS0": [
@@ -2450,7 +2558,7 @@ window._CCSettings = {
                 "cc.Prefab"
             ],
             "beeh9NrKhOEZlEcrh+Zid2": [
-                "5_Games/5_Slot5/Minigame.prefab",
+                "5_Games/5_Slot5/Minigame1.prefab",
                 "cc.Prefab"
             ],
             "6bMpW//HNJkoPYtsEc+Gb7": [
@@ -2510,13 +2618,6 @@ window._CCSettings = {
             "abb1fbmUxGXKLrIPn0s+80",
             "e2EjgpN7VMTrgJppp4UN7t"
         ],
-        "01d3963ff": [
-            "29FYIk+N1GYaeWH/q1NxQO",
-            "e97GVMl6JHh5Ml5qEDdSGa",
-            "edhBd9UNlI1LfwWWkM+M9F",
-            "f0BIwQ8D5Ml7nTNQbh1YlS",
-            "f38gzWUbZCIrJsjc0TrFDp"
-        ],
         "0431e2e9c": [
             "1c1JF3YJFDwJ3q2Rj2v/RR",
             "2d+7kcvNBHsoS3NPnCbu1m",
@@ -2535,19 +2636,11 @@ window._CCSettings = {
             "f38gzWUbZCIrJsjc0TrFDp",
             "felX2q/UNEHpGzg5NstdQ2"
         ],
-        "073fbb81d": [
-            "50CqG+M/5BebFpM8k+iE20",
-            "5e1mJtuSZCmp72QSrZmxwT",
-            "6a4JIHrCtEx7OScrBV7F8T",
-            "d7tjYClfJOmLakVEh1E/Ji",
-            "dbqekr4yhEu6/r4FjZTHzi"
-        ],
-        "0935bc77b": [
+        "05a3dea1d": [
             "01e5UILiVLf49KZ1kIrGQw",
             "010RgwuEpDh6yal770kNLk",
             "02MgPgf1VIHKPPweu2M1qk",
             "04O8P6mDJDbq+rsmWx+BRz",
-            "06oAXtHUdNbptTvgHRwak4",
             "062TEqOH9KMbE6PPMrARRd",
             "099pv/en5Ov7EOuWw4oYV/",
             "0bO6ZMbENAtLHWq6AIT+Uu",
@@ -2560,6 +2653,7 @@ window._CCSettings = {
             "10wAI7l15BbIrc1hJXGwRG",
             "1065P0xqNIWoAL3wwsWT7N",
             "11S9LqoGFCkKHCl7PPfL64",
+            "11gkc7LM1EeLcBsDv5tUjs",
             "12uraOYolPyoYsYg5SajC/",
             "13l9RRtxhB5JIHIak8vIRI",
             "16DHsfl6lNJ46SwcsRgoLZ",
@@ -2569,6 +2663,7 @@ window._CCSettings = {
             "19byRHGJpMPbTB7infNmIw",
             "1bWPwVWeNBMLH0o9DggUQv",
             "1bx3yDhlRD6YPrhxyA7wE7",
+            "1ddixse41PYZnVFRB10neS",
             "1ebb00950",
             "1ftFrxJaRCcL/GYdqqIIUO",
             "20CCcyb7pO7K+SOHoX7QYQ",
@@ -2617,6 +2712,7 @@ window._CCSettings = {
             "4cJcRlaEROkLtfAAua+nLJ",
             "4dQtoV/gJNsLRSktyYY9e9",
             "4d6UIW8VBMw7qrCUHDrC7w",
+            "4fwFlBxi1DxqILb4pOnz3R",
             "50cvkwlzVPEbDV+1sv8rbC",
             "51bCGvbDBOgYlNao1aJs9p",
             "518or4kNRFrJWMz/ccgXbh",
@@ -2633,7 +2729,6 @@ window._CCSettings = {
             "5cr1Tl5mFOxqO6tLlGNKnN",
             "5dfGp7UQZEa4PNwAHXhyfY",
             "5d9jfiwcRJQ7hTC6NoOLNZ",
-            "5eEznpIYBA9q+HDrP5so3q",
             "5etiYXNUVGQpSDTRNYrpta",
             "60K7Y9xLpOz6G6ePuHDRVt",
             "61cyPdEfRN047sDK9rO0W5",
@@ -2650,6 +2745,7 @@ window._CCSettings = {
             "6eBWFz0oVHPLIGQKf/9Thu",
             "6eTluZ8JlF+JURU8R4bKnu",
             "6fv6MLLrRKzbV8GreZW2z1",
+            "70y9rXjYlDFoIPqealc67k",
             "71VhFCTINJM6/Ky3oX9nBT",
             "72uBcdD5lFL4QL3ba6Im2y",
             "73HOyAsl5CPJnuM8ql8e/N",
@@ -2657,6 +2753,7 @@ window._CCSettings = {
             "75fi9Bf4hNP4RKE148tkGH",
             "75n9nuA2JHDrcFaspMnV3L",
             "75ty/AxiZM0bqDcmClfWel",
+            "76KA2cCZpDvrLlUID3yStF",
             "76ZvQWN3ZC1byJVA8FNsLK",
             "79oNUpwn5EyK+4pwI0IDTu",
             "7cQTiYqRBOPqJvaGQFI2tn",
@@ -2665,6 +2762,7 @@ window._CCSettings = {
             "7eMllcwY1KEbk24RHnZtn9",
             "7f1VTGOvVNLpjiyPXAt3oD",
             "7f2aKV8dNGm5aCS5soIhYd",
+            "80W2w9fFFDWJqduhUnXeJH",
             "80gMHpbH9KDIkE8Pg8D9Wj",
             "81kEpCQClJcJYjDvndV8oH",
             "81k/777jNLsIHEfAs6pynO",
@@ -2682,13 +2780,16 @@ window._CCSettings = {
             "90F0whFgNIcpgGVhSbh01l",
             "90O/GK0wdPn5gFp/E2qODF",
             "90vBxT2CRMvrcoJtVclXd9",
+            "91WIqy5zxBqLJ1gZ6O+IVj",
             "91ZeR9Dg1Dp5jBcE+wq4E9",
             "91io3B/KBM3Y57K06zYw3i",
             "92eZW7SMtOsqRHkLb5US9C",
+            "93vUdxacVLZrtZrq2zAEP/",
             "933vVEGwRP+bJNT0tXdclB",
             "94KG+IW6FPJYqI1l39j1Xv",
             "96X8xrvqRGoKbMD+va2P9j",
             "96nQv9EUBLIpGUgCdk8tzo",
+            "96xclc6t1ON63whepU2MH6",
             "960SWOJVREU4xaUwfd19kz",
             "99FuClTiZPJJ2xEaYHQCv6",
             "995W0xImdDMa/Pq6Uipica",
@@ -2711,6 +2812,8 @@ window._CCSettings = {
             "a5cBSlYnpA3bJ4j2t10Cpe",
             "a6+coWhRxP8Znn2bxVihrH",
             "a7WGeJj8FGs6hIeAAGY50A",
+            "a7+vTgS5NLKJjpbZVft/c+",
+            "a8IdIQbnBKlIoj6HnKN6TO",
             "a8YiZzpKxM+r2szBANdYbW",
             "a88JHWlVhHUo2h/r2PgjOg",
             "a9YqmCV9hNP7iqKMBx7Xrx",
@@ -2722,6 +2825,7 @@ window._CCSettings = {
             "aeu+GvjvdDDoyJvSX1f8Ce",
             "b1wuVW4URMKKtv9pbdHnVA",
             "b2r+x6qJJC/bpO4NTF5Ip7",
+            "b3GjRGqF1L55xPu1IRLMoM",
             "b4Pv0k0SFFuJ4DUwY6GTt9",
             "b4P/PCArtIdIH38t6mlw8Y",
             "b4YnSH8HVEz4aJk1B8oL0+",
@@ -2752,6 +2856,8 @@ window._CCSettings = {
             "cd44h3qFdE9bzGtDdOAQQG",
             "d0EQ6+x+lCYrupjIfuVch3",
             "d0IHT+eGVIi5zSVq5auPu5",
+            "d0JaosdIdDUocGODPcMGHr",
+            "d2HrR2T4FATrF7pwAXNClz",
             "d4eCV7DxNIS6pzl67hcvtE",
             "d608qFRoFHwbXd0Dap056i",
             "d7BLWRSbpEApwgHZDCDpAB",
@@ -2774,6 +2880,7 @@ window._CCSettings = {
             "ebUnafWu1Dz63PG3WQBAfX",
             "eb2YSL8RZFc7soLi4mdks6",
             "ecIY4l6NFB5LZT6E7fhAQt",
+            "edZvoGhKlMb6mCwG5jhg/4",
             "ed5CdPyNxKNq4j3Sr6Uqg5",
             "een9tgXwBABIqIy+/JU+dy",
             "efD0VP+H1J6YfdtTBLxWQT",
@@ -2789,6 +2896,7 @@ window._CCSettings = {
             "f60x2DBT9JKYW4IqPo6bmW",
             "f8IrzToSVNK5+V/G22i+VZ",
             "f959Y9p3ZPYZVyi5F83ABb",
+            "fa8FJAyUpL4oee7jJ1PjJi",
             "fbG27YoX9CmZIaM+CzCMSD",
             "fbfyDexoBC9KCkIPyNxBMW",
             "fbtCH5A9xJw6y2+N4LS640",
@@ -2796,6 +2904,13 @@ window._CCSettings = {
             "fbyCwa9WtN3IItbBNY7pWg",
             "fdWXgvHb9JOqOC8jLKjonW",
             "ff8C4iykVK9KokfHrXMqRh"
+        ],
+        "073fbb81d": [
+            "50CqG+M/5BebFpM8k+iE20",
+            "5e1mJtuSZCmp72QSrZmxwT",
+            "6a4JIHrCtEx7OScrBV7F8T",
+            "d7tjYClfJOmLakVEh1E/Ji",
+            "dbqekr4yhEu6/r4FjZTHzi"
         ],
         "0b0b093dd": [
             "53snJ90A5LFJXxplp3ARES",
@@ -2908,6 +3023,24 @@ window._CCSettings = {
         "0d4958486": [
             "10Q2/qfwxE2Y4D8Df4gByf",
             "a9HT2hGqRCPLT1KXId+yWD"
+        ],
+        "0e46bf46c": [
+            "08+xXqvs1MUq/dIBFqvUzw",
+            "19t+Nvk2VEbpHwGOqyOUL6",
+            "48ZiaNWm5Fxp/TOBJ1ydeJ",
+            "48aI31qb9F5IQ49aCJb0VK",
+            "51GoSJ0uhKcJ3TuAnJXCl5",
+            "54Mw0y5X5LTp/1ZAzkpbaX",
+            "70lC8aV+tBXp55tJhaTiWY",
+            "7cSdY5oVBFBoztL1Cne6JY",
+            "93YaJrEINOOaV09Sm6smDE",
+            "aaWWHdlCRO9JaQOOeEkOnH",
+            "c7F2CQeGBBpayPfXNasD5v",
+            "cbj/89fQJKoIb5XC1OrqZ7",
+            "e7rGNNxD1F6qx3KiDv6x+w",
+            "e9YSqke7RKR6DWAr4h0ERl",
+            "edhBd9UNlI1LfwWWkM+M9F",
+            "f38gzWUbZCIrJsjc0TrFDp"
         ]
     },
     md5AssetsMap: {},

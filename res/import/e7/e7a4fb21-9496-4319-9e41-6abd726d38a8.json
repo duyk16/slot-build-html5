@@ -1,0 +1,27 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "egypt-end-bonusgame",
+    "texture": "4fwFlBxi1DxqILb4pOnz3R",
+    "rect": [
+      0,
+      0,
+      916,
+      512
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      916,
+      512
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}
