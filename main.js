@@ -45,6 +45,18 @@ window.boot = function () {
                 }
             }
         }
+
+        var subpackages = settings.subpackages;
+        for (var subId in subpackages) {
+            var uuidArray = subpackages[subId].uuids;
+            if (uuidArray) {
+                for (var k = 0, l = uuidArray.length; k < l; k++) {
+                    if (typeof uuidArray[k] === 'number') {
+                        uuidArray[k] = uuids[uuidArray[k]];
+                    }
+                }
+            }
+        }
     }
 
     function setLoadingDisplay () {
@@ -99,15 +111,6 @@ window.boot = function () {
             }
         }
 
-        // init assets
-        cc.AssetLibrary.init({
-            libraryPath: 'res/import',
-            rawAssetsBase: 'res/raw-',
-            rawAssets: settings.rawAssets,
-            packedAssets: settings.packedAssets,
-            md5AssetsMap: settings.md5AssetsMap
-        });
-
         var launchScene = settings.launchScene;
 
         // load scene
@@ -158,6 +161,16 @@ window.boot = function () {
         collisionMatrix: settings.collisionMatrix,
     }
 
+    // init assets
+    cc.AssetLibrary.init({
+        libraryPath: 'res/import',
+        rawAssetsBase: 'res/raw-',
+        rawAssets: settings.rawAssets,
+        packedAssets: settings.packedAssets,
+        md5AssetsMap: settings.md5AssetsMap,
+        subpackages: settings.subpackages
+    });
+
     cc.game.run(option, onStart);
 };
 
@@ -185,8 +198,19 @@ if (false) {
     window.boot();
 }
 else if (window.jsb) {
-    require('src/settings.js');
-    require('src/cocos2d-jsb.js');
-    require('jsb-adapter/engine/index.js');
+
+    var isRuntime = (typeof loadRuntime === 'function');
+    if (isRuntime) {
+        require('src/settings.js');
+        require('src/cocos2d-runtime.js');
+        require('jsb-adapter/engine/index.js');
+    }
+    else {
+        require('src/settings.js');
+        require('src/cocos2d-jsb.js');
+        require('jsb-adapter/jsb-engine.js');
+    }
+
+    cc.macro.CLEANUP_IMAGE_CACHE = true;
     window.boot();
 }

@@ -1,0 +1,195 @@
+
+skeleton.png
+size: 2048,1024
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+alpha_bigwin
+  rotate: false
+  xy: 1190, 305
+  size: 719, 717
+  orig: 719, 717
+  offset: 0, 0
+  index: -1
+b_color06
+  rotate: true
+  xy: 1028, 20
+  size: 118, 133
+  orig: 118, 133
+  offset: 0, 0
+  index: -1
+b_stoke6
+  rotate: true
+  xy: 1630, 142
+  size: 94, 116
+  orig: 94, 116
+  offset: 0, 0
+  index: -1
+bglight_satr
+  rotate: false
+  xy: 1440, 144
+  size: 188, 159
+  orig: 188, 159
+  offset: 0, 0
+  index: -1
+board
+  rotate: false
+  xy: 2, 75
+  size: 634, 192
+  orig: 634, 192
+  offset: 0, 0
+  index: -1
+board_dark
+  rotate: true
+  xy: 1911, 451
+  size: 571, 127
+  orig: 571, 127
+  offset: 0, 0
+  index: -1
+board_mark
+  rotate: false
+  xy: 638, 140
+  size: 571, 127
+  orig: 571, 127
+  offset: 0, 0
+  index: -1
+elip_star
+  rotate: false
+  xy: 1558, 89
+  size: 53, 53
+  orig: 53, 53
+  offset: 0, 0
+  index: -1
+g_color04
+  rotate: false
+  xy: 638, 2
+  size: 117, 136
+  orig: 117, 136
+  offset: 0, 0
+  index: -1
+g_stoke4
+  rotate: true
+  xy: 1748, 134
+  size: 102, 116
+  orig: 102, 116
+  offset: 0, 0
+  index: -1
+gradient_star
+  rotate: false
+  xy: 1211, 103
+  size: 227, 200
+  orig: 227, 200
+  offset: 0, 0
+  index: -1
+i_color02
+  rotate: true
+  xy: 383, 18
+  size: 55, 132
+  orig: 55, 132
+  offset: 0, 0
+  index: -1
+i_color05
+  rotate: true
+  xy: 247, 16
+  size: 57, 134
+  orig: 57, 134
+  offset: 0, 0
+  index: -1
+i_stoke2
+  rotate: false
+  xy: 1163, 22
+  size: 33, 116
+  orig: 33, 116
+  offset: 0, 0
+  index: -1
+i_stoke5
+  rotate: true
+  xy: 517, 39
+  size: 34, 113
+  orig: 34, 113
+  offset: 0, 0
+  index: -1
+leon_off
+  rotate: false
+  xy: 885, 2
+  size: 17, 18
+  orig: 17, 18
+  offset: 0, 0
+  index: -1
+leon_on
+  rotate: false
+  xy: 1558, 39
+  size: 48, 48
+  orig: 48, 48
+  offset: 0, 0
+  index: -1
+n_color03
+  rotate: false
+  xy: 757, 3
+  size: 126, 135
+  orig: 126, 135
+  offset: 0, 0
+  index: -1
+n_stoke3
+  rotate: true
+  xy: 1440, 41
+  size: 101, 116
+  orig: 101, 116
+  offset: 0, 0
+  index: -1
+shine
+  rotate: true
+  xy: 2, 3
+  size: 70, 243
+  orig: 70, 243
+  offset: 0, 0
+  index: -1
+star_hightlight
+  rotate: false
+  xy: 1378, 49
+  size: 51, 52
+  orig: 51, 52
+  offset: 0, 0
+  index: -1
+star_img
+  rotate: true
+  xy: 1198, 14
+  size: 87, 88
+  orig: 87, 88
+  offset: 0, 0
+  index: -1
+star_img2
+  rotate: true
+  xy: 1288, 14
+  size: 87, 88
+  orig: 87, 88
+  offset: 0, 0
+  index: -1
+w_color01
+  rotate: true
+  xy: 1911, 291
+  size: 158, 135
+  orig: 158, 135
+  offset: 0, 0
+  index: -1
+w_stoke1
+  rotate: false
+  xy: 885, 22
+  size: 141, 116
+  orig: 141, 116
+  offset: 0, 0
+  index: -1
+white_bigwin
+  rotate: false
+  xy: 2, 269
+  size: 1186, 753
+  orig: 1186, 753
+  offset: 0, 0
+  index: -1
+you just won
+  rotate: false
+  xy: 1630, 238
+  size: 237, 65
+  orig: 237, 65
+  offset: 0, 0
+  index: -1

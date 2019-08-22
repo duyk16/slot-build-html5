@@ -1,0 +1,104 @@
+
+skeleton.png
+size: 2048,256
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+alpha_quantai
+  rotate: false
+  xy: 938, 58
+  size: 211, 196
+  orig: 211, 196
+  offset: 0, 0
+  index: -1
+alpha_thienthan
+  rotate: false
+  xy: 1746, 110
+  size: 148, 144
+  orig: 148, 144
+  offset: 0, 0
+  index: -1
+alpha_white_active_bonus
+  rotate: false
+  xy: 2, 2
+  size: 326, 252
+  orig: 326, 252
+  offset: 0, 0
+  index: -1
+book_active_bonus
+  rotate: false
+  xy: 330, 32
+  size: 302, 222
+  orig: 302, 222
+  offset: 0, 0
+  index: -1
+canhthienthan
+  rotate: false
+  xy: 1571, 27
+  size: 124, 83
+  orig: 124, 83
+  offset: 0, 0
+  index: -1
+light_star
+  rotate: false
+  xy: 330, 5
+  size: 24, 25
+  orig: 24, 25
+  offset: 0, 0
+  index: -1
+light_star_thienthan
+  rotate: false
+  xy: 938, 43
+  size: 13, 13
+  orig: 13, 13
+  offset: 0, 0
+  index: -1
+quantai
+  rotate: false
+  xy: 1697, 5
+  size: 115, 103
+  orig: 115, 103
+  offset: 0, 0
+  index: -1
+quantai_effect_1
+  rotate: true
+  xy: 1896, 100
+  size: 154, 136
+  orig: 154, 136
+  offset: 0, 0
+  index: -1
+quantai_effect_2
+  rotate: false
+  xy: 1571, 112
+  size: 173, 142
+  orig: 173, 142
+  offset: 0, 0
+  index: -1
+quantai_effect_3
+  rotate: false
+  xy: 1368, 75
+  size: 201, 179
+  orig: 201, 179
+  offset: 0, 0
+  index: -1
+quantai_effect_4
+  rotate: false
+  xy: 1151, 68
+  size: 215, 186
+  orig: 215, 186
+  offset: 0, 0
+  index: -1
+shadow_active_bonus
+  rotate: false
+  xy: 634, 32
+  size: 302, 222
+  orig: 302, 222
+  offset: 0, 0
+  index: -1
+vongthienthan
+  rotate: false
+  xy: 1814, 67
+  size: 56, 41
+  orig: 56, 41
+  offset: 0, 0
+  index: -1

@@ -1,0 +1,181 @@
+
+skeleton.png
+size: 2048,1024
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+a_color14
+  rotate: false
+  xy: 446, 61
+  size: 117, 127
+  orig: 117, 127
+  offset: 0, 0
+  index: -1
+a_color20
+  rotate: false
+  xy: 730, 345
+  size: 118, 127
+  orig: 118, 127
+  offset: 0, 0
+  index: -1
+a_stoke13
+  rotate: false
+  xy: 637, 226
+  size: 113, 117
+  orig: 113, 117
+  offset: 0, 0
+  index: -1
+a_stoke19
+  rotate: false
+  xy: 752, 226
+  size: 113, 117
+  orig: 113, 117
+  offset: 0, 0
+  index: -1
+amazing_dropshadow
+  rotate: false
+  xy: 670, 851
+  size: 714, 161
+  orig: 714, 161
+  offset: 0, 0
+  index: -1
+bg
+  rotate: false
+  xy: 2, 190
+  size: 514, 413
+  orig: 514, 413
+  offset: 0, 0
+  index: -1
+bg_alpha
+  rotate: false
+  xy: 2, 605
+  size: 666, 407
+  orig: 666, 407
+  offset: 0, 0
+  index: -1
+bg_color
+  rotate: true
+  xy: 1141, 414
+  size: 435, 343
+  orig: 435, 343
+  offset: 0, 0
+  index: -1
+bg_mark
+  rotate: false
+  xy: 1486, 310
+  size: 435, 343
+  orig: 435, 343
+  offset: 0, 0
+  index: -1
+g_color2
+  rotate: false
+  xy: 565, 67
+  size: 110, 130
+  orig: 110, 130
+  offset: 0, 0
+  index: -1
+g_stoke1
+  rotate: false
+  xy: 1937, 892
+  size: 105, 120
+  orig: 105, 120
+  offset: 0, 0
+  index: -1
+i_color8
+  rotate: false
+  xy: 1386, 885
+  size: 64, 127
+  orig: 64, 127
+  offset: 0, 0
+  index: -1
+i_stoke7
+  rotate: false
+  xy: 1937, 773
+  size: 58, 117
+  orig: 58, 117
+  offset: 0, 0
+  index: -1
+light_off
+  rotate: false
+  xy: 670, 474
+  size: 469, 375
+  orig: 469, 375
+  offset: 0, 0
+  index: -1
+light_on
+  rotate: false
+  xy: 2, 2
+  size: 38, 38
+  orig: 38, 38
+  offset: 0, 0
+  index: -1
+light_shine
+  rotate: false
+  xy: 518, 343
+  size: 86, 260
+  orig: 86, 260
+  offset: 0, 0
+  index: -1
+m_color17
+  rotate: false
+  xy: 298, 61
+  size: 146, 127
+  orig: 146, 127
+  offset: 0, 0
+  index: -1
+m_stoke16
+  rotate: true
+  xy: 518, 199
+  size: 142, 117
+  orig: 142, 117
+  offset: 0, 0
+  index: -1
+n_color5
+  rotate: false
+  xy: 606, 345
+  size: 122, 127
+  orig: 122, 127
+  offset: 0, 0
+  index: -1
+n_stoke4
+  rotate: false
+  xy: 968, 355
+  size: 118, 117
+  orig: 118, 117
+  offset: 0, 0
+  index: -1
+slots
+  rotate: false
+  xy: 2, 42
+  size: 294, 146
+  orig: 294, 146
+  offset: 0, 0
+  index: -1
+star_shine
+  rotate: false
+  xy: 981, 272
+  size: 81, 81
+  orig: 81, 81
+  offset: 0, 0
+  index: -1
+stoke_bg
+  rotate: false
+  xy: 1486, 655
+  size: 449, 357
+  orig: 449, 357
+  offset: 0, 0
+  index: -1
+z_color11
+  rotate: false
+  xy: 850, 345
+  size: 116, 127
+  orig: 116, 127
+  offset: 0, 0
+  index: -1
+z_stoke10
+  rotate: false
+  xy: 867, 226
+  size: 112, 117
+  orig: 112, 117
+  offset: 0, 0
+  index: -1

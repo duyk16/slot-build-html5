@@ -1,0 +1,279 @@
+
+skeleton.png
+size: 2048,512
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+Layer 1
+  rotate: false
+  xy: 200, 154
+  size: 207, 106
+  orig: 207, 106
+  offset: 0, 0
+  index: -1
+Layer 10
+  rotate: false
+  xy: 857, 373
+  size: 214, 106
+  orig: 214, 106
+  offset: 0, 0
+  index: -1
+Layer 10_10
+  rotate: false
+  xy: 641, 282
+  size: 214, 87
+  orig: 214, 87
+  offset: 0, 0
+  index: -1
+Layer 11
+  rotate: false
+  xy: 1727, 383
+  size: 216, 96
+  orig: 216, 96
+  offset: 0, 0
+  index: -1
+Layer 11_11
+  rotate: false
+  xy: 410, 204
+  size: 216, 85
+  orig: 216, 85
+  offset: 0, 0
+  index: -1
+Layer 12
+  rotate: false
+  xy: 857, 280
+  size: 216, 91
+  orig: 216, 91
+  offset: 0, 0
+  index: -1
+Layer 12_12
+  rotate: false
+  xy: 628, 205
+  size: 216, 75
+  orig: 216, 75
+  offset: 0, 0
+  index: -1
+Layer 13
+  rotate: false
+  xy: 1289, 377
+  size: 214, 102
+  orig: 214, 102
+  offset: 0, 0
+  index: -1
+Layer 13_13
+  rotate: false
+  xy: 846, 201
+  size: 214, 77
+  orig: 214, 77
+  offset: 0, 0
+  index: -1
+Layer 14
+  rotate: false
+  xy: 1073, 373
+  size: 214, 106
+  orig: 214, 106
+  offset: 0, 0
+  index: -1
+Layer 14_14
+  rotate: false
+  xy: 1285, 208
+  size: 214, 81
+  orig: 214, 81
+  offset: 0, 0
+  index: -1
+Layer 15
+  rotate: false
+  xy: 200, 262
+  size: 208, 107
+  orig: 208, 107
+  offset: 0, 0
+  index: -1
+Layer 15_15
+  rotate: false
+  xy: 1075, 285
+  size: 208, 86
+  orig: 208, 86
+  offset: 0, 0
+  index: -1
+Layer 1_1
+  rotate: false
+  xy: 200, 67
+  size: 207, 85
+  orig: 207, 85
+  offset: 0, 0
+  index: -1
+Layer 2
+  rotate: true
+  xy: 1945, 276
+  size: 203, 100
+  orig: 203, 100
+  offset: 0, 0
+  index: -1
+Layer 2_2
+  rotate: false
+  xy: 1501, 139
+  size: 203, 82
+  orig: 203, 82
+  offset: 0, 0
+  index: -1
+Layer 3
+  rotate: false
+  xy: 409, 110
+  size: 213, 92
+  orig: 213, 92
+  offset: 0, 0
+  index: -1
+Layer 3_3
+  rotate: false
+  xy: 409, 32
+  size: 213, 76
+  orig: 213, 76
+  offset: 0, 0
+  index: -1
+Layer 4
+  rotate: false
+  xy: 1727, 293
+  size: 216, 88
+  orig: 216, 88
+  offset: 0, 0
+  index: -1
+Layer 4_4
+  rotate: false
+  xy: 1727, 220
+  size: 216, 71
+  orig: 216, 71
+  offset: 0, 0
+  index: -1
+Layer 5
+  rotate: false
+  xy: 1505, 385
+  size: 220, 94
+  orig: 220, 94
+  offset: 0, 0
+  index: -1
+Layer 5_5
+  rotate: false
+  xy: 1505, 306
+  size: 220, 77
+  orig: 220, 77
+  offset: 0, 0
+  index: -1
+Layer 6
+  rotate: false
+  xy: 419, 375
+  size: 220, 104
+  orig: 220, 104
+  offset: 0, 0
+  index: -1
+Layer 6_6
+  rotate: false
+  xy: 1505, 223
+  size: 220, 81
+  orig: 220, 81
+  offset: 0, 0
+  index: -1
+Layer 7
+  rotate: true
+  xy: 2, 116
+  size: 220, 106
+  orig: 220, 106
+  offset: 0, 0
+  index: -1
+Layer 7_7
+  rotate: false
+  xy: 419, 291
+  size: 220, 82
+  orig: 220, 82
+  offset: 0, 0
+  index: -1
+Layer 8
+  rotate: false
+  xy: 641, 371
+  size: 214, 108
+  orig: 214, 108
+  offset: 0, 0
+  index: -1
+Layer 8_8
+  rotate: false
+  xy: 1289, 291
+  size: 214, 84
+  orig: 214, 84
+  offset: 0, 0
+  index: -1
+Layer 9
+  rotate: false
+  xy: 200, 371
+  size: 217, 108
+  orig: 217, 108
+  offset: 0, 0
+  index: -1
+Layer 9_9
+  rotate: true
+  xy: 110, 119
+  size: 217, 88
+  orig: 217, 88
+  offset: 0, 0
+  index: -1
+alpha_gay_blue
+  rotate: false
+  xy: 2, 32
+  size: 82, 82
+  orig: 82, 82
+  offset: 0, 0
+  index: -1
+bantay
+  rotate: false
+  xy: 1991, 261
+  size: 16, 13
+  orig: 16, 13
+  offset: 0, 0
+  index: -1
+bird
+  rotate: false
+  xy: 2, 338
+  size: 196, 141
+  orig: 196, 141
+  offset: 0, 0
+  index: -1
+gay_ps
+  rotate: true
+  xy: 1706, 165
+  size: 53, 202
+  orig: 53, 202
+  offset: 0, 0
+  index: -1
+mi_phai
+  rotate: false
+  xy: 1945, 230
+  size: 44, 44
+  orig: 44, 44
+  offset: 0, 0
+  index: -1
+mi_trai
+  rotate: false
+  xy: 1706, 139
+  size: 21, 24
+  orig: 21, 24
+  offset: 0, 0
+  index: -1
+sao_1
+  rotate: false
+  xy: 86, 95
+  size: 20, 19
+  orig: 20, 19
+  offset: 0, 0
+  index: -1
+sao_2
+  rotate: false
+  xy: 1910, 197
+  size: 21, 21
+  orig: 21, 21
+  offset: 0, 0
+  index: -1
+sao_3
+  rotate: false
+  xy: 2, 2
+  size: 28, 28
+  orig: 28, 28
+  offset: 0, 0
+  index: -1

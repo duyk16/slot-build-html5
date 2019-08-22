@@ -1,0 +1,34 @@
+
+skeleton.png
+size: 1024,128
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+btn-buy-stroke-blue
+  rotate: false
+  xy: 430, 2
+  size: 180, 70
+  orig: 180, 70
+  offset: 0, 0
+  index: -1
+btn-buy-stroke-violet
+  rotate: false
+  xy: 612, 2
+  size: 180, 70
+  orig: 180, 70
+  offset: 0, 0
+  index: -1
+light-1-buy
+  rotate: false
+  xy: 2, 2
+  size: 236, 70
+  orig: 236, 70
+  offset: 0, 0
+  index: -1
+light-2-buy
+  rotate: false
+  xy: 240, 2
+  size: 188, 70
+  orig: 188, 70
+  offset: 0, 0
+  index: -1
