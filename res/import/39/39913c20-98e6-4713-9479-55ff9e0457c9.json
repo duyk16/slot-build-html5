@@ -1,1 +1,27 @@
-{"__type__":"cc.SpriteFrame","content":{"name":"bonus","texture":"9bOnDny41IKLc98du0WW8z","rect":[0,0,180,137],"offset":[0,0],"originalSize":[180,137],"capInsets":[0,0,0,0]}}
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "bonus",
+    "texture": "9bOnDny41IKLc98du0WW8z",
+    "rect": [
+      0,
+      0,
+      180,
+      137
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      180,
+      137
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

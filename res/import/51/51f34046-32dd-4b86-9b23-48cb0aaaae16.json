@@ -1,1 +1,27 @@
-{"__type__":"cc.SpriteFrame","content":{"name":"slot-btn-spin-active-number","texture":"919RH2H3ZMeruZBLtnXJ0l","rect":[0,0,260,92],"offset":[0,0],"originalSize":[260,92],"capInsets":[0,0,0,0]}}
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "slot-btn-spin-active-number",
+    "texture": "919RH2H3ZMeruZBLtnXJ0l",
+    "rect": [
+      0,
+      0,
+      260,
+      92
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      260,
+      92
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

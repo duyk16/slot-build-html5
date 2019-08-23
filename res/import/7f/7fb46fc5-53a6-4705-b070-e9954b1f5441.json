@@ -1,1 +1,27 @@
-{"__type__":"cc.SpriteFrame","content":{"name":"active_reels_button_02","texture":"23EOrVrZBK2IKksmj9B31c","rect":[0,2,69,36],"offset":[0,-1],"originalSize":[69,38],"capInsets":[0,0,0,0]}}
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "active_reels_button_02",
+    "texture": "23EOrVrZBK2IKksmj9B31c",
+    "rect": [
+      0,
+      2,
+      69,
+      36
+    ],
+    "offset": [
+      0,
+      -1
+    ],
+    "originalSize": [
+      69,
+      38
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

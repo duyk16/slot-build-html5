@@ -1,1 +1,27 @@
-{"__type__":"cc.SpriteFrame","content":{"name":"popup-bonusgame-casino","texture":"6dPWUEB/dLT4bv/6/1duVP","rect":[0,0,1366,768],"offset":[0,0],"originalSize":[1366,768],"capInsets":[0,0,0,0]}}
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "popup-bonusgame-casino",
+    "texture": "6dPWUEB/dLT4bv/6/1duVP",
+    "rect": [
+      0,
+      0,
+      1366,
+      768
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      1366,
+      768
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

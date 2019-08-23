@@ -1,1 +1,5 @@
-{"__type__":"cc.AudioClip","_name":"xinfu_free_spins_pop_up","_native":".ogg"}
+{
+  "__type__": "cc.AudioClip",
+  "_name": "xinfu_free_spins_pop_up",
+  "_native": ".ogg"
+}

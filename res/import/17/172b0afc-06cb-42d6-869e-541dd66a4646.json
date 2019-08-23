@@ -1,1 +1,27 @@
-{"__type__":"cc.SpriteFrame","content":{"name":"power_reels_lock_3","texture":"a4c0p7afZLZYsfz7RxaJhj","rect":[0,2,69,36],"offset":[0,-1],"originalSize":[69,38],"capInsets":[0,0,0,0]}}
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "power_reels_lock_3",
+    "texture": "a4c0p7afZLZYsfz7RxaJhj",
+    "rect": [
+      0,
+      2,
+      69,
+      36
+    ],
+    "offset": [
+      0,
+      -1
+    ],
+    "originalSize": [
+      69,
+      38
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

@@ -1,1 +1,27 @@
-{"__type__":"cc.SpriteFrame","content":{"name":"item-casino-6","texture":"13l9RRtxhB5JIHIak8vIRI","rect":[0,0,159,130],"offset":[0,0],"originalSize":[159,130],"capInsets":[0,0,0,0]}}
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "item-casino-6",
+    "texture": "13l9RRtxhB5JIHIak8vIRI",
+    "rect": [
+      0,
+      0,
+      159,
+      130
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      159,
+      130
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

@@ -1,1 +1,27 @@
-{"__type__":"cc.SpriteFrame","content":{"name":"effect_spin_2","texture":"168kTQHklIXrpLPEZbE2wt","rect":[3,0,149,154],"offset":[-1.5,1],"originalSize":[158,156],"capInsets":[0,0,0,0]}}
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "effect_spin_2",
+    "texture": "168kTQHklIXrpLPEZbE2wt",
+    "rect": [
+      3,
+      0,
+      149,
+      154
+    ],
+    "offset": [
+      -1.5,
+      1
+    ],
+    "originalSize": [
+      158,
+      156
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

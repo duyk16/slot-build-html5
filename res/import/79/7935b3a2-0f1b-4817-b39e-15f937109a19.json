@@ -1,1 +1,27 @@
-{"__type__":"cc.SpriteFrame","content":{"name":"item-egypt-8","texture":"a9cjbO+uNHHYfo7mNsafuK","rect":[1,0,119,111],"offset":[-7,0],"originalSize":[135,111],"capInsets":[0,0,0,0]}}
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "item-egypt-8",
+    "texture": "a9cjbO+uNHHYfo7mNsafuK",
+    "rect": [
+      1,
+      0,
+      119,
+      111
+    ],
+    "offset": [
+      -7,
+      0
+    ],
+    "originalSize": [
+      135,
+      111
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

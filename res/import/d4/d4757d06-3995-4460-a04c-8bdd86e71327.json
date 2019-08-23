@@ -1,1 +1,27 @@
-{"__type__":"cc.SpriteFrame","content":{"name":"btn-back-ingame","texture":"9bv3ONbMhAdba2ui24gBFo","rect":[0,0,64,66],"offset":[0,0],"originalSize":[64,66],"capInsets":[0,0,0,0]}}
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "btn-back-ingame",
+    "texture": "9bv3ONbMhAdba2ui24gBFo",
+    "rect": [
+      0,
+      0,
+      64,
+      66
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      64,
+      66
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

@@ -1,1 +1,27 @@
-{"__type__":"cc.SpriteFrame","content":{"name":"btn-spin","texture":"53qAh3fYJFjKQHTm0picXK","rect":[0,0,178,82],"offset":[0,0],"originalSize":[178,82],"capInsets":[0,0,0,0]}}
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "btn-spin",
+    "texture": "53qAh3fYJFjKQHTm0picXK",
+    "rect": [
+      0,
+      0,
+      178,
+      82
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      178,
+      82
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

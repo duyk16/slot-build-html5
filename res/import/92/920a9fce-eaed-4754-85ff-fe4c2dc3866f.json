@@ -1,1 +1,27 @@
-{"__type__":"cc.SpriteFrame","content":{"name":"rules_txt","texture":"44N4gHH3lE25lGr+XW9ut0","rect":[3,4,785,332],"offset":[-1,0],"originalSize":[793,340],"capInsets":[0,0,0,0]}}
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "rules_txt",
+    "texture": "44N4gHH3lE25lGr+XW9ut0",
+    "rect": [
+      3,
+      4,
+      785,
+      332
+    ],
+    "offset": [
+      -1,
+      0
+    ],
+    "originalSize": [
+      793,
+      340
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

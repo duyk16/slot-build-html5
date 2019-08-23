@@ -1,1 +1,27 @@
-{"__type__":"cc.SpriteFrame","content":{"name":"btn-maxbet","texture":"f60x2DBT9JKYW4IqPo6bmW","rect":[0,0,86,80],"offset":[0,0],"originalSize":[86,80],"capInsets":[0,0,0,0]}}
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "btn-maxbet",
+    "texture": "f60x2DBT9JKYW4IqPo6bmW",
+    "rect": [
+      0,
+      0,
+      86,
+      80
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      86,
+      80
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

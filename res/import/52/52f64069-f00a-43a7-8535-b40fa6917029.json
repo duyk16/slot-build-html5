@@ -1,1 +1,27 @@
-{"__type__":"cc.SpriteFrame","content":{"name":"bg-item-casino-11","texture":"87pz+NpYxNdb7jJ0qMvn1Z","rect":[0,0,165,136],"offset":[0,0],"originalSize":[165,136],"capInsets":[0,0,0,0]}}
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "bg-item-casino-11",
+    "texture": "87pz+NpYxNdb7jJ0qMvn1Z",
+    "rect": [
+      0,
+      0,
+      165,
+      136
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      165,
+      136
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

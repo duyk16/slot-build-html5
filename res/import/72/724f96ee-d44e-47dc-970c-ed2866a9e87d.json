@@ -1,1 +1,27 @@
-{"__type__":"cc.SpriteFrame","content":{"name":"btn-deal-ingame","texture":"c3G2mIaW1HnaLFeoRilV6J","rect":[0,0,123,56],"offset":[-0.5,0],"originalSize":[124,56],"capInsets":[0,0,0,0]}}
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "btn-deal-ingame",
+    "texture": "c3G2mIaW1HnaLFeoRilV6J",
+    "rect": [
+      0,
+      0,
+      123,
+      56
+    ],
+    "offset": [
+      -0.5,
+      0
+    ],
+    "originalSize": [
+      124,
+      56
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

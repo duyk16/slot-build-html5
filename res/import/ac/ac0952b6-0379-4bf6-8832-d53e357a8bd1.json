@@ -1,1 +1,27 @@
-{"__type__":"cc.SpriteFrame","content":{"name":"slot-btn-ulti-bonus","texture":"81kEpCQClJcJYjDvndV8oH","rect":[0,0,169,64],"offset":[0,0],"originalSize":[169,64],"capInsets":[0,0,0,0]}}
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "slot-btn-ulti-bonus",
+    "texture": "81kEpCQClJcJYjDvndV8oH",
+    "rect": [
+      0,
+      0,
+      169,
+      64
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      169,
+      64
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

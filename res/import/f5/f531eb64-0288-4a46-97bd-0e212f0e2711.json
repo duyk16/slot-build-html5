@@ -1,1 +1,27 @@
-{"__type__":"cc.SpriteFrame","content":{"name":"egypt-coin-1","texture":"45kNrtbstPV6VJpYXmpBrC","rect":[0,0,106,103],"offset":[0,0],"originalSize":[106,103],"capInsets":[0,0,0,0]}}
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "egypt-coin-1",
+    "texture": "45kNrtbstPV6VJpYXmpBrC",
+    "rect": [
+      0,
+      0,
+      106,
+      103
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      106,
+      103
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

@@ -1,1 +1,27 @@
-{"__type__":"cc.SpriteFrame","content":{"name":"btn-treasure","texture":"e4cpgk8o1Kl7KKX53NAns/","rect":[0,0,61,57],"offset":[0,0],"originalSize":[61,57],"capInsets":[0,0,0,0]}}
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "btn-treasure",
+    "texture": "e4cpgk8o1Kl7KKX53NAns/",
+    "rect": [
+      0,
+      0,
+      61,
+      57
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      61,
+      57
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

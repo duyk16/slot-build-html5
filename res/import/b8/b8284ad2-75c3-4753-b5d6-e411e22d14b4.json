@@ -1,1 +1,27 @@
-{"__type__":"cc.SpriteFrame","content":{"name":"bg-screen-slot","texture":"1cdkkRlDZFo6XTHJ0gaBop","rect":[0,0,184,300],"offset":[0,0],"originalSize":[184,300],"capInsets":[0,0,0,0]}}
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "bg-screen-slot",
+    "texture": "1cdkkRlDZFo6XTHJ0gaBop",
+    "rect": [
+      0,
+      0,
+      184,
+      300
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      184,
+      300
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

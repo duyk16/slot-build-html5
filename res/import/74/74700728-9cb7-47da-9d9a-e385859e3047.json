@@ -1,1 +1,27 @@
-{"__type__":"cc.SpriteFrame","content":{"name":"wild_special","texture":"d6uQ6WQtxFdYVlsja0aCru","rect":[6,0,146,146],"offset":[1,3.5],"originalSize":[156,153],"capInsets":[0,0,0,0]}}
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "wild_special",
+    "texture": "d6uQ6WQtxFdYVlsja0aCru",
+    "rect": [
+      6,
+      0,
+      146,
+      146
+    ],
+    "offset": [
+      1,
+      3.5
+    ],
+    "originalSize": [
+      156,
+      153
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

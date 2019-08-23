@@ -1,1 +1,27 @@
-{"__type__":"cc.SpriteFrame","content":{"name":"avatar-top-demo-2","texture":"18ce1ef28","rect":[418,896,44,44],"offset":[0,0],"originalSize":[44,44],"capInsets":[0,0,0,0]}}
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "avatar-top-demo-2",
+    "texture": "18ce1ef28",
+    "rect": [
+      418,
+      896,
+      44,
+      44
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      44,
+      44
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

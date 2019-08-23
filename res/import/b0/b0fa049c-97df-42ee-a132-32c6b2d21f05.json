@@ -1,1 +1,27 @@
-{"__type__":"cc.SpriteFrame","content":{"name":"bg-noti-menu","texture":"18ce1ef28","rect":[360,896,24,24],"offset":[0,0],"originalSize":[24,24],"capInsets":[0,0,0,0]}}
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "bg-noti-menu",
+    "texture": "18ce1ef28",
+    "rect": [
+      360,
+      896,
+      24,
+      24
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      24,
+      24
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

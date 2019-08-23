@@ -1,1 +1,27 @@
-{"__type__":"cc.SpriteFrame","content":{"name":"sach_gray","texture":"0abT/FKjFCH7/WMpX7WCVR","rect":[3,4,326,252],"offset":[1,-1],"originalSize":[330,258],"capInsets":[0,0,0,0]}}
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "sach_gray",
+    "texture": "0abT/FKjFCH7/WMpX7WCVR",
+    "rect": [
+      3,
+      4,
+      326,
+      252
+    ],
+    "offset": [
+      1,
+      -1
+    ],
+    "originalSize": [
+      330,
+      258
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

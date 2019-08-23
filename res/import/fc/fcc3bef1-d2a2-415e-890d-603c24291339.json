@@ -1,1 +1,27 @@
-{"__type__":"cc.SpriteFrame","content":{"name":"free-spin-background","texture":"a6+coWhRxP8Znn2bxVihrH","rect":[0,0,242,99],"offset":[0,0],"originalSize":[242,99],"capInsets":[0,0,0,0]}}
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "free-spin-background",
+    "texture": "a6+coWhRxP8Znn2bxVihrH",
+    "rect": [
+      0,
+      0,
+      242,
+      99
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      242,
+      99
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

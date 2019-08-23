@@ -1,1 +1,27 @@
-{"__type__":"cc.SpriteFrame","content":{"name":"daulau","texture":"72yi6d2y5BNoBC/q2cbJOm","rect":[0,0,140,138],"offset":[0,0],"originalSize":[140,138],"capInsets":[0,0,0,0]}}
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "daulau",
+    "texture": "72yi6d2y5BNoBC/q2cbJOm",
+    "rect": [
+      0,
+      0,
+      140,
+      138
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      140,
+      138
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

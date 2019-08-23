@@ -1,1 +1,27 @@
-{"__type__":"cc.SpriteFrame","content":{"name":"btn-setting-ingame","texture":"24+0SS8ORMZr1CCaMMEeLb","rect":[0,0,64,66],"offset":[0,0],"originalSize":[64,66],"capInsets":[0,0,0,0]}}
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "btn-setting-ingame",
+    "texture": "24+0SS8ORMZr1CCaMMEeLb",
+    "rect": [
+      0,
+      0,
+      64,
+      66
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      64,
+      66
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

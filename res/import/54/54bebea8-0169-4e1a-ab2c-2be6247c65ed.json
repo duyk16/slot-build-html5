@@ -1,1 +1,27 @@
-{"__type__":"cc.SpriteFrame","content":{"name":"scatter","texture":"64nrzxkzVPnqhQb0JO6Q1O","rect":[0,0,140,145],"offset":[0,0],"originalSize":[140,145],"capInsets":[0,0,0,0]}}
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "scatter",
+    "texture": "64nrzxkzVPnqhQb0JO6Q1O",
+    "rect": [
+      0,
+      0,
+      140,
+      145
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      140,
+      145
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

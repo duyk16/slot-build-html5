@@ -1,1 +1,27 @@
-{"__type__":"cc.SpriteFrame","content":{"name":"bg-line-black-exp-ingame","texture":"d0EQ6+x+lCYrupjIfuVch3","rect":[0,0,196,22],"offset":[0,0],"originalSize":[196,22],"capInsets":[0,0,0,0]}}
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "bg-line-black-exp-ingame",
+    "texture": "d0EQ6+x+lCYrupjIfuVch3",
+    "rect": [
+      0,
+      0,
+      196,
+      22
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      196,
+      22
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

@@ -1,1 +1,27 @@
-{"__type__":"cc.SpriteFrame","content":{"name":"skeleton","texture":"45SuvtTZdBdoHdue3IpPVi","rect":[3,3,199,226],"offset":[-25.5,12],"originalSize":[256,256],"capInsets":[0,0,0,0]}}
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "skeleton",
+    "texture": "45SuvtTZdBdoHdue3IpPVi",
+    "rect": [
+      3,
+      3,
+      199,
+      226
+    ],
+    "offset": [
+      -25.5,
+      12
+    ],
+    "originalSize": [
+      256,
+      256
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

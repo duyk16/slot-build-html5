@@ -1,1 +1,27 @@
-{"__type__":"cc.SpriteFrame","content":{"name":"egypt-bonus-coin-active","texture":"d2HrR2T4FATrF7pwAXNClz","rect":[0,7,164,164],"offset":[0,-3],"originalSize":[164,172],"capInsets":[0,0,0,0]}}
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "egypt-bonus-coin-active",
+    "texture": "d2HrR2T4FATrF7pwAXNClz",
+    "rect": [
+      0,
+      7,
+      164,
+      164
+    ],
+    "offset": [
+      0,
+      -3
+    ],
+    "originalSize": [
+      164,
+      172
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

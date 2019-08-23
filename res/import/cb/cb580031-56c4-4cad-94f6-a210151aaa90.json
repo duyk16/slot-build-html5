@@ -1,1 +1,5 @@
-{"__type__":"cc.AudioClip","_name":"xinfu_bang_up2","_native":".ogg"}
+{
+  "__type__": "cc.AudioClip",
+  "_name": "xinfu_bang_up2",
+  "_native": ".ogg"
+}

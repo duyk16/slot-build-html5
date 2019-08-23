@@ -1,1 +1,5 @@
-{"__type__":"cc.ParticleAsset","_name":"particle_texture","_native":".plist"}
+{
+  "__type__": "cc.ParticleAsset",
+  "_name": "particle_texture",
+  "_native": ".plist"
+}

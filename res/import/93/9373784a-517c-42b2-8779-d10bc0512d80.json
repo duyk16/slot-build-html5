@@ -1,1 +1,27 @@
-{"__type__":"cc.SpriteFrame","content":{"name":"game-dra-item-3","texture":"7cKraiSJtJo4XZFptOKD5P","rect":[7,15,136,98],"offset":[-0.5,-0.5],"originalSize":[151,127],"capInsets":[0,0,0,0]}}
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "game-dra-item-3",
+    "texture": "7cKraiSJtJo4XZFptOKD5P",
+    "rect": [
+      7,
+      15,
+      136,
+      98
+    ],
+    "offset": [
+      -0.5,
+      -0.5
+    ],
+    "originalSize": [
+      151,
+      127
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

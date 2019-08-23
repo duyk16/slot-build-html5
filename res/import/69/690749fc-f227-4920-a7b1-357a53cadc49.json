@@ -1,1 +1,74 @@
-{"__type__":"cc.SpriteAtlas","_spriteFrames":{"1":{"__uuid__":"429SWZnyhPa51bYeKJzasc"},"2":{"__uuid__":"32uJS7vkJPC4pbE1eIPhoe"},"3":{"__uuid__":"78JSOtNCZAFqTxyRrxVNq7"},"4":{"__uuid__":"2agyg9WxFJepOVSMsx/i7i"},"5":{"__uuid__":"9fLlU2MoNFA7UD5M2Wfz11"},"6":{"__uuid__":"cbQAO4FUFCErkQUukKx3bh"},"7":{"__uuid__":"02dHAsFDlPOao46McYoXTR"},"8":{"__uuid__":"57kja0qhBHD6DV8CSP5znI"},"trans-item-game-slot":{"__uuid__":"a2kiz2G2lNroffMNw9uwdx"},"slot-bg-jackpot-lobby":{"__uuid__":"abcQr87EVGGJy6Vu9xVLcO"},"slot-btn-menu-left":{"__uuid__":"163ciWemNOkqZ/iPB1WcYl"},"avatar-demo":{"__uuid__":"c2bMG0Ot5Mop/4f4Pc2eyZ"},"slot-btn-minimize-ingame":{"__uuid__":"fajXu1vbxP6apZ9/vyN5Sd"},"bg-noti-menu":{"__uuid__":"b0+gScl99C7qEyMsay0h8F"},"avatar-top-demo-4":{"__uuid__":"05wzE2x7lLpoc+x24qDc+M"},"bg-icon-banner":{"__uuid__":"61YxvObDdD540zeO4ag6XR"},"avatar-top-demo-6":{"__uuid__":"26okrYRW9PAbP7KmhmKYj7"},"avatar-top-demo-2":{"__uuid__":"42BzJyY75GP6jz60dZnVkZ"},"avatar-top-demo-7":{"__uuid__":"76Hrs3LCdGUKI/L38myT1N"},"avatar-top-demo-8":{"__uuid__":"85VYVNEXhHGobNYi5z7NIR"},"avatar-top-demo-1":{"__uuid__":"92OCu0ialLV6uvzpaOhOBl"},"avatar-top-demo-3":{"__uuid__":"c1mPwM4kJF2YCV8qXKDiVi"},"avatar-top-demo-5":{"__uuid__":"dbpBbPQrFDLpXIn2yPcCMN"}}}
+{
+  "__type__": "cc.SpriteAtlas",
+  "_spriteFrames": {
+    "1": {
+      "__uuid__": "429SWZnyhPa51bYeKJzasc"
+    },
+    "2": {
+      "__uuid__": "32uJS7vkJPC4pbE1eIPhoe"
+    },
+    "3": {
+      "__uuid__": "78JSOtNCZAFqTxyRrxVNq7"
+    },
+    "4": {
+      "__uuid__": "2agyg9WxFJepOVSMsx/i7i"
+    },
+    "5": {
+      "__uuid__": "9fLlU2MoNFA7UD5M2Wfz11"
+    },
+    "6": {
+      "__uuid__": "cbQAO4FUFCErkQUukKx3bh"
+    },
+    "7": {
+      "__uuid__": "02dHAsFDlPOao46McYoXTR"
+    },
+    "8": {
+      "__uuid__": "57kja0qhBHD6DV8CSP5znI"
+    },
+    "trans-item-game-slot": {
+      "__uuid__": "a2kiz2G2lNroffMNw9uwdx"
+    },
+    "slot-bg-jackpot-lobby": {
+      "__uuid__": "abcQr87EVGGJy6Vu9xVLcO"
+    },
+    "slot-btn-menu-left": {
+      "__uuid__": "163ciWemNOkqZ/iPB1WcYl"
+    },
+    "avatar-demo": {
+      "__uuid__": "c2bMG0Ot5Mop/4f4Pc2eyZ"
+    },
+    "slot-btn-minimize-ingame": {
+      "__uuid__": "fajXu1vbxP6apZ9/vyN5Sd"
+    },
+    "bg-noti-menu": {
+      "__uuid__": "b0+gScl99C7qEyMsay0h8F"
+    },
+    "avatar-top-demo-4": {
+      "__uuid__": "05wzE2x7lLpoc+x24qDc+M"
+    },
+    "bg-icon-banner": {
+      "__uuid__": "61YxvObDdD540zeO4ag6XR"
+    },
+    "avatar-top-demo-6": {
+      "__uuid__": "26okrYRW9PAbP7KmhmKYj7"
+    },
+    "avatar-top-demo-2": {
+      "__uuid__": "42BzJyY75GP6jz60dZnVkZ"
+    },
+    "avatar-top-demo-7": {
+      "__uuid__": "76Hrs3LCdGUKI/L38myT1N"
+    },
+    "avatar-top-demo-8": {
+      "__uuid__": "85VYVNEXhHGobNYi5z7NIR"
+    },
+    "avatar-top-demo-1": {
+      "__uuid__": "92OCu0ialLV6uvzpaOhOBl"
+    },
+    "avatar-top-demo-3": {
+      "__uuid__": "c1mPwM4kJF2YCV8qXKDiVi"
+    },
+    "avatar-top-demo-5": {
+      "__uuid__": "dbpBbPQrFDLpXIn2yPcCMN"
+    }
+  }
+}

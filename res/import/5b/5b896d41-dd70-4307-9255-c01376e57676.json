@@ -1,1 +1,5 @@
-{"__type__":"cc.Asset","_name":"skeleton","_native":".atlas"}
+{
+  "__type__": "cc.Asset",
+  "_name": "skeleton",
+  "_native": ".atlas"
+}

@@ -1,1 +1,27 @@
-{"__type__":"cc.SpriteFrame","content":{"name":"huong_duong_dark","texture":"93vT8NDl1ONKBKaBR3WDGC","rect":[0,0,122,138],"offset":[-0.5,0.5],"originalSize":[123,139],"capInsets":[0,0,0,0]}}
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "huong_duong_dark",
+    "texture": "93vT8NDl1ONKBKaBR3WDGC",
+    "rect": [
+      0,
+      0,
+      122,
+      138
+    ],
+    "offset": [
+      -0.5,
+      0.5
+    ],
+    "originalSize": [
+      123,
+      139
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

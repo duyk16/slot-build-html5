@@ -1,1 +1,27 @@
-{"__type__":"cc.SpriteFrame","content":{"name":"title_wheel_spins","texture":"84cIXtauxCM44Nbp3AYcwn","rect":[0,0,214,27],"offset":[-0.5,0],"originalSize":[215,27],"capInsets":[0,0,0,0]}}
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "title_wheel_spins",
+    "texture": "84cIXtauxCM44Nbp3AYcwn",
+    "rect": [
+      0,
+      0,
+      214,
+      27
+    ],
+    "offset": [
+      -0.5,
+      0
+    ],
+    "originalSize": [
+      215,
+      27
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

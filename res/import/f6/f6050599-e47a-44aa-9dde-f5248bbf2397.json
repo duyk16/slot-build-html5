@@ -1,1 +1,27 @@
-{"__type__":"cc.SpriteFrame","content":{"name":"paytable3","texture":"a1tzISbQRJU6mjWiZClm+h","rect":[0,0,892,463],"offset":[0,0],"originalSize":[892,463],"capInsets":[0,0,0,0]}}
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "paytable3",
+    "texture": "a1tzISbQRJU6mjWiZClm+h",
+    "rect": [
+      0,
+      0,
+      892,
+      463
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      892,
+      463
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}
