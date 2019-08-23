@@ -6109,8 +6109,12 @@ window._CCSettings = {
     jsList: [
         "assets/scripts/lib/socketcluster.js"
     ],
-    launchScene: "db://assets/Scenes/Start.fire",
+    launchScene: "db://assets/Scenes/Loading.fire",
     scenes: [
+        {
+            url: "db://assets/Scenes/Loading.fire",
+            uuid: "26w9+to+JIY70nMMyqz8Sn"
+        },
         {
             url: "db://assets/Scenes/Start.fire",
             uuid: "6czYMWTwpEQoAxxs+CVLIY"

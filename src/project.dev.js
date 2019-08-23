@@ -10067,6 +10067,35 @@ window.__require = function e(t, n, r) {
   }, {
     "../Components/AccumulatedBar": "AccumulatedBar"
   } ],
+  Loading: [ function(require, module, exports) {
+    "use strict";
+    cc._RF.push(module, "90037cAJmBHU6kH2nSV00DK", "Loading");
+    Object.defineProperty(exports, "__esModule", {
+      value: true
+    });
+    var _a = cc._decorator, ccclass = _a.ccclass, property = _a.property;
+    var Loading = function(_super) {
+      __extends(Loading, _super);
+      function Loading() {
+        return null !== _super && _super.apply(this, arguments) || this;
+      }
+      Loading.prototype.onLoad = function() {
+        window["load"] = this;
+      };
+      Loading.prototype.preLoad = function() {
+        var date = Date.now();
+        cc.director.preloadScene("Start", function(count, total) {
+          return cc.log(count + "/" + total);
+        }, function(err) {
+          cc.log("Done in ", Date.now() - date);
+        });
+      };
+      Loading = __decorate([ ccclass ], Loading);
+      return Loading;
+    }(cc.Component);
+    exports.default = Loading;
+    cc._RF.pop();
+  }, {} ],
   Main: [ function(require, module, exports) {
     "use strict";
     cc._RF.push(module, "1c171djw71FS6tvzt/Atvwj", "Main");
@@ -21387,4 +21416,4 @@ window.__require = function e(t, n, r) {
     exports.AuthEngine = AuthEngine;
     cc._RF.pop();
   }, {} ]
-}, {}, [ "AccumulatedBar1", "AnimationController1", "MinigameController1", "ResourceMinigame1", "ResourceController1", "SlotController1", "SlotItem1", "AccumulatedBar2", "AnimationController2", "MinigameController2", "ResourceMinigame2", "ResourceController2", "SlotController2", "SlotItem2", "AnimationController3", "ItemSkeleton", "MinigameController3", "ResourceMinigame3", "ResourceController3", "SlotController3", "SlotItem3", "AnimationController4", "AtributeStatic", "ResourceController4", "SlotController4", "SlotItem4", "MinigameController4", "ResourceMinigame4", "AnimationController5", "MinigameController5", "ResourceMiniGame5", "ResourceController5", "SlotController5", "SlotItem5", "AnimationController6", "MinigameController6", "ResourceMiniGame6", "ResourceController6", "SlotController6", "SlotItem6", "AnimationController7", "MinigameController7", "ResourceMiniGame7", "ResourceController7", "SlotController7", "SlotItem7", "AnimationController8", "MinigameController8", "ResourceMiniGame8", "ResourceController8", "SlotController8", "SlotItem8", "CoinAnimation", "DailyRewardAnimation", "ItemAnimation", "LevelUpAnimation", "WinAnimation", "Api", "BottomBarController", "BottomGameBarController", "BottomHomeBarController", "MultiScene", "TopBarController", "BasePopup", "AccumulatedBar", "Avatar", "CoinLabel", "WheelComp", "DefineColor", "DefineInterface", "DefineKey", "DefineString", "DefineType", "DefineZIndex", "Dialog", "DownloadCtr", "Effect", "EffectLayout", "GameConfig", "GameDefine", "GameScene", "HomeScene", "ItemGame", "UserInfoController", "LoadingScene", "Main", "PlatformController", "AndroidAdmob", "AndroidFacebook", "AndroidFirebase", "AndroidHandle", "AndroidIap", "AndroidOnesignal", "IOSAdmob", "IOSFacebook", "IOSFireBase", "IOSHandle", "IOSIap", "IOSOnesignal", "WebAdmob", "WebFacebook", "WebFirebase", "WebHandle", "WebIap", "WebOnesignal", "PopupDailyQuest", "PopupSetting", "PopupShop", "AutoFitCanvas", "ImageScale", "MarginWithIphoneX", "AnimationController", "Item", "LinesController", "PayTable", "PayTableResource", "ResourceController", "ResourcePrefab", "SlotController", "SlotItem", "SlotSkeleton", "SoundController", "Store", "Tracking", "UIController", "GameUtil", "StringUtil", "WheelBonus", "WheelGold", "WheelSilver", "auth" ]);
+}, {}, [ "AccumulatedBar1", "AnimationController1", "MinigameController1", "ResourceMinigame1", "ResourceController1", "SlotController1", "SlotItem1", "AccumulatedBar2", "AnimationController2", "MinigameController2", "ResourceMinigame2", "ResourceController2", "SlotController2", "SlotItem2", "AnimationController3", "ItemSkeleton", "MinigameController3", "ResourceMinigame3", "ResourceController3", "SlotController3", "SlotItem3", "AnimationController4", "AtributeStatic", "ResourceController4", "SlotController4", "SlotItem4", "MinigameController4", "ResourceMinigame4", "AnimationController5", "MinigameController5", "ResourceMiniGame5", "ResourceController5", "SlotController5", "SlotItem5", "AnimationController6", "MinigameController6", "ResourceMiniGame6", "ResourceController6", "SlotController6", "SlotItem6", "AnimationController7", "MinigameController7", "ResourceMiniGame7", "ResourceController7", "SlotController7", "SlotItem7", "AnimationController8", "MinigameController8", "ResourceMiniGame8", "ResourceController8", "SlotController8", "SlotItem8", "CoinAnimation", "DailyRewardAnimation", "ItemAnimation", "LevelUpAnimation", "WinAnimation", "Api", "BottomBarController", "BottomGameBarController", "BottomHomeBarController", "MultiScene", "TopBarController", "BasePopup", "AccumulatedBar", "Avatar", "CoinLabel", "WheelComp", "DefineColor", "DefineInterface", "DefineKey", "DefineString", "DefineType", "DefineZIndex", "Dialog", "DownloadCtr", "Effect", "EffectLayout", "GameConfig", "GameDefine", "GameScene", "HomeScene", "ItemGame", "UserInfoController", "Loading", "LoadingScene", "Main", "PlatformController", "AndroidAdmob", "AndroidFacebook", "AndroidFirebase", "AndroidHandle", "AndroidIap", "AndroidOnesignal", "IOSAdmob", "IOSFacebook", "IOSFireBase", "IOSHandle", "IOSIap", "IOSOnesignal", "WebAdmob", "WebFacebook", "WebFirebase", "WebHandle", "WebIap", "WebOnesignal", "PopupDailyQuest", "PopupSetting", "PopupShop", "AutoFitCanvas", "ImageScale", "MarginWithIphoneX", "AnimationController", "Item", "LinesController", "PayTable", "PayTableResource", "ResourceController", "ResourcePrefab", "SlotController", "SlotItem", "SlotSkeleton", "SoundController", "Store", "Tracking", "UIController", "GameUtil", "StringUtil", "WheelBonus", "WheelGold", "WheelSilver", "auth" ]);
