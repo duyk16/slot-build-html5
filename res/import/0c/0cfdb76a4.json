@@ -1,1 +1,0 @@
-[{"__type__":"cc.SpriteFrame","content":{"name":"bubble_particle","texture":"139ajMHxxOIKbI2zfCZr8Q","rect":[1,1,18,18],"offset":[0,0],"originalSize":[20,20],"capInsets":[0,0,0,0]}},{"__type__":"cc.ParticleAsset","_name":"bubble_particle","_native":".plist","spriteFrame":{"__uuid__":"13pI23QWtHzJ1OTBglys+D"}}]
