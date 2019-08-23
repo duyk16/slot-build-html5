@@ -1,0 +1,164 @@
+{
+  "__type__": "sp.SkeletonData",
+  "_name": "skeleton",
+  "skeletonJsonStr": "{\"skeleton\":{\"hash\":\"eYscEflq1zQAM0esJDZLNi67/U8\",\"spine\":\"3.7.94\",\"width\":223,\"height\":208,\"images\":\"./images/\",\"audio\":\"D:/Work/Effect/locxoay\"},\"bones\":[{\"name\":\"root\"}],\"slots\":[{\"name\":\"locxoay\",\"bone\":\"root\",\"attachment\":\"Layer 1\"}],\"skins\":{\"default\":{\"locxoay\":{\"Layer 1\":{\"width\":223,\"height\":208},\"Layer 2\":{\"width\":220,\"height\":213},\"Layer 3\":{\"width\":213,\"height\":207},\"Layer 4\":{\"width\":224,\"height\":217},\"Layer 5\":{\"width\":209,\"height\":214},\"Layer 6\":{\"width\":224,\"height\":213},\"Layer 7\":{\"width\":238,\"height\":222},\"Layer 8\":{\"width\":237,\"height\":226},\"Layer 9\":{\"width\":223,\"height\":220},\"Layer 10\":{\"width\":228,\"height\":211},\"Layer 11\":{\"width\":213,\"height\":217},\"Layer 12\":{\"width\":209,\"height\":221},\"Layer 13\":{\"width\":202,\"height\":210},\"Layer 14\":{\"width\":219,\"height\":208}}}},\"animations\":{\"animation\":{\"slots\":{\"locxoay\":{\"attachment\":[{\"time\":0.0667,\"name\":\"Layer 2\"},{\"time\":0.1333,\"name\":\"Layer 3\"},{\"time\":0.2,\"name\":\"Layer 4\"},{\"time\":0.2667,\"name\":\"Layer 5\"},{\"time\":0.3333,\"name\":\"Layer 6\"},{\"time\":0.4,\"name\":\"Layer 7\"},{\"time\":0.4667,\"name\":\"Layer 8\"},{\"time\":0.5333,\"name\":\"Layer 9\"},{\"time\":0.6,\"name\":\"Layer 10\"},{\"time\":0.6667,\"name\":\"Layer 11\"},{\"time\":0.7333,\"name\":\"Layer 12\"},{\"time\":0.8,\"name\":\"Layer 13\"},{\"time\":0.8667,\"name\":\"Layer 14\"},{\"time\":0.9333,\"name\":\"Layer 1\"}]}}}}}",
+  "_skeletonJson": {
+    "skeleton": {
+      "hash": "eYscEflq1zQAM0esJDZLNi67/U8",
+      "spine": "3.7.94",
+      "width": 223,
+      "height": 208,
+      "images": "./images/",
+      "audio": "D:/Work/Effect/locxoay"
+    },
+    "bones": [
+      {
+        "name": "root"
+      }
+    ],
+    "slots": [
+      {
+        "name": "locxoay",
+        "bone": "root",
+        "attachment": "Layer 1"
+      }
+    ],
+    "skins": {
+      "default": {
+        "locxoay": {
+          "Layer 1": {
+            "width": 223,
+            "height": 208
+          },
+          "Layer 2": {
+            "width": 220,
+            "height": 213
+          },
+          "Layer 3": {
+            "width": 213,
+            "height": 207
+          },
+          "Layer 4": {
+            "width": 224,
+            "height": 217
+          },
+          "Layer 5": {
+            "width": 209,
+            "height": 214
+          },
+          "Layer 6": {
+            "width": 224,
+            "height": 213
+          },
+          "Layer 7": {
+            "width": 238,
+            "height": 222
+          },
+          "Layer 8": {
+            "width": 237,
+            "height": 226
+          },
+          "Layer 9": {
+            "width": 223,
+            "height": 220
+          },
+          "Layer 10": {
+            "width": 228,
+            "height": 211
+          },
+          "Layer 11": {
+            "width": 213,
+            "height": 217
+          },
+          "Layer 12": {
+            "width": 209,
+            "height": 221
+          },
+          "Layer 13": {
+            "width": 202,
+            "height": 210
+          },
+          "Layer 14": {
+            "width": 219,
+            "height": 208
+          }
+        }
+      }
+    },
+    "animations": {
+      "animation": {
+        "slots": {
+          "locxoay": {
+            "attachment": [
+              {
+                "time": 0.0667,
+                "name": "Layer 2"
+              },
+              {
+                "time": 0.1333,
+                "name": "Layer 3"
+              },
+              {
+                "time": 0.2,
+                "name": "Layer 4"
+              },
+              {
+                "time": 0.2667,
+                "name": "Layer 5"
+              },
+              {
+                "time": 0.3333,
+                "name": "Layer 6"
+              },
+              {
+                "time": 0.4,
+                "name": "Layer 7"
+              },
+              {
+                "time": 0.4667,
+                "name": "Layer 8"
+              },
+              {
+                "time": 0.5333,
+                "name": "Layer 9"
+              },
+              {
+                "time": 0.6,
+                "name": "Layer 10"
+              },
+              {
+                "time": 0.6667,
+                "name": "Layer 11"
+              },
+              {
+                "time": 0.7333,
+                "name": "Layer 12"
+              },
+              {
+                "time": 0.8,
+                "name": "Layer 13"
+              },
+              {
+                "time": 0.8667,
+                "name": "Layer 14"
+              },
+              {
+                "time": 0.9333,
+                "name": "Layer 1"
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "_atlasText": "\nskeleton.png\nsize: 2048,512\nformat: RGBA8888\nfilter: Linear,Linear\nrepeat: none\nLayer 1\n  rotate: false\n  xy: 1370, 260\n  size: 223, 208\n  orig: 223, 208\n  offset: 0, 0\n  index: -1\nLayer 10\n  rotate: false\n  xy: 692, 257\n  size: 228, 211\n  orig: 228, 211\n  offset: 0, 0\n  index: -1\nLayer 11\n  rotate: false\n  xy: 226, 23\n  size: 213, 217\n  orig: 213, 217\n  offset: 0, 0\n  index: -1\nLayer 12\n  rotate: true\n  xy: 1595, 259\n  size: 209, 221\n  orig: 209, 221\n  offset: 0, 0\n  index: -1\nLayer 13\n  rotate: false\n  xy: 861, 43\n  size: 202, 210\n  orig: 202, 210\n  offset: 0, 0\n  index: -1\nLayer 14\n  rotate: false\n  xy: 1818, 260\n  size: 219, 208\n  orig: 219, 208\n  offset: 0, 0\n  index: -1\nLayer 2\n  rotate: false\n  xy: 1148, 255\n  size: 220, 213\n  orig: 220, 213\n  offset: 0, 0\n  index: -1\nLayer 3\n  rotate: true\n  xy: 652, 36\n  size: 213, 207\n  orig: 213, 207\n  offset: 0, 0\n  index: -1\nLayer 4\n  rotate: false\n  xy: 466, 251\n  size: 224, 217\n  orig: 224, 217\n  offset: 0, 0\n  index: -1\nLayer 5\n  rotate: false\n  xy: 441, 32\n  size: 209, 214\n  orig: 209, 214\n  offset: 0, 0\n  index: -1\nLayer 6\n  rotate: false\n  xy: 922, 255\n  size: 224, 213\n  orig: 224, 213\n  offset: 0, 0\n  index: -1\nLayer 7\n  rotate: true\n  xy: 2, 2\n  size: 238, 222\n  orig: 238, 222\n  offset: 0, 0\n  index: -1\nLayer 8\n  rotate: false\n  xy: 2, 242\n  size: 237, 226\n  orig: 237, 226\n  offset: 0, 0\n  index: -1\nLayer 9\n  rotate: false\n  xy: 241, 248\n  size: 223, 220\n  orig: 223, 220\n  offset: 0, 0\n  index: -1\n",
+  "textures": [
+    {
+      "__uuid__": "6dgLItBRxGYL7S/Q4C+Frc"
+    }
+  ],
+  "textureNames": [
+    "skeleton.png"
+  ]
+}
