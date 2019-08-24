@@ -10077,19 +10077,30 @@ window.__require = function e(t, n, r) {
     var Loading = function(_super) {
       __extends(Loading, _super);
       function Loading() {
-        return null !== _super && _super.apply(this, arguments) || this;
+        var _this = null !== _super && _super.apply(this, arguments) || this;
+        _this.bar = null;
+        return _this;
       }
       Loading.prototype.onLoad = function() {
         window["load"] = this;
+        this.preLoad();
+        cc.debug.setDisplayStats(false);
       };
       Loading.prototype.preLoad = function() {
+        var _this = this;
         var date = Date.now();
         cc.director.preloadScene("Start", function(count, total) {
-          return cc.log(count + "/" + total);
+          var bar = _this.bar;
+          var _progress = count / total;
+          if (!bar.progress) return bar.progress = _progress;
+          1 == _progress && (bar.progress = 1);
+          _progress - bar.progress > .03 && (bar.progress = _progress);
         }, function(err) {
           cc.log("Done in ", Date.now() - date);
+          cc.director.loadScene("Start");
         });
       };
+      __decorate([ property(cc.ProgressBar) ], Loading.prototype, "bar", void 0);
       Loading = __decorate([ ccclass ], Loading);
       return Loading;
     }(cc.Component);
