@@ -2573,7 +2573,7 @@
       "scene": {
         "__id__": 1
       },
-      "asyncLoadAssets": {}
+      "asyncLoadAssets": null
     },
     {
       "__type__": "cc.Scene",
@@ -2595,7 +2595,7 @@
         "y": 0.5680555555555555,
         "z": 1
       },
-      "autoReleaseAssets": true
+      "autoReleaseAssets": false
     },
     {
       "__type__": "cc.Node",
