@@ -1,0 +1,27 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "slot-icon-btn-daily-gilf",
+    "texture": "43w7FVWOlKFJAIw6LQSc0C",
+    "rect": [
+      0,
+      0,
+      130,
+      117
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      130,
+      117
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

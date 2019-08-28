@@ -19778,7 +19778,6 @@
       _dirtyListeners: {},
       _inDispatch: 0,
       _isEnabled: false,
-      _renderOrderMap: {},
       _internalCustomListenerIDs: [],
       _setDirtyForNode: function(node) {
         var selListeners = this._nodeListenersMap[node._id];
@@ -19884,11 +19883,11 @@
           dirtyFlag & this.DIRTY_FIXED_PRIORITY && this._sortListenersOfFixedPriority(listenerID);
           if (dirtyFlag & this.DIRTY_SCENE_GRAPH_PRIORITY) {
             var rootEntity = cc.director.getScene();
-            rootEntity && this._sortListenersOfSceneGraphPriority(listenerID, rootEntity);
+            rootEntity && this._sortListenersOfSceneGraphPriority(listenerID);
           }
         }
       },
-      _sortListenersOfSceneGraphPriority: function(listenerID, rootNode) {
+      _sortListenersOfSceneGraphPriority: function(listenerID) {
         var listeners = this._getListeners(listenerID);
         if (!listeners) return;
         var sceneGraphListener = listeners.getSceneGraphPriorityListeners();
@@ -19896,11 +19895,19 @@
         listeners.getSceneGraphPriorityListeners().sort(this._sortEventListenersOfSceneGraphPriorityDes);
       },
       _sortEventListenersOfSceneGraphPriorityDes: function(l1, l2) {
-        var orders = eventManager._renderOrderMap;
-        var node1 = l1._getSceneGraphPriority(), node2 = l2._getSceneGraphPriority(), order1 = orders[node1._id], order2 = orders[node2._id];
-        if (!(l2 && node2 && order2)) return -1;
-        if (!l1 || !node1 || !order1) return 1;
-        return order2 - order1;
+        var node1 = l1._getSceneGraphPriority(), node2 = l2._getSceneGraphPriority();
+        if (!(l2 && node2 && node2._activeInHierarchy && null !== node2._parent)) return -1;
+        if (!l1 || !node1 || !node1._activeInHierarchy || null === node1._parent) return 1;
+        var p1 = node1, p2 = node2, ex = false;
+        while (p1._parent._id !== p2._parent._id) {
+          p1 = null === p1._parent._parent ? (ex = true) && node2 : p1._parent;
+          p2 = null === p2._parent._parent ? (ex = true) && node1 : p2._parent;
+        }
+        if (p1._id === p2._id) {
+          if (p1._id === node2._id) return -1;
+          if (p1._id === node1._id) return 1;
+        }
+        return ex ? p1._localZOrder - p2._localZOrder : p2._localZOrder - p1._localZOrder;
       },
       _sortListenersOfFixedPriority: function(listenerID) {
         var listeners = this._listenersMap[listenerID];
@@ -20071,7 +20078,6 @@
         if (listeners) {
           cc.js.array.remove(listeners, listener);
           0 === listeners.length && delete this._nodeListenersMap[node._id];
-          delete this._renderOrderMap[node._id];
         }
       },
       _dispatchEventToListeners: function(listeners, onEvent, eventOrArgs) {
@@ -20107,10 +20113,6 @@
       },
       _sortNumberAsc: function(a, b) {
         return a - b;
-      },
-      _updateRenderOrder: function(node, order) {
-        var selListeners = this._nodeListenersMap[node._id];
-        void 0 !== selListeners && (this._renderOrderMap[node._id] = order);
       },
       hasEventListener: function(listenerID) {
         return !!this._getListeners(listenerID);
@@ -20231,7 +20233,6 @@
             var listenersCopy = cc.js.array.copy(listeners);
             for (i = 0; i < listenersCopy.length; i++) _t.removeListener(listenersCopy[i]);
             delete _t._nodeListenersMap[listenerType._id];
-            delete _t._renderOrderMap[listenerType._id];
           }
           var locToAddedListeners = _t._toAddedListeners;
           for (i = 0; i < locToAddedListeners.length; ) {
@@ -23074,8 +23075,10 @@
             --originCount;
           }
         }
+        node._childArrivalOrder = node._children.length;
         for (var _i = 0, len = node._children.length; _i < len; ++_i) {
           var child = node._children[_i];
+          child._localZOrder = 4294901760 & child._localZOrder | _i + 1;
           child._active && this._activateNodeRecursively(child, preloadInvoker, onLoadInvoker, onEnableInvoker);
         }
         node._onPostActivated(true);
@@ -39226,8 +39229,6 @@
     var FINAL = 1024;
     var _batcher = void 0;
     var _cullingMask = 0;
-    var _renderQueueIndex = 0;
-    var EventManager = require("../event-manager/CCEventManager");
     function RenderFlow() {
       this._func = init;
       this._next = null;
@@ -39307,7 +39308,6 @@
       var children = node._children;
       for (var i = 0, l = children.length; i < l; i++) {
         var c = children[i];
-        EventManager._updateRenderOrder(c, ++_renderQueueIndex);
         c._renderFlag |= worldDirtyFlag;
         if (!c._activeInHierarchy || 0 === c._opacity) continue;
         var colorVal = c._color._val;
@@ -39402,7 +39402,6 @@
       _batcher.reset();
       _batcher.walking = true;
       _cullingMask = 1 << scene.groupIndex;
-      _renderQueueIndex = 0;
       if (scene._renderFlag & WORLD_TRANSFORM) {
         _batcher.worldMatDirty++;
         scene._calculWorldMatrix();
@@ -39431,9 +39430,7 @@
     RenderFlow.FLAG_POST_RENDER = POST_RENDER;
     RenderFlow.FLAG_FINAL = FINAL;
     module.exports = cc.RenderFlow = RenderFlow;
-  }), {
-    "../event-manager/CCEventManager": 99
-  } ],
+  }), {} ],
   205: [ (function(require, module, exports) {
     var RenderTexture = require("../../../assets/CCRenderTexture");
     var space = 2;
