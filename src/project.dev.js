@@ -8256,7 +8256,7 @@ window.__require = function e(t, n, r) {
         this.btnMini.node.zIndex = 1;
       };
       GameScene.prototype.loadBgSlot = function(id) {
-        cc.log("load bg");
+        cc.log("load bg", Date.now() - window["dateStart"]);
         var slotScene = view.slot[id];
         this.bigBg.node.active = false;
         this.bigBg.node.y = -this.bigBg.node.height * (1 === game.data.deviceKind ? 1.5 : 1.2);
@@ -20266,6 +20266,7 @@ window.__require = function e(t, n, r) {
              case 0:
               _a.trys.push([ 0, 5, , 6 ]);
               date = Date.now();
+              window["dateStart"] = date;
               game.log("START");
               game.log("UIController", "openSlot");
               if (!view.screen.game) {
@@ -20663,6 +20664,7 @@ window.__require = function e(t, n, r) {
       };
       UIController.prototype.openShortLoading = function() {
         if (view.progress) return;
+        cc.log("OPEN SHORT");
         view.progress = cc.instantiate(this.prefab.shortLoading);
         view.progress.parent = this.canvas;
         view.progress.zIndex = define.zIndex.SHORT_LOADING;
@@ -20672,6 +20674,7 @@ window.__require = function e(t, n, r) {
       UIController.prototype.closeShortLoading = function() {
         if (!view.progress) return;
         view.progress.runAction(cc.sequence([ cc.fadeOut(.2), cc.callFunc(function() {
+          cc.log("CLOSE SHORT");
           if (view.progress && view.progress.destroy) {
             view.progress.destroy();
             view.progress = void 0;
