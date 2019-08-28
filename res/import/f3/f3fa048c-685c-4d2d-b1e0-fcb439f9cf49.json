@@ -1,0 +1,27 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "bg-gem-ingame",
+    "texture": "98S8nZu99GTL7pws2foX3n",
+    "rect": [
+      0,
+      0,
+      1053,
+      558
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      1053,
+      558
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

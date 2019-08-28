@@ -1,0 +1,27 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "egypt-bonus-txt-pick",
+    "texture": "80W2w9fFFDWJqduhUnXeJH",
+    "rect": [
+      0,
+      0,
+      403,
+      78
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      403,
+      78
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

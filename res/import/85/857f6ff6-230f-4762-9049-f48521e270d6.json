@@ -1,0 +1,27 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "active_reel",
+    "texture": "3885qT1whFMYvSd7eqSYA4",
+    "rect": [
+      3,
+      2,
+      705,
+      366
+    ],
+    "offset": [
+      0,
+      1
+    ],
+    "originalSize": [
+      711,
+      372
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

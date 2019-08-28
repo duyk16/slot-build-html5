@@ -3131,10 +3131,13 @@ window.__require = function e(t, n, r) {
         _this.lerpRatio = 10;
         _this.fps = 30;
         _this.loop = false;
+        _this.sound = false;
+        _this.sfx = void 0;
         _this.listenner = void 0;
         _this.loopListenner = void 0;
         _this.nodeTail = void 0;
         _this.maskTail = void 0;
+        _this.soundID = void 0;
         _this._tempProgress = 0;
         _this._tempSetTimeout = null;
         return _this;
@@ -3203,10 +3206,18 @@ window.__require = function e(t, n, r) {
           progress < 0 && (progress = 0);
           this.progress = progress;
         }
+        this.sound && -1 == this.soundID && (this.soundID = controller.sound.playSound(this.sfx ? this.sfx : "sfx_accumulated"));
         this.updateLength();
+        if (Math.abs(this.progress - this._tempProgress) < .005 && -1 != this.soundID) {
+          controller.sound.stopSound(this.soundID, {
+            fade: false
+          });
+          this.soundID = -1;
+        }
         if (Math.abs(this.progress - this._tempProgress) < .004) {
           this._tempProgress = this.progress;
           if (1 == this._tempProgress && this.type == EType.CIRCLE && !this.loop && this.nodeTail) {
+            controller.sound.playSound("sfx_done");
             this.nodeTail.stopAllActions();
             this.nodeTail.runAction(cc.repeatForever(cc.sequence(cc.rotateBy(.7, 360).easing(cc.easeCubicActionOut()), cc.delayTime(.4))));
           }
@@ -3230,7 +3241,7 @@ window.__require = function e(t, n, r) {
           this.bar.getComponent(cc.Sprite).fillRange = -this._tempProgress;
           if (this.maskTail) {
             this.nodeTail.getNumberOfRunningActions() && this.nodeTail.stopAllActions();
-            this._tempProgress < .4 ? this.maskTail.setContentSize(cc.size(.5 * this.bar.width, this.bar.height)) : this._tempProgress >= .4 && this.maskTail.setContentSize(cc.size(0, 0));
+            this._tempProgress < .4 ? this.maskTail.setContentSize(cc.size(.6 * this.bar.width, this.bar.height)) : this._tempProgress >= .4 && this.maskTail.setContentSize(cc.size(0, 0));
           }
           this.maskTail && this.nodeTail && (this.nodeTail.rotation = 360 * this._tempProgress + 5);
         }
@@ -3251,6 +3262,10 @@ window.__require = function e(t, n, r) {
       __decorate([ property(cc.Integer) ], AccumulatedBar.prototype, "lerpRatio", void 0);
       __decorate([ property(cc.Integer) ], AccumulatedBar.prototype, "fps", void 0);
       __decorate([ property(cc.Boolean) ], AccumulatedBar.prototype, "loop", void 0);
+      __decorate([ property(cc.Boolean) ], AccumulatedBar.prototype, "sound", void 0);
+      __decorate([ property({
+        type: cc.AudioClip
+      }) ], AccumulatedBar.prototype, "sfx", void 0);
       AccumulatedBar = __decorate([ ccclass ], AccumulatedBar);
       return AccumulatedBar;
     }(cc.Component);
@@ -3267,6 +3282,7 @@ window.__require = function e(t, n, r) {
       function AndroidAdmob() {
         this.tag = "AndroidAdmob";
         this.isBannerShow = false;
+        this.successCallback = void 0;
       }
       AndroidAdmob.getIns = function() {
         this.intance || (this.intance = new AndroidAdmob());
@@ -3323,6 +3339,7 @@ window.__require = function e(t, n, r) {
           }
         });
         plugin.init();
+        this.cache();
       };
       AndroidAdmob.prototype.cache = function() {
         game.log(this.tag, "admob", "cache");
@@ -3361,8 +3378,9 @@ window.__require = function e(t, n, r) {
         game.log(this.tag, "admob", "is avaiable banner", isAvai);
         return isAvai;
       };
-      AndroidAdmob.prototype.showInterstitial = function() {
+      AndroidAdmob.prototype.showInterstitial = function(cb) {
         game.log(this.tag, "admob", "show interstitial");
+        this.successCallback = cb;
         sdkbox.PluginAdMob.show("interstitial");
       };
       AndroidAdmob.prototype.isAvailableInterstitial = function() {
@@ -3370,8 +3388,22 @@ window.__require = function e(t, n, r) {
         game.log(this.tag, "admob", "is avaiable interstitial", isAvai);
         return isAvai;
       };
-      AndroidAdmob.prototype.showRewarded = function() {
+      AndroidAdmob.prototype.showRewarded = function(cb) {
         game.log(this.tag, "admob", "show rewarded");
+        if (!this.isAvailableRewarded()) {
+          controller.ui.showDialog({
+            title: "Message",
+            message: {
+              message: "Video ads wasn't ready"
+            },
+            buttons: [ {
+              title: "Confirm",
+              theme: define.type.CLASS_THEME.DANGER
+            } ]
+          });
+          return;
+        }
+        this.successCallback = cb;
         sdkbox.PluginAdMob.show("rewarded");
       };
       AndroidAdmob.prototype.isAvailableRewarded = function() {
@@ -3450,6 +3482,10 @@ window.__require = function e(t, n, r) {
 
          case define.type.ADMOB_LISTENNER.REWARD:
           game.log(this.tag, "interstitial listenner", "REWARD");
+          if ("function" == typeof this.successCallback) {
+            this.successCallback();
+            this.successCallback = void 0;
+          }
           break;
 
          default:
@@ -3486,6 +3522,10 @@ window.__require = function e(t, n, r) {
 
          case define.type.ADMOB_LISTENNER.REWARD:
           game.log(this.tag, "rewarded listenner", "REWARD");
+          if ("function" == typeof this.successCallback) {
+            this.successCallback();
+            this.successCallback = void 0;
+          }
           break;
 
          default:
@@ -3508,6 +3548,7 @@ window.__require = function e(t, n, r) {
       function AndroidFacebook() {
         this.tag = "AndroidFacebook";
         this.loginCallback = void 0;
+        this.shareSuccessCallback = void 0;
       }
       AndroidFacebook.getIns = function() {
         this.intance || (this.intance = new AndroidFacebook());
@@ -3606,12 +3647,14 @@ window.__require = function e(t, n, r) {
         game.log("login facebook: sdkbox or plugin null");
       };
       AndroidFacebook.prototype.shareHandle = function(option) {
+        this.isLoggedIn() || this.login();
         if (!option) return;
         if (!option.type) return;
         game.log(this.tag, "facebook", "share handle", option);
         tracking.send(tracking.event.FACEBOOK_SHARE_CLICK);
         var info = option;
         sdkbox.PluginFacebook.dialog(info);
+        "function" == typeof option.callback && (this.shareSuccessCallback = option.callback);
       };
       AndroidFacebook.prototype.share = function(option) {
         if (!option) return;
@@ -3699,7 +3742,7 @@ window.__require = function e(t, n, r) {
                       if ("success" === data) {
                         game.log(_this.tag, "Login FB success", "merge facebook success");
                         setNewLoginData(function() {
-                          cc.game.restart();
+                          util.game.restartGame();
                         });
                       } else game.error("Cai nay chua lam");
                     });
@@ -3758,6 +3801,10 @@ window.__require = function e(t, n, r) {
          case define.type.FACEBOOK_LISTENNER.SHARED_SUCCESS:
           game.log(this.tag, "facebook listenner", "SHARED_SUCCESS", "data: " + data.data);
           tracking.send(tracking.event.FACEBOOK_SHARE_SUCCESS);
+          if ("function" == typeof this.shareSuccessCallback) {
+            this.shareSuccessCallback();
+            this.shareSuccessCallback = void 0;
+          }
           break;
 
          case define.type.FACEBOOK_LISTENNER.SHARED_FAILED:
@@ -3781,11 +3828,13 @@ window.__require = function e(t, n, r) {
               theme: define.type.CLASS_THEME.DANGER
             } ]
           });
+          this.shareSuccessCallback = void 0;
           break;
 
          case define.type.FACEBOOK_LISTENNER.SHARED_CANCEL:
           game.log(this.tag, "facebook listenner", "SHARED_CANCEL");
           tracking.send(tracking.event.FACEBOOK_SHARE_CANCELED);
+          this.shareSuccessCallback = void 0;
           break;
 
          case define.type.FACEBOOK_LISTENNER.PERMISSON:
@@ -3964,6 +4013,7 @@ window.__require = function e(t, n, r) {
         url && "string" === typeof url ? cc.sys.openURL(url) : game.error(this.tag, "handle", "url is not useable");
       };
       AndroidHandle.prototype.screenshot = function() {
+        controller.sound.playSound("sfx_capture");
         var node = new cc.Node();
         node.parent = cc.director.getScene();
         node.x = .5 * cc.winSize.width;
@@ -4034,6 +4084,7 @@ window.__require = function e(t, n, r) {
           onSuccess: function(product) {
             tracking.send(tracking.event.IAP_PURCHASE_SUCCESS, this.itemBuying);
             tracking.purchase(product.id, product.priceValue);
+            controller.sound.playSound("sfx_done");
             game.log("platform.iap", "iap listenner", "on success", "product: " + JSON.stringify(product));
             game.log("platform.iap", "iap listenner", "send game data");
             this.itemBuying.type === define.type.ESHOP.GENERAL_SHOP ? api.sendGD({
@@ -4108,19 +4159,21 @@ window.__require = function e(t, n, r) {
               method: "IAP_ANDROID",
               receipt: JSON.parse(product.receipt)
             }, function(err, data) {
-              1 == err && (err = "Error");
-              controller.ui.showDialog({
-                title: "Message",
-                type: define.type.DIALOG_TYPE.HIGH,
-                name: "iap_msg",
-                message: {
-                  message: err
-                },
-                buttons: [ {
-                  title: "OK",
-                  theme: define.type.CLASS_THEME.DANGER
-                } ]
-              });
+              if (err) {
+                1 == err && (err = "Error");
+                controller.ui.showDialog({
+                  title: "Message",
+                  type: define.type.DIALOG_TYPE.HIGH,
+                  name: "iap_msg",
+                  message: {
+                    message: err
+                  },
+                  buttons: [ {
+                    title: "OK",
+                    theme: define.type.CLASS_THEME.DANGER
+                  } ]
+                });
+              }
               if (data) {
                 game.data.shop[define.type.ESHOP.DEAL_SHOP] = void 0;
                 store.emit(store.key.UPDATE_SHOP_DATA, game.data.shop);
@@ -4143,6 +4196,7 @@ window.__require = function e(t, n, r) {
           }.bind(this),
           onFailure: function(product, msg) {
             tracking.send(tracking.event.IAP_PURCHASE_FAILED);
+            controller.sound.playSound("sfx_fail");
             game.error("platform.iap", "iap listenner", "on failure", "product: " + JSON.stringify(product) + " - msg: " + JSON.stringify(msg));
             controller.ui.showDialog({
               type: define.type.DIALOG_TYPE.HIGH,
@@ -4158,6 +4212,7 @@ window.__require = function e(t, n, r) {
           },
           onCanceled: function(product) {
             tracking.send(tracking.event.IAP_PURCHASE_CANCELED);
+            controller.sound.playSound("sfx_fail");
             game.warn("platform.iap", "iap listenner", "on canceled", "product: " + JSON.stringify(product));
             controller.ui.showDialog({
               type: define.type.DIALOG_TYPE.HIGH,
@@ -5033,10 +5088,12 @@ window.__require = function e(t, n, r) {
       };
       AnimationController.prototype.spinItems = function(listItem) {
         var _this = this;
-        listItem.forEach(function(item) {
+        listItem.forEach(function(item, index) {
           item.forEach(function(item) {
             _this.node.runAction(cc.sequence([ cc.delayTime(.2 * item.x), cc.callFunc(function() {
-              item.move();
+              item.move().then(function() {
+                index == listItem.length - 1 && view.screen.slot && view.screen.slot.SlotController.playSound("realStop");
+              });
             }) ]));
           });
         });
@@ -5284,7 +5341,7 @@ window.__require = function e(t, n, r) {
         });
         this.socket.on("disconnect", function(data) {
           var _this = this;
-          controller.ui.showDialog({
+          controller.ui && controller.ui.showDialog({
             title: "Connection Error",
             type: define.type.DIALOG_TYPE.FORCE,
             name: "connection_error",
@@ -5375,9 +5432,14 @@ window.__require = function e(t, n, r) {
             }, function(err, data) {
               store.emit(store.key.UPDATE_SHOP_DATA, data);
             });
-            controller.ui.playPrefabAnimation("levelup", {
+            view.screen.slot ? controller.ui.playPrefabAnimation("levelup", {
               level: data.level,
               coin: rewards
+            }) : controller.ui.pushNotification({
+              title: "Level " + data.level,
+              content: "Reward",
+              coin: rewards,
+              share: true
             });
             break;
 
@@ -5402,9 +5464,12 @@ window.__require = function e(t, n, r) {
           game.log(data);
         });
       };
-      API.prototype.sendGD = function(data, cb) {
+      API.prototype.sendGD = function(data, cb, progress) {
+        void 0 === progress && (progress = true);
+        progress && controller.ui.openShortLoading();
         this.socket.emit("GD", data, function(err, data) {
           game.logEvent(err, data);
+          progress && controller.ui.closeShortLoading();
           cb(err, data);
         });
       };
@@ -5534,6 +5599,7 @@ window.__require = function e(t, n, r) {
       };
       Avatar.prototype.onClickAvatart = function() {
         game.log("On click avatar");
+        controller.sound.playButtonSFX();
         this.callback && this.callback();
       };
       __decorate([ property(cc.Sprite) ], Avatar.prototype, "img", void 0);
@@ -5621,6 +5687,7 @@ window.__require = function e(t, n, r) {
           };
           var popEffect = effect.getEffectName(DefineType_1.EFFECT_KIND.IN, _this.effect);
           popup.runAction(effect.get(popEffect, option));
+          controller.sound.playPopupSFX();
         });
       };
       BasePopup.prototype.onClose = function(callback) {
@@ -5649,6 +5716,7 @@ window.__require = function e(t, n, r) {
         };
         var popEffect = effect.getEffectName(DefineType_1.EFFECT_KIND.OUT, this.effect);
         popup.runAction(effect.get(popEffect, option));
+        controller.sound.playSound("sfx_pop_1");
       };
       BasePopup.prototype.openCallback = function() {};
       BasePopup.prototype.closeCallback = function() {};
@@ -5692,6 +5760,79 @@ window.__require = function e(t, n, r) {
     cc._RF.pop();
   }, {
     "./Define/DefineType": "DefineType"
+  } ],
+  BetChoosing: [ function(require, module, exports) {
+    "use strict";
+    cc._RF.push(module, "07691kSW5NF4IgpFaKbpla6", "BetChoosing");
+    Object.defineProperty(exports, "__esModule", {
+      value: true
+    });
+    var BasePopup_1 = require("../../../scripts/BasePopup");
+    var _a = cc._decorator, ccclass = _a.ccclass, property = _a.property;
+    var ItemSlot4Resource = function() {
+      function ItemSlot4Resource() {
+        this.normal = void 0;
+        this.gold = void 0;
+      }
+      __decorate([ property(cc.SpriteFrame) ], ItemSlot4Resource.prototype, "normal", void 0);
+      __decorate([ property(cc.SpriteFrame) ], ItemSlot4Resource.prototype, "gold", void 0);
+      ItemSlot4Resource = __decorate([ ccclass("ItemSlot4Resource") ], ItemSlot4Resource);
+      return ItemSlot4Resource;
+    }();
+    exports.ItemSlot4Resource = ItemSlot4Resource;
+    var ChiSlot4Resouce = function() {
+      function ChiSlot4Resouce() {
+        this.active = void 0;
+        this.inactive = void 0;
+      }
+      __decorate([ property(cc.SpriteFrame) ], ChiSlot4Resouce.prototype, "active", void 0);
+      __decorate([ property(cc.SpriteFrame) ], ChiSlot4Resouce.prototype, "inactive", void 0);
+      ChiSlot4Resouce = __decorate([ ccclass("ChiSlot4Resouce") ], ChiSlot4Resouce);
+      return ChiSlot4Resouce;
+    }();
+    exports.ChiSlot4Resouce = ChiSlot4Resouce;
+    var BetChoosingSlot4Resource = function() {
+      function BetChoosingSlot4Resource() {
+        this.item = void 0;
+        this.chi = void 0;
+      }
+      __decorate([ property(ItemSlot4Resource) ], BetChoosingSlot4Resource.prototype, "item", void 0);
+      __decorate([ property(ChiSlot4Resouce) ], BetChoosingSlot4Resource.prototype, "chi", void 0);
+      BetChoosingSlot4Resource = __decorate([ ccclass("BetChoosingSlot4Resource") ], BetChoosingSlot4Resource);
+      return BetChoosingSlot4Resource;
+    }();
+    exports.BetChoosingSlot4Resource = BetChoosingSlot4Resource;
+    var BetChoosing = function(_super) {
+      __extends(BetChoosing, _super);
+      function BetChoosing() {
+        var _this = null !== _super && _super.apply(this, arguments) || this;
+        _this.resource = [];
+        _this.items = [];
+        _this.chi = [];
+        _this.layLeft = void 0;
+        _this.layCenter = void 0;
+        _this.layRight = void 0;
+        _this.layTop = void 0;
+        return _this;
+      }
+      BetChoosing.prototype.openCallback = function() {
+        this.effectIn();
+      };
+      BetChoosing.prototype.effectIn = function() {};
+      __decorate([ property([ BetChoosingSlot4Resource ]) ], BetChoosing.prototype, "resource", void 0);
+      __decorate([ property([ cc.Node ]) ], BetChoosing.prototype, "items", void 0);
+      __decorate([ property([ cc.Node ]) ], BetChoosing.prototype, "chi", void 0);
+      __decorate([ property(cc.Node) ], BetChoosing.prototype, "layLeft", void 0);
+      __decorate([ property(cc.Node) ], BetChoosing.prototype, "layCenter", void 0);
+      __decorate([ property(cc.Node) ], BetChoosing.prototype, "layRight", void 0);
+      __decorate([ property(cc.Node) ], BetChoosing.prototype, "layTop", void 0);
+      BetChoosing = __decorate([ ccclass ], BetChoosing);
+      return BetChoosing;
+    }(BasePopup_1.default);
+    exports.default = BetChoosing;
+    cc._RF.pop();
+  }, {
+    "../../../scripts/BasePopup": "BasePopup"
   } ],
   BottomBarController: [ function(require, module, exports) {
     "use strict";
@@ -5877,8 +6018,11 @@ window.__require = function e(t, n, r) {
         this.autoSpinLabel = this.spinButton.node.getComponentInChildren(cc.Label);
       };
       BottomGameBarController.prototype.onClickDailyQuest = function() {
-        controller.ui.showPopup("daily");
         game.log("BottomHomeBarController", "onClickDailyQuest");
+        controller.sound.playButtonSFX({
+          tags: [ define.type.VIEW.GAME.toString() ]
+        });
+        controller.ui.showPopup("daily");
       };
       BottomGameBarController.prototype.resetWinAmount = function() {
         this.winLabel.string = "0";
@@ -5887,9 +6031,15 @@ window.__require = function e(t, n, r) {
         var _this = this;
         this.spinButton.node.on(cc.Node.EventType.TOUCH_START, function(e) {
           game.log("Spin button start click");
+          controller.sound.playSound("sfx_btn_2", {
+            tags: [ define.type.VIEW.GAME.toString() ]
+          });
           _this._isPress = true;
           _this._setTimeout = setTimeout(function() {
             if (!_this.autoBet.active) {
+              controller.sound.playSound("sfx_slide_2", {
+                tags: [ define.type.VIEW.GAME.toString() ]
+              });
               _this.showAutoBet();
               _this.autoBet.zIndex = -1;
             }
@@ -5898,6 +6048,9 @@ window.__require = function e(t, n, r) {
         });
         this.spinButton.node.on(cc.Node.EventType.TOUCH_END, function(e) {
           game.log("Spin button end click");
+          controller.sound.playSound("sfx_btn_1", {
+            tags: [ define.type.VIEW.GAME.toString() ]
+          });
           if (_this._isPress) {
             view.screen.game.onClickSpin();
             _this.bottomBarEvent(define.type.BottomBar.lock);
@@ -5945,6 +6098,9 @@ window.__require = function e(t, n, r) {
       BottomGameBarController.prototype.autoSpin = function(e, times) {
         var _this = this;
         tracking.send(tracking.event.AUTO_SPIN.replace("NUMSPIN", times));
+        controller.sound.playButtonSFX({
+          tags: [ define.type.VIEW.GAME.toString() ]
+        });
         view.screen.slot.SlotController.autoSpin(Number(times));
         this.updateSpinFrame(define.type.SpinButton.stopAutoSpin);
         setTimeout(function() {
@@ -5960,6 +6116,9 @@ window.__require = function e(t, n, r) {
       BottomGameBarController.prototype.hideAutoBet = function() {
         var _this = this;
         game.log("Hide auto bet");
+        controller.sound.playSound("sfx_slide_1", {
+          tags: [ define.type.VIEW.GAME.toString() ]
+        });
         this.autoBet.runAction(cc.sequence(cc.moveBy(.1, cc.v2(0, -this.autoBet.height)), cc.callFunc(function() {
           util.game.hideNode(_this.autoBet);
           _this.autoBet && (_this.autoBet.active = false);
@@ -5981,6 +6140,9 @@ window.__require = function e(t, n, r) {
         0 == index && -1 == i ? this.currentBet = this.betArray[this.betArray.length - 1] : index == this.betArray.length - 1 && 1 == i ? this.currentBet = this.betArray[0] : this.currentBet = index < 0 ? this.betArray[0] : this.betArray[index + i];
         view.screen.slot && view.screen.slot.SlotController.updateCurrentBet(this.currentBet);
         this.displayBetLabel();
+        controller.sound.playButtonSFX({
+          tags: [ define.type.VIEW.GAME.toString() ]
+        });
       };
       BottomGameBarController.prototype.updateSpinFrame = function(type) {
         switch (type) {
@@ -6010,6 +6172,9 @@ window.__require = function e(t, n, r) {
         this.currentBet = this.betArray[this.betArray.length - 1];
         view.screen.slot && view.screen.slot.SlotController.updateCurrentBet(this.currentBet);
         this.displayBetLabel();
+        controller.sound.playButtonSFX({
+          tags: [ define.type.VIEW.GAME.toString() ]
+        });
       };
       BottomGameBarController.prototype.updateWinAmount = function(num) {
         this.winAmount = num;
@@ -6098,6 +6263,7 @@ window.__require = function e(t, n, r) {
           if (3 === questType || questCur.goal == dailyQuest.currentProgress) {
             if (questCur.goal <= dailyQuest.currentProgress) text.string = "Claim"; else {
               var questProgress = dailyQuest.currentCount;
+              "number" != typeof questProgress && (questProgress = questCur.require.times);
               text.string = questProgress + " " + (questProgress > 1 ? "times" : "time");
             }
             text.node.opacity = 255;
@@ -6181,8 +6347,8 @@ window.__require = function e(t, n, r) {
       };
       BottomHomeBarController.prototype.registerStore = function() {
         var keyBonus = store.register(store.key.DAILYBONUS, function(data) {
-          if (!data || !data.freeWheel) return;
-          var isTaken = data.freeWheel.isTaken;
+          if (!data || !data[define.type.EDailyBonus.FREE_WHEEL]) return;
+          var isTaken = data[define.type.EDailyBonus.FREE_WHEEL].isTaken;
           if (isTaken) {
             this.lbDailyTime.node.active = true;
             this.lbDailyTitle.string = "DAILY BONUS";
@@ -6204,20 +6370,18 @@ window.__require = function e(t, n, r) {
       };
       BottomHomeBarController.prototype.onClickWheelBonus = function() {
         game.log("BottomHomeBarController", "onClickWheelBonus");
-        if (game.data.dailyBonus.freeWheel.isTaken) controller.ui.openWheelBonus(define.type.WHEEL_BONUS.GOLD); else {
-          var _a = game.data.dailyBonus.freeWheel, array = _a.array, result = _a.result;
-          controller.ui.openWheelBonus(define.type.WHEEL_BONUS.SILVER, {
-            result: result,
-            items: array
-          });
-        }
+        controller.sound.playButtonSFX();
+        game.data.dailyBonus[define.type.EDailyBonus.FREE_WHEEL].isTaken ? controller.ui.openWheelBonus(define.type.WHEEL_BONUS.GOLD) : controller.ui.openWheelBonus(define.type.WHEEL_BONUS.SILVER);
       };
       BottomHomeBarController.prototype.onClickDailyQuest = function() {
         game.log("BottomHomeBarController", "onClickDailyQuest");
+        controller.sound.playButtonSFX();
         controller.ui.showPopup("daily");
       };
       BottomHomeBarController.prototype.onClickDailyGift = function() {
         game.log("BottomHomeBarController", "onClickDailyGift");
+        controller.sound.playButtonSFX();
+        controller.ui.showPopup("dailygift");
       };
       BottomHomeBarController.prototype.onDestroy = function() {
         this.key.forEach(function(o) {
@@ -6252,6 +6416,7 @@ window.__require = function e(t, n, r) {
       CoinAnimation.prototype.play = function() {
         var _this = this;
         return new Promise(function(res, rej) {
+          _this.playSound();
           _this.coin.forEach(function(o) {
             o && o.resetSystem();
           });
@@ -6259,6 +6424,19 @@ window.__require = function e(t, n, r) {
             res();
           }, 3800);
         });
+      };
+      CoinAnimation.prototype.playSound = function() {
+        for (var i = 0; i < 4; i++) {
+          setTimeout(function() {
+            controller.sound.playSound("sfx_coin");
+          }, 1200 * Math.random());
+          setTimeout(function() {
+            controller.sound.playSound("sfx_coin_flip");
+          }, 1500 + 1500 * Math.random());
+          setTimeout(function() {
+            controller.sound.playSound("sfx_coin_drop");
+          }, 1500 + 1500 * Math.random());
+        }
       };
       __decorate([ property({
         type: [ cc.ParticleSystem ]
@@ -6285,6 +6463,7 @@ window.__require = function e(t, n, r) {
         this.prefix = "";
         this.subfix = "";
         this.fps = 30;
+        this.soundID = -1;
         this.coinLabel = coinLabel;
         lerpRatio && (this.lerpRatio = lerpRatio);
         prefix && (this.prefix = prefix);
@@ -6298,6 +6477,11 @@ window.__require = function e(t, n, r) {
           return __generator(this, function(_a) {
             switch (_a.label) {
              case 0:
+              option = option || {};
+              -1 == this.soundID && (this.soundID = controller.sound.playSound("sfx_scoring", {
+                volume: .7,
+                tags: option.sfxTag
+              }));
               if (!option) return [ 3, 3 ];
               if (!option.delayTime) return [ 3, 2 ];
               return [ 4, util.game.delay(option.delayTime, this.coinLabel.node).catch(function(e) {}) ];
@@ -6324,6 +6508,8 @@ window.__require = function e(t, n, r) {
                 this.coinLabel.string = this.prefix + util.string.formatMoney(this._tempUserBalance) + this.subfix;
                 if (Math.abs(this.userBalance - this._tempUserBalance) < 1) {
                   this.coinLabel.string = this.prefix + util.string.formatMoney(this.userBalance) + this.subfix;
+                  -1 != this.soundID && controller.sound.stopSound(this.soundID);
+                  this.soundID = -1;
                   return [ 2, true ];
                 }
               }
@@ -6376,6 +6562,7 @@ window.__require = function e(t, n, r) {
               this.icMark.opacity = 0;
               this.lbCoin.node.opacity = 0;
               this.bg.opacity = 0;
+              controller.sound.playSound("sfx_success_4");
               return [ 4, this.onOpen() ];
 
              case 1:
@@ -6459,7 +6646,8 @@ window.__require = function e(t, n, r) {
               return [ 4, new Promise(function(res, rej) {
                 var stamp = effect.stamp({
                   scale: 4,
-                  rotate: false
+                  rotate: false,
+                  sfx: true
                 });
                 _this.icMark && _this.icMark.runAction(stamp);
                 var springy = cc.sequence(cc.delayTime(.9 * stamp.getDuration()), effect.springy({
@@ -6494,6 +6682,7 @@ window.__require = function e(t, n, r) {
           return __generator(this, function(_a) {
             switch (_a.label) {
              case 0:
+              controller.sound.playSound("sfx_slide_1");
               return [ 4, new Promise(function(res, rej) {
                 _this.bg.runAction(effect.bouceOut({
                   callback: function() {
@@ -6597,7 +6786,8 @@ window.__require = function e(t, n, r) {
     exports.local = {
       LOGIN_DATA: "LOGIN_DATA_IP",
       DEVICE_ID: "DEVICE_ID",
-      PLATFORM_INIT: "PLATFORM_INIT"
+      PLATFORM_INIT: "PLATFORM_INIT",
+      FACEBOOK_BANNER_SHOW: "FACEBOOK_BANNER_SHOW"
     };
     exports.store = {
       LOGIN_DONE: "LOGIN_DONE",
@@ -7076,6 +7266,7 @@ window.__require = function e(t, n, r) {
     (function(VIEW) {
       VIEW[VIEW["HOME"] = 0] = "HOME";
       VIEW[VIEW["GAME"] = 1] = "GAME";
+      VIEW[VIEW["WHEEL"] = 2] = "WHEEL";
     })(VIEW = exports.VIEW || (exports.VIEW = {}));
     var WHEEL_BONUS;
     (function(WHEEL_BONUS) {
@@ -7084,9 +7275,10 @@ window.__require = function e(t, n, r) {
     })(WHEEL_BONUS = exports.WHEEL_BONUS || (exports.WHEEL_BONUS = {}));
     var EDailyBonus;
     (function(EDailyBonus) {
-      EDailyBonus[EDailyBonus["LUCY"] = 1] = "LUCY";
-      EDailyBonus[EDailyBonus["LEVEL"] = 2] = "LEVEL";
-      EDailyBonus[EDailyBonus["FREE_WHEEL"] = 3] = "FREE_WHEEL";
+      EDailyBonus["LUCY"] = "LUCY";
+      EDailyBonus["FREE_WHEEL"] = "FREE_WHEEL";
+      EDailyBonus["WATCH_ADS_GIFT"] = "WATCH_ADS_GIFT";
+      EDailyBonus["SHARE_FB"] = "SHARE_FB";
     })(EDailyBonus = exports.EDailyBonus || (exports.EDailyBonus = {}));
     var MASK_TYPE;
     (function(MASK_TYPE) {
@@ -7240,7 +7432,7 @@ window.__require = function e(t, n, r) {
           this.layTitle.active = true;
           this.lbTitle.string = title;
         } else this.layTitle.active = false;
-        if (message) {
+        if (message && message.message) {
           var nodeMessage = cc.instantiate(this.dialogItems.message);
           nodeMessage.x = 0;
           nodeMessage.parent = this.popup;
@@ -7293,6 +7485,7 @@ window.__require = function e(t, n, r) {
           });
         }
         this.dialogItems.node.active = false;
+        controller.sound.playDialogSFX();
       };
       Dialog.prototype.onClose = function() {
         var popupName = this.popupName;
@@ -7308,6 +7501,7 @@ window.__require = function e(t, n, r) {
         var btnData = this.data.buttons[parseInt(customEventData)];
         var callback = btnData.callback || function(data) {}.bind(this);
         var allowClose = "boolean" != typeof btnData.allowClose || btnData.allowClose;
+        btnData.theme == DefineType_1.CLASS_THEME.SUCCESS ? controller.sound.playSound("sfx_btn_1") : btnData.theme == DefineType_1.CLASS_THEME.DANGER ? controller.sound.playSound("sfx_btn_3") : btnData.theme == DefineType_1.CLASS_THEME.INFO && controller.sound.playSound("sfx_btn_4");
         callback({
           editboxs: this.editboxs.map(function(o) {
             return o.string;
@@ -7750,100 +7944,134 @@ window.__require = function e(t, n, r) {
       };
       Effect.prototype.bouceIn = function(option) {
         option = option || {};
-        var time = option.time, scale = option.scale, easing = option.easing, callback = option.callback, pScale = option.pScale;
+        var time = option.time, scale = option.scale, easing = option.easing, callback = option.callback, pScale = option.pScale, sfx = option.sfx, sound = option.sound;
         time = !time ? .25 : time;
         scale = !scale ? 1 : scale;
         pScale = !pScale ? 0 : pScale;
         easing = "undefined" === typeof easing || easing;
+        sfx = "boolean" === typeof sfx && sfx;
+        sound = "string" === typeof sound ? sound : "sfx_pop_2";
+        var actSFX = cc.callFunc(function() {
+          sfx && controller.sound.playSound(sound);
+        });
         var pre = cc.spawn(cc.fadeOut(0), cc.scaleTo(0, pScale));
         var effect = cc.spawn(cc.fadeIn(time), easing ? cc.scaleTo(time, scale).easing(cc.easeBackOut()) : cc.scaleTo(time, scale));
         var call = cc.callFunc(function() {
           callback && callback();
         });
-        return cc.sequence(pre, effect, call);
+        return cc.sequence(pre, actSFX, effect, call);
       };
       Effect.prototype.bouceOut = function(option) {
         option = option || {};
-        var time = option.time, scale = option.scale, easing = option.easing, callback = option.callback;
+        var time = option.time, scale = option.scale, easing = option.easing, callback = option.callback, sfx = option.sfx, sound = option.sound;
         time = !time ? .15 : time;
         scale = !scale ? 0 : scale;
         easing = "undefined" === typeof easing || easing;
+        sfx = "boolean" === typeof sfx && sfx;
+        sound = "string" === typeof sound ? sound : "sfx_pop_3";
+        var actSFX = cc.callFunc(function() {
+          sfx && controller.sound.playSound(sound);
+        });
         var effect = cc.spawn(cc.fadeOut(time), easing ? cc.scaleTo(time, scale).easing(cc.easeBackIn()) : cc.scaleTo(time, scale));
         var call = cc.callFunc(function() {
           callback && callback();
         });
-        return cc.sequence(effect, call);
+        return cc.sequence(actSFX, effect, call);
       };
       Effect.prototype.moveInBy = function(option) {
         option = option || {
           direction: DefineType_1.DIRECTION.LEFT
         };
-        var time = option.time, direction = option.direction, distance = option.distance, easing = option.easing, callback = option.callback;
+        var time = option.time, direction = option.direction, distance = option.distance, easing = option.easing, callback = option.callback, sfx = option.sfx, sound = option.sound;
         time = !time ? .15 : time;
         direction = !direction ? DefineType_1.DIRECTION.LEFT : direction;
         distance = !distance ? 200 : distance;
         easing = "undefined" === typeof easing || easing;
+        sfx = "boolean" === typeof sfx && sfx;
+        sound = "string" === typeof sound ? sound : "sfx_slide_2";
         var vec = void 0;
         direction == DefineType_1.DIRECTION.LEFT && (vec = cc.v2(distance, 0));
         direction == DefineType_1.DIRECTION.RIGHT && (vec = cc.v2(-distance, 0));
         direction == DefineType_1.DIRECTION.UP && (vec = cc.v2(0, -distance));
         direction == DefineType_1.DIRECTION.DOWN && (vec = cc.v2(0, distance));
+        var actSFX = cc.callFunc(function() {
+          sfx && controller.sound.playSound(sound);
+        });
         var pre = cc.spawn(cc.fadeOut(0), cc.moveBy(0, -vec.x, -vec.y));
         var effect = cc.spawn(cc.fadeIn(time), easing ? cc.moveBy(time, vec.x, vec.y).easing(cc.easeBackOut()) : cc.moveBy(time, vec.x, vec.y));
         var call = cc.callFunc(function() {
           callback && callback();
         });
-        return cc.sequence(pre, effect, call);
+        return cc.sequence(pre, actSFX, effect, call);
       };
       Effect.prototype.moveOutBy = function(option) {
         option = option || {
           direction: DefineType_1.DIRECTION.LEFT
         };
-        var time = option.time, direction = option.direction, distance = option.distance, easing = option.easing, callback = option.callback;
+        var time = option.time, direction = option.direction, distance = option.distance, easing = option.easing, callback = option.callback, sfx = option.sfx, sound = option.sound;
         time = !time ? .15 : time;
         direction = !direction ? DefineType_1.DIRECTION.LEFT : direction;
         distance = !distance ? 200 : distance;
         easing = "undefined" === typeof easing || easing;
+        sfx = "boolean" === typeof sfx && sfx;
+        sound = "string" === typeof sound ? sound : "sfx_slide_1";
         var vec = void 0;
         direction == DefineType_1.DIRECTION.LEFT && (vec = cc.v2(-distance, 0));
         direction == DefineType_1.DIRECTION.RIGHT && (vec = cc.v2(distance, 0));
         direction == DefineType_1.DIRECTION.UP && (vec = cc.v2(0, distance));
         direction == DefineType_1.DIRECTION.DOWN && (vec = cc.v2(0, -distance));
+        var actSFX = cc.callFunc(function() {
+          sfx && controller.sound.playSound(sound);
+        });
         var effect = cc.spawn(cc.fadeOut(time), easing ? cc.moveBy(time, vec.x, vec.y).easing(cc.easeBackIn()) : cc.moveBy(time, vec.x, vec.y));
         var end = cc.moveBy(0, -vec.x, -vec.y);
         var call = cc.callFunc(function() {
           callback && callback();
         });
-        return cc.sequence(effect, end, call);
+        return cc.sequence(effect, actSFX, end, call);
       };
       Effect.prototype.shake = function(option) {
         option = option || {};
-        var delay = option.delay, timeShake = option.timeShake, loop = option.loop;
+        var delay = option.delay, timeShake = option.timeShake, loop = option.loop, sfx = option.sfx, sound = option.sound;
         delay = delay || 3;
         timeShake = timeShake || 4;
         loop = "boolean" !== typeof loop || loop;
-        var act = cc.sequence(cc.repeat(cc.sequence(cc.rotateBy(.05, 10), cc.rotateBy(.05, -10)), timeShake), cc.delayTime(delay));
+        sfx = "boolean" === typeof sfx && sfx;
+        sound = "string" === typeof sound ? sound : "sfx_shake";
+        var act = cc.sequence(cc.repeat(cc.sequence(cc.callFunc(function() {
+          sfx && controller.sound.playSound(sound);
+        }), cc.rotateBy(.05, 10), cc.rotateBy(.05, -10)), timeShake), cc.delayTime(delay));
         loop && (act = act.repeatForever());
         return act;
       };
       Effect.prototype.jelly = function(option) {
         option = option || {};
-        var time = option.time, loop = option.loop;
+        var time = option.time, loop = option.loop, sfx = option.sfx, sound = option.sound;
         time = time || 1;
         loop = "boolean" !== typeof loop || loop;
+        sfx = "boolean" === typeof sfx && sfx;
+        sound = "string" === typeof sound ? sound : "sfx_bubble";
         var scaleDown = cc.scaleTo(.2 * time / 1, 1.25, .75);
+        var actSFX = cc.callFunc(function() {
+          sfx && controller.sound.playSound(sound);
+        });
         var scaleUp = cc.scaleTo(.8 * time / 1, 1, 1).easing(cc.easeElasticOut(.01));
         var delayTime = cc.delayTime(1);
-        var act = cc.sequence(scaleDown, scaleUp, delayTime);
+        var act = cc.sequence(scaleDown, actSFX, scaleUp, delayTime);
         loop && (act = act.repeatForever());
         return act;
       };
       Effect.prototype.stamp = function(option) {
         option = option || {};
-        var time = option.time, rotate = option.rotate, scale = option.scale, callback = option.callback;
+        var time = option.time, rotate = option.rotate, scale = option.scale, callback = option.callback, sfx = option.sfx, sound = option.sound;
         time = time || .3;
         scale = scale || 2;
         rotate = "boolean" !== typeof rotate || rotate;
+        sfx = "boolean" === typeof sfx && sfx;
+        sound = "string" === typeof sound ? sound : "sfx_explosion";
+        var actSFX = cc.callFunc(function() {
+          sfx && controller.sound.playSound(sound);
+        });
         var preFade = cc.fadeOut(0);
         var preSca = cc.scaleTo(0, scale);
         var preRot = cc.rotateBy(0, -20);
@@ -7854,13 +8082,14 @@ window.__require = function e(t, n, r) {
         var act = cc.spawn(actFade, actSca, rotate ? actRot : void 0);
         var action = cc.sequence(pre, act, callback ? cc.callFunc(function() {
           callback();
-        }) : void 0);
+        }) : void 0, actSFX);
         return action;
       };
       Effect.prototype.springy = function(option) {
         option = option || {};
-        var time = option.time, callback = option.callback;
+        var time = option.time, callback = option.callback, sfx = option.sfx, sound = option.sound;
         time = time || .6;
+        sfx = "boolean" === typeof sfx && sfx;
         var scaIn = cc.scaleTo(.2 * time / .7, .9);
         var scaOut = cc.scaleTo(.5 * time / .7, 1).easing(cc.easeBackOut());
         var call = cc.callFunc(function() {
@@ -7868,6 +8097,15 @@ window.__require = function e(t, n, r) {
         });
         var act = cc.sequence(scaIn, scaOut, call);
         return act;
+      };
+      Effect.prototype.listDelay = function(list, effect, option) {
+        option = option || {};
+        option.delay = option.delay || 0;
+        var timeDelay = list.length < 8 ? .1 : 1 / list.length;
+        list.forEach(function(o, i) {
+          o.opacity = 0;
+          o.runAction(effect);
+        });
       };
       var Effect_1;
       Effect.instance = void 0;
@@ -8033,9 +8271,11 @@ window.__require = function e(t, n, r) {
         view.screen.slot.SlotController.clickSpin();
       };
       GameScene.prototype.onClickMinimize = function() {
+        controller.sound.playButtonSFX();
         controller.ui.minimizeGameScene();
       };
       GameScene.prototype.onClickBack = function() {
+        controller.sound.playButtonSFX();
         controller.ui.deleteSlot();
       };
       __decorate([ property(cc.Node) ], GameScene.prototype, "center", void 0);
@@ -8053,8 +8293,6 @@ window.__require = function e(t, n, r) {
       value: true
     });
     var DefineType_1 = require("../Define/DefineType");
-    var DefineKey_1 = require("../Define/DefineKey");
-    var PlatformController_1 = require("../Platform/PlatformController");
     var GameUtil = function() {
       function GameUtil() {}
       GameUtil.generateUUID = function() {
@@ -8125,8 +8363,11 @@ window.__require = function e(t, n, r) {
         return nday.getTime() - today.getTime();
       };
       GameUtil.restartGame = function() {
-        cc.sys.isNative && cc.sys.localStorage.setItem(DefineKey_1.local.PLATFORM_INIT, PlatformController_1.default.ins().inited);
-        cc.game.restart();
+        if (cc.sys.isNative) {
+          controller.ui.resetView();
+          api.socket.disconnect();
+          api.loginNow();
+        } else cc.game.restart();
       };
       GameUtil.loadTextTure = function(url, callback) {
         var input = -1 == url.indexOf(".png") ? {
@@ -8156,9 +8397,7 @@ window.__require = function e(t, n, r) {
     exports.default = GameUtil;
     cc._RF.pop();
   }, {
-    "../Define/DefineKey": "DefineKey",
-    "../Define/DefineType": "DefineType",
-    "../Platform/PlatformController": "PlatformController"
+    "../Define/DefineType": "DefineType"
   } ],
   HomeScene: [ function(require, module, exports) {
     "use strict";
@@ -8174,7 +8413,6 @@ window.__require = function e(t, n, r) {
         _this.listGameView = null;
         _this.itemGame = null;
         _this.itemBanner = null;
-        _this.animationclip = null;
         _this.btnMenu = null;
         _this.banner = null;
         return _this;
@@ -8183,10 +8421,26 @@ window.__require = function e(t, n, r) {
       HomeScene.prototype.start = function() {
         this.onOpen();
         this.initialize();
+        this.addEventListenner();
       };
       HomeScene.prototype.initialize = function() {
         this.initItem();
         this.initBanner();
+      };
+      HomeScene.prototype.addEventListenner = function() {
+        var eventHandler = new cc.Component.EventHandler();
+        eventHandler.target = this.node;
+        eventHandler.component = "HomeScene";
+        eventHandler.handler = "listenner";
+        this.listGameView.scrollEvents.push(eventHandler);
+      };
+      HomeScene.prototype.listenner = function(scroll, event) {
+        var maxDistance = .5 * Math.abs(cc.winSize.width - view.background.width);
+        var ratio = maxDistance / scroll.content.width * .8;
+        var distance = scroll.getScrollOffset().x * ratio;
+        distance > maxDistance && (distance = maxDistance);
+        distance < -maxDistance && (distance = -maxDistance);
+        view.background.x = distance;
       };
       HomeScene.prototype.initBanner = function() {
         var _this = this;
@@ -8220,6 +8474,9 @@ window.__require = function e(t, n, r) {
           var numPage = banner.getPages().length;
           var nIndex = index + 1 < numPage ? index + 1 : 0;
           banner.scrollToPage(nIndex, 1);
+          controller.sound.playSound("sfx_slide_3", {
+            tags: [ define.type.VIEW.HOME.toString() ]
+          });
         }))));
       };
       HomeScene.prototype.initItem = function() {
@@ -8233,8 +8490,19 @@ window.__require = function e(t, n, r) {
           itemGame.scale = 0;
           itemGame.runAction(cc.sequence(cc.delayTime(.2 * i), effect.bouceIn({
             time: .2,
-            pScale: .7
+            pScale: .7,
+            sfx: true,
+            sound: "sfx_pop_4"
           })));
+          itemGame.on(cc.Node.EventType.MOUSE_ENTER, function() {
+            itemGame.stopAllActions();
+            itemGame.runAction(cc.scaleTo(.15, 1.075).easing(cc.easeIn(.6)));
+            controller.sound.playSound("sfx_btn_2");
+          });
+          itemGame.on(cc.Node.EventType.MOUSE_LEAVE, function() {
+            itemGame.stopAllActions();
+            itemGame.runAction(cc.scaleTo(.05, 1).easing(cc.easeOut(.6)));
+          });
         });
       };
       HomeScene.prototype.onOpen = function() {
@@ -8242,7 +8510,8 @@ window.__require = function e(t, n, r) {
           time: .2
         }));
         this.banner.node.runAction(effect.bouceIn({
-          time: .3
+          time: .3,
+          sfx: true
         }));
       };
       HomeScene.prototype.openSlot = function(e) {
@@ -8253,6 +8522,7 @@ window.__require = function e(t, n, r) {
             id = slotIcon.id;
             smid = slotIcon.smid;
             controller.ui.openGame(slotIcon, id, smid);
+            controller.sound.playButtonSFX();
             return [ 2 ];
           });
         });
@@ -8263,7 +8533,6 @@ window.__require = function e(t, n, r) {
       __decorate([ property(cc.ScrollView) ], HomeScene.prototype, "listGameView", void 0);
       __decorate([ property(cc.Node) ], HomeScene.prototype, "itemGame", void 0);
       __decorate([ property(cc.Node) ], HomeScene.prototype, "itemBanner", void 0);
-      __decorate([ property(cc.AnimationClip) ], HomeScene.prototype, "animationclip", void 0);
       __decorate([ property(cc.Button) ], HomeScene.prototype, "btnMenu", void 0);
       __decorate([ property(cc.PageView) ], HomeScene.prototype, "banner", void 0);
       HomeScene = __decorate([ ccclass ], HomeScene);
@@ -8282,6 +8551,7 @@ window.__require = function e(t, n, r) {
       function IOSAdmob() {
         this.tag = "IOSAdmob";
         this.isBannerShow = false;
+        this.successCallback = void 0;
       }
       IOSAdmob.getIns = function() {
         this.intance || (this.intance = new IOSAdmob());
@@ -8338,6 +8608,7 @@ window.__require = function e(t, n, r) {
           }
         });
         plugin.init();
+        this.cache();
       };
       IOSAdmob.prototype.cache = function() {
         game.log(this.tag, "admob", "cache");
@@ -8376,8 +8647,9 @@ window.__require = function e(t, n, r) {
         game.log(this.tag, "admob", "is avaiable banner", isAvai);
         return isAvai;
       };
-      IOSAdmob.prototype.showInterstitial = function() {
+      IOSAdmob.prototype.showInterstitial = function(cb) {
         game.log(this.tag, "admob", "show interstitial");
+        this.successCallback = cb;
         sdkbox.PluginAdMob.show("interstitial");
       };
       IOSAdmob.prototype.isAvailableInterstitial = function() {
@@ -8385,8 +8657,22 @@ window.__require = function e(t, n, r) {
         game.log(this.tag, "admob", "is avaiable interstitial", isAvai);
         return isAvai;
       };
-      IOSAdmob.prototype.showRewarded = function() {
+      IOSAdmob.prototype.showRewarded = function(cb) {
         game.log(this.tag, "admob", "show rewarded");
+        if (!this.isAvailableRewarded()) {
+          controller.ui.showDialog({
+            title: "Message",
+            message: {
+              message: "Video ads wasn't ready"
+            },
+            buttons: [ {
+              title: "Confirm",
+              theme: define.type.CLASS_THEME.DANGER
+            } ]
+          });
+          return;
+        }
+        this.successCallback = cb;
         sdkbox.PluginAdMob.show("rewarded");
       };
       IOSAdmob.prototype.isAvailableRewarded = function() {
@@ -8465,6 +8751,10 @@ window.__require = function e(t, n, r) {
 
          case define.type.ADMOB_LISTENNER.REWARD:
           game.log(this.tag, "interstitial listenner", "REWARD");
+          if ("function" == typeof this.successCallback) {
+            this.successCallback();
+            this.successCallback = void 0;
+          }
           break;
 
          default:
@@ -8501,6 +8791,10 @@ window.__require = function e(t, n, r) {
 
          case define.type.ADMOB_LISTENNER.REWARD:
           game.log(this.tag, "rewarded listenner", "REWARD");
+          if ("function" == typeof this.successCallback) {
+            this.successCallback();
+            this.successCallback = void 0;
+          }
           break;
 
          default:
@@ -8523,6 +8817,7 @@ window.__require = function e(t, n, r) {
       function IOSFacebook() {
         this.tag = "IOSFacebook";
         this.loginCallback = void 0;
+        this.shareSuccessCallback = void 0;
       }
       IOSFacebook.getIns = function() {
         this.intance || (this.intance = new IOSFacebook());
@@ -8621,12 +8916,19 @@ window.__require = function e(t, n, r) {
         game.log("login facebook: sdkbox or plugin null");
       };
       IOSFacebook.prototype.shareHandle = function(option) {
+        this.isLoggedIn() || this.login();
         if (!option) return;
         if (!option.type) return;
         game.log(this.tag, "facebook", "share handle", option);
+        game.log(this.tag, "facebook", "share handle", option.type);
+        game.log(this.tag, "facebook", "share handle", option.link);
+        game.log(this.tag, "facebook", "share handle", option.title);
+        game.log(this.tag, "facebook", "share handle", option.text);
+        game.log(this.tag, "facebook", "share handle", option.image);
         tracking.send(tracking.event.FACEBOOK_SHARE_CLICK);
         var info = option;
         sdkbox.PluginFacebook.dialog(info);
+        "function" == typeof option.callback && (this.shareSuccessCallback = option.callback);
       };
       IOSFacebook.prototype.share = function(option) {
         if (!option) return;
@@ -8714,7 +9016,7 @@ window.__require = function e(t, n, r) {
                       if ("success" === data) {
                         game.log(_this.tag, "Login FB success", "merge facebook success");
                         setNewLoginData(function() {
-                          cc.game.restart();
+                          util.game.restartGame();
                         });
                       } else game.error("Cai nay chua lam");
                     });
@@ -8773,6 +9075,10 @@ window.__require = function e(t, n, r) {
          case define.type.FACEBOOK_LISTENNER.SHARED_SUCCESS:
           game.log(this.tag, "facebook listenner", "SHARED_SUCCESS", "data: " + data.data);
           tracking.send(tracking.event.FACEBOOK_SHARE_SUCCESS);
+          if ("function" == typeof this.shareSuccessCallback) {
+            this.shareSuccessCallback();
+            this.shareSuccessCallback = void 0;
+          }
           break;
 
          case define.type.FACEBOOK_LISTENNER.SHARED_FAILED:
@@ -8796,11 +9102,13 @@ window.__require = function e(t, n, r) {
               theme: define.type.CLASS_THEME.DANGER
             } ]
           });
+          this.shareSuccessCallback = void 0;
           break;
 
          case define.type.FACEBOOK_LISTENNER.SHARED_CANCEL:
           game.log(this.tag, "facebook listenner", "SHARED_CANCEL");
           tracking.send(tracking.event.FACEBOOK_SHARE_CANCELED);
+          this.shareSuccessCallback = void 0;
           break;
 
          case define.type.FACEBOOK_LISTENNER.PERMISSON:
@@ -8979,6 +9287,7 @@ window.__require = function e(t, n, r) {
         url && "string" === typeof url ? cc.sys.openURL(url) : game.error(this.tag, "handle", "url is not useable");
       };
       IOSHandle.prototype.screenshot = function() {
+        controller.sound.playSound("sfx_capture");
         var node = new cc.Node();
         node.parent = cc.director.getScene();
         node.x = .5 * cc.winSize.width;
@@ -9331,6 +9640,7 @@ window.__require = function e(t, n, r) {
         _this.autoRun = true;
         _this.fadeOut = true;
         _this.autoRelease = true;
+        _this.sfx = false;
         _this.timeOut = .5;
         _this.skeleton = null;
         _this.callback = null;
@@ -9358,6 +9668,7 @@ window.__require = function e(t, n, r) {
               "undefined" === typeof option.autoRun && (option.autoRun = true);
               "undefined" === typeof option.autoRelease && (option.autoRelease = true);
               "undefined" === typeof option.fadeOut && (option.fadeOut = true);
+              "undefined" === typeof option.sfx && (option.sfx = false);
               "undefined" === typeof option.callback && (option.callback = null);
               for (key in option) option.hasOwnProperty(key) && (this[key] = option[key]);
               this.updateSkeletonData();
@@ -9389,6 +9700,7 @@ window.__require = function e(t, n, r) {
           "boolean" === typeof option.autoRun && (_this.autoRun = option.autoRun);
           "boolean" === typeof option.autoRelease && (_this.autoRelease = option.autoRelease);
           "boolean" === typeof option.fadeOut && (_this.fadeOut = option.fadeOut);
+          "boolean" === typeof option.sfx && (_this.sfx = option.sfx);
           "function" === typeof option.callback && (_this.callback = option.callback);
           "number" === typeof option.timeOut && (_this.timeOut = option.timeOut);
           _this.node.active = true;
@@ -9404,7 +9716,8 @@ window.__require = function e(t, n, r) {
           }.bind(_this));
           _this.skeleton.setAnimation(0, _this.animation, _this.loop);
           _this.skeleton.node.runAction(effect.bouceIn({
-            time: .25
+            time: .25,
+            sfx: _this.sfx
           }));
         });
       };
@@ -9421,7 +9734,7 @@ window.__require = function e(t, n, r) {
       __decorate([ property(cc.Boolean) ], ItemAnimation.prototype, "autoRelease", void 0);
       __decorate([ property({
         tooltip: "Time destroy"
-      }) ], ItemAnimation.prototype, "timeOut", void 0);
+      }), property(cc.Boolean) ], ItemAnimation.prototype, "sfx", void 0);
       ItemAnimation = __decorate([ ccclass ], ItemAnimation);
       return ItemAnimation;
     }(cc.Component);
@@ -9589,6 +9902,7 @@ window.__require = function e(t, n, r) {
               this.btnCollect.node.opacity = 0;
               this.lbLevel.string = this.data.level.toString();
               this.enableCollect = true;
+              controller.sound.playSound("sfx_levelup");
               return [ 4, this.onOpen() ];
 
              case 1:
@@ -9676,6 +9990,7 @@ window.__require = function e(t, n, r) {
                 game.log("LevelUpAnimation", "onClickCollect", "enableCollect is false");
                 return [ 2 ];
               }
+              controller.sound.playButtonSFX();
               return [ 4, this.onClose() ];
 
              case 1:
@@ -9888,6 +10203,8 @@ window.__require = function e(t, n, r) {
         _this.logo = void 0;
         _this.progress = void 0;
         _this.lbPercent = void 0;
+        _this.lbPress = void 0;
+        _this.sfx = void 0;
         _this.loadDone = false;
         _this.numComplete = 0;
         _this.numProgress = 0;
@@ -9896,56 +10213,63 @@ window.__require = function e(t, n, r) {
       }
       LoadingScene.prototype.onLoad = function() {
         var _this = this;
+        console.time();
         this.bg.width = cc.winSize.width;
         this.bg.height = cc.winSize.height;
-        this.progress.lerpRatio = 20;
+        this.progress.lerpRatio = 5;
+        this.progress.fps = 24;
         this.progress.setListener(function(percent) {
-          return __awaiter(_this, void 0, void 0, function() {
-            return __generator(this, function(_a) {
-              switch (_a.label) {
-               case 0:
-                if (this.loadDone) return [ 2 ];
-                this.lbPercent && (this.lbPercent.string = "Loading: " + percent.toFixed(2) + "%");
-                if (!(100 === percent)) return [ 3, 3 ];
-                this.loadDone = true;
-                return [ 4, this.onClose() ];
-
-               case 1:
-                _a.sent();
-                return [ 4, controller.ui.openHomeScene() ];
-
-               case 2:
-                _a.sent();
-                game.data.megaWheel && "number" == typeof game.data.megaWheel.result && controller.ui.openWheelBonus(define.type.WHEEL_BONUS.GOLD);
-                view.bar.top.lerpOn = true;
-                view.bar.top.updateBarData();
-                _a.label = 3;
-
-               case 3:
-                return [ 2 ];
-              }
-            });
-          });
+          if (_this.loadDone) return;
+          _this.lbPercent && (_this.lbPercent.string = "Loading: " + percent.toFixed(2) + "%");
+          if (100 === percent) {
+            _this.loadDone = true;
+            _this.onShowPress();
+            console.timeEnd();
+          }
         });
         this.initListenner();
         this.initialize();
       };
+      LoadingScene.prototype.start = function() {
+        controller.sound.playMusic(this.sfx, true, {
+          fade: true
+        });
+      };
       LoadingScene.prototype.initListenner = function() {
         var _this = this;
-        var cb = function() {
+        var cb = function(text) {
           if (!_this || !_this.node || !_this.numComplete || !_this.progress) return;
           _this.numProgress++;
           _this.progress.setProgress(_this.numProgress / _this.numComplete);
+          game.log("LoadingScene", "Load " + text + " done");
         };
+        this.numComplete++;
+        var ocount = void 0;
+        cc.director.preloadScene("Start", function(count, total) {
+          if (ocount != count && count % 150 == 0 || count == total) {
+            ocount = count;
+            _this.numComplete++;
+            cb("scene " + count + " " + total);
+          }
+        }, function(err) {
+          cb("scene");
+        });
         this.numComplete++;
         var keyLogin = store.register(store.key.LOGIN_DONE, function() {
           if (config.setup["skipLogin"]) {
             _this.progress.setProgress(.99, false);
             _this.progress.lerpRatio = 100;
             _this.progress.setProgress(1);
-          } else cb();
+          } else cb("login");
         });
         this.key.push(keyLogin);
+        this.numComplete++;
+        cc.loader.loadResDir("6_sound", function(error, res, urls) {
+          res.forEach(function(o) {
+            resource.sounds[o.name] = o;
+          });
+          cb("resource");
+        });
       };
       LoadingScene.prototype.initialize = function() {
         return __awaiter(this, void 0, void 0, function() {
@@ -10007,20 +10331,14 @@ window.__require = function e(t, n, r) {
             switch (_a.label) {
              case 0:
               return [ 4, new Promise(function(res, rej) {
-                _this && _this.lbPercent && _this.lbPercent.node && _this.lbPercent.node.runAction(cc.sequence(cc.fadeIn(.1), cc.callFunc(function() {
-                  res();
-                })));
+                _this.lbPress.node.runAction(effect.bouceOut({
+                  callback: function() {
+                    res();
+                  }
+                }));
               }) ];
 
              case 1:
-              _a.sent();
-              return [ 4, new Promise(function(res, rej) {
-                _this && _this.progress && _this.progress.node && _this.progress.node.runAction(cc.sequence(cc.fadeOut(.1), cc.callFunc(function() {
-                  res();
-                })));
-              }) ];
-
-             case 2:
               _a.sent();
               return [ 4, new Promise(function(res, rej) {
                 _this && _this.logo && _this.logo.node && _this.logo.node.runAction(effect.bouceOut({
@@ -10030,7 +10348,7 @@ window.__require = function e(t, n, r) {
                 }));
               }) ];
 
-             case 3:
+             case 2:
               _a.sent();
               return [ 4, new Promise(function(res, rej) {
                 _this && _this.bg && _this.bg.runAction(cc.sequence(cc.moveTo(.3, cc.v2(0, -_this.bg.height)).easing(cc.easeOut(.7)), cc.callFunc(function() {
@@ -10038,9 +10356,61 @@ window.__require = function e(t, n, r) {
                 })));
               }) ];
 
-             case 4:
+             case 3:
               _a.sent();
               this.onRelease();
+              return [ 2 ];
+            }
+          });
+        });
+      };
+      LoadingScene.prototype.onShowPress = function() {
+        return __awaiter(this, void 0, void 0, function() {
+          var _this = this;
+          return __generator(this, function(_a) {
+            switch (_a.label) {
+             case 0:
+              return [ 4, new Promise(function(res, rej) {
+                _this.progress.node.runAction(effect.bouceOut({
+                  callback: function() {
+                    res();
+                  }
+                }));
+              }) ];
+
+             case 1:
+              _a.sent();
+              return [ 4, new Promise(function(res, rej) {
+                _this.lbPercent.node.runAction(effect.bouceOut({
+                  callback: function() {
+                    res();
+                  }
+                }));
+              }) ];
+
+             case 2:
+              _a.sent();
+              this.lbPress.node.runAction(cc.repeatForever(cc.sequence(cc.callFunc(function() {
+                controller.sound.playSound("sfx_done", {
+                  volume: .2
+                });
+              }), cc.fadeIn(.8), cc.fadeOut(.4))));
+              this.node.on(cc.Node.EventType.TOUCH_END, function() {
+                return __awaiter(_this, void 0, void 0, function() {
+                  return __generator(this, function(_a) {
+                    switch (_a.label) {
+                     case 0:
+                      this.node.off(cc.Node.EventType.TOUCH_END);
+                      return [ 4, this.onClose() ];
+
+                     case 1:
+                      _a.sent();
+                      cc.director.loadScene("Start");
+                      return [ 2 ];
+                    }
+                  });
+                });
+              });
               return [ 2 ];
             }
           });
@@ -10059,6 +10429,10 @@ window.__require = function e(t, n, r) {
       __decorate([ property(sp.Skeleton) ], LoadingScene.prototype, "logo", void 0);
       __decorate([ property(AccumulatedBar_1.default) ], LoadingScene.prototype, "progress", void 0);
       __decorate([ property(cc.Label) ], LoadingScene.prototype, "lbPercent", void 0);
+      __decorate([ property(cc.Label) ], LoadingScene.prototype, "lbPress", void 0);
+      __decorate([ property({
+        type: cc.AudioClip
+      }) ], LoadingScene.prototype, "sfx", void 0);
       LoadingScene = __decorate([ ccclass ], LoadingScene);
       return LoadingScene;
     }(cc.Component);
@@ -10067,46 +10441,6 @@ window.__require = function e(t, n, r) {
   }, {
     "../Components/AccumulatedBar": "AccumulatedBar"
   } ],
-  Loading: [ function(require, module, exports) {
-    "use strict";
-    cc._RF.push(module, "90037cAJmBHU6kH2nSV00DK", "Loading");
-    Object.defineProperty(exports, "__esModule", {
-      value: true
-    });
-    var _a = cc._decorator, ccclass = _a.ccclass, property = _a.property;
-    var Loading = function(_super) {
-      __extends(Loading, _super);
-      function Loading() {
-        var _this = null !== _super && _super.apply(this, arguments) || this;
-        _this.bar = null;
-        return _this;
-      }
-      Loading.prototype.onLoad = function() {
-        window["load"] = this;
-        this.preLoad();
-        cc.debug.setDisplayStats(false);
-      };
-      Loading.prototype.preLoad = function() {
-        var _this = this;
-        var date = Date.now();
-        cc.director.preloadScene("Start", function(count, total) {
-          var bar = _this.bar;
-          var _progress = count / total;
-          if (!bar.progress) return bar.progress = _progress;
-          1 == _progress && (bar.progress = 1);
-          _progress - bar.progress > .03 && (bar.progress = _progress);
-        }, function(err) {
-          cc.log("Done in ", Date.now() - date);
-          cc.director.loadScene("Start");
-        });
-      };
-      __decorate([ property(cc.ProgressBar) ], Loading.prototype, "bar", void 0);
-      Loading = __decorate([ ccclass ], Loading);
-      return Loading;
-    }(cc.Component);
-    exports.default = Loading;
-    cc._RF.pop();
-  }, {} ],
   Main: [ function(require, module, exports) {
     "use strict";
     cc._RF.push(module, "1c171djw71FS6tvzt/Atvwj", "Main");
@@ -10139,12 +10473,12 @@ window.__require = function e(t, n, r) {
         var _this = null !== _super && _super.apply(this, arguments) || this;
         _this.ip = EIP["64.120.114.208"];
         _this.showLog = false;
-        _this.testKey = false;
         _this.testIAP = false;
         _this.skipLogin = false;
         return _this;
       }
       Main.prototype.onLoad = function() {
+        cc.game.addPersistRootNode(this.node);
         this.initGlobal();
         cc.game.on(cc.game.EVENT_HIDE, this.onGameHide, this);
         cc.game.on(cc.game.EVENT_SHOW, this.onGameShow, this);
@@ -10154,24 +10488,22 @@ window.__require = function e(t, n, r) {
       };
       Main.prototype.start = function() {
         var _this = this;
-        controller.ui.openLoadingScene();
         setTimeout(function() {
           _this && _this.checkInternetConnection && _this.checkInternetConnection();
         }, 3e3);
       };
       Main.prototype.initialize = function() {
         var keyTest = cc.director.getScene().getChildByName("TestKey");
-        this.testKey && keyTest && (keyTest.active = true);
       };
       Main.prototype.initGlobal = function() {
         var _this = this;
+        window.resource = {
+          sounds: {}
+        };
         window.controller = {
-          ui: this.node.getComponent("UIController"),
+          ui: void 0,
           sound: SoundController_1.default.ins()
         };
-        var bar = cc.director.getScene().getChildByName("Canvas").getChildByName("bar");
-        var topBar = bar.getChildByName("topBar").getComponent("TopBarController");
-        var botBar = bar.getChildByName("bottomBar").getComponent("BottomBarController");
         window.view = {
           screen: {
             loading: void 0,
@@ -10180,7 +10512,7 @@ window.__require = function e(t, n, r) {
             slot: void 0,
             bonus: void 0,
             wheelBonus: void 0,
-            model: cc.director.getScene().getChildByName("Canvas").getChildByName("Model")
+            model: void 0
           },
           slot: {
             1: void 0,
@@ -10195,12 +10527,13 @@ window.__require = function e(t, n, r) {
           popup: {},
           dialog: {},
           progress: void 0,
+          background: void 0,
           bar: {
-            node: bar,
-            top: topBar,
-            bottom: botBar
+            node: void 0,
+            top: void 0,
+            bottom: void 0
           },
-          multi: cc.director.getScene().getChildByName("Canvas").getChildByName("multiSlot").getComponent("MultiScene"),
+          multi: void 0,
           animation: void 0
         };
         window.define = {
@@ -10214,7 +10547,6 @@ window.__require = function e(t, n, r) {
           game: GameConfig_1.default,
           setup: {
             showLog: this.showLog,
-            testKey: this.testKey,
             testIAP: this.testIAP,
             skipLogin: this.skipLogin
           }
@@ -10326,6 +10658,9 @@ window.__require = function e(t, n, r) {
         window.tracking = Tracking_1.default.ins();
         window.controller.sound.init();
         window.platform.init();
+        cc.sys.isBrowser && (cc.macro.DOWNLOAD_MAX_CONCURRENT = 4);
+        game.data.deviceOs == define.type.DEVICE_OS.ANDROID_NAVITE && (cc.macro.DOWNLOAD_MAX_CONCURRENT = 3);
+        game.data.deviceOs == define.type.DEVICE_OS.IOS_NAVITE && (cc.macro.DOWNLOAD_MAX_CONCURRENT = 5);
       };
       Main.prototype.resiterStore = function() {
         store.register(store.key.UPDATE_USER_BALANCE, function(amount) {
@@ -10366,7 +10701,7 @@ window.__require = function e(t, n, r) {
         this.checkInternetConnection();
       };
       Main.prototype.checkInternetConnection = function() {
-        platform.handle.isConnecting() || controller.ui.showDialog({
+        !platform.handle.isConnecting() && controller.ui && controller.ui.showDialog({
           title: "Connection Error",
           type: define.type.DIALOG_TYPE.FORCE,
           name: "connection_error",
@@ -10382,214 +10717,11 @@ window.__require = function e(t, n, r) {
           } ]
         });
       };
-      Main.prototype.onTestKey = function(editbox) {
-        switch (parseInt(editbox.string)) {
-         case 1:
-          platform.firebase.getVersion();
-          break;
-
-         case 2:
-          platform.firebase.setUserProperty("hehe", "huhu");
-          break;
-
-         case 3:
-          platform.firebase.setUserID("1000000");
-          break;
-
-         case 4:
-          platform.firebase.setScreenName("Main", "MainScene");
-          break;
-
-         case 5:
-          platform.firebase.sendLogEvent("test", [ "test1", "test2" ]);
-          break;
-
-         case 6:
-          platform.firebase.resetAnalyticsData();
-          break;
-
-         case 7:
-          platform.firebase.setAnalyticsCollectionEnabled(true);
-          break;
-
-         case 8:
-          platform.admob.cache();
-          break;
-
-         case 9:
-          platform.admob.showBanner();
-          break;
-
-         case 10:
-          platform.admob.showInterstitial();
-          break;
-
-         case 11:
-          platform.admob.showRewarded();
-          break;
-
-         case 12:
-          platform.facebook.login();
-          break;
-
-         case 13:
-          platform.onesignal.registerPushNotifications();
-          break;
-
-         case 14:
-          platform.onesignal.sendTag("test", "test hihi");
-          break;
-
-         case 15:
-          platform.onesignal.getTags();
-          break;
-
-         case 16:
-          platform.onesignal.deleteTag("test");
-          break;
-
-         case 17:
-          platform.onesignal.setEmail("huyvk3110@gmail.com");
-          break;
-
-         case 18:
-          platform.onesignal.idsAvailable();
-          break;
-
-         case 19:
-          platform.onesignal.enableInAppAlertNotification(true);
-          break;
-
-         case 20:
-          platform.onesignal.setSubscription(true);
-          break;
-
-         case 21:
-          platform.onesignal.postNotification("hihi hehe");
-          break;
-
-         case 22:
-          platform.iap.setDebug(true);
-          break;
-
-         case 23:
-          platform.iap.purchase("coin_package");
-          break;
-
-         case 24:
-          platform.iap.refresh();
-          break;
-
-         case 25:
-          platform.iap.restore();
-          break;
-
-         case 26:
-          platform.iap.removeListener();
-          break;
-
-         case 27:
-          platform.iap.enableUserSideVerification();
-          break;
-
-         case 28:
-          platform.iap.isAutoFinishTransaction();
-          break;
-
-         case 29:
-          platform.iap.setAutoFinishTransaction(true);
-          break;
-
-         case 30:
-          platform.iap.finishTransaction("com.cocos2dx.plugintest2");
-          break;
-
-         case 31:
-          platform.iap.fetchStorePromotionOrder();
-          break;
-
-         case 32:
-          platform.iap.updateStorePromotionOrder("coin_package");
-          break;
-
-         case 33:
-          platform.iap.fetchStorePromotionVisibility("coin_package");
-          break;
-
-         case 34:
-          platform.iap.updateStorePromotionVisibility("coin_package", true);
-          break;
-
-         case 35:
-          platform.iap.getPurchaseHistory();
-          break;
-
-         case 36:
-          platform.iap.getInitializedErrMsg();
-          break;
-
-         case 37:
-          platform.iap.requestUpdateTransaction();
-          break;
-
-         case 38:
-          platform.iap.purchase("item1");
-          break;
-
-         case 39:
-          platform.iap.purchase("item2");
-          break;
-
-         case 40:
-          platform.iap.purchase("item3");
-          break;
-
-         case 41:
-          sdkbox.firebase.Analytics.logEvent("test1");
-          break;
-
-         case 42:
-          sdkbox.firebase.Analytics.logEvent("test2", "params1");
-          break;
-
-         case 43:
-          sdkbox.firebase.Analytics.logEvent("test3", [ "params1", "params2" ]);
-          break;
-
-         case 44:
-          sdkbox.firebase.Analytics.logEvent("test3", [ "0_params1", "1_params2" ]);
-          break;
-
-         case 45:
-          console.log(JSON.stringify(sdkbox.firebase.Analytics.Event));
-          break;
-
-         case 46:
-          console.log(JSON.stringify(sdkbox.firebase.Analytics.Param));
-          break;
-
-         case 47:
-          console.log("Send logEvent 47");
-          sdkbox.firebase.Analytics.logEvent("test4", {
-            key1: "param1",
-            key2: "param2"
-          });
-          break;
-
-         default:
-          game.log("Key not defined");
-        }
-      };
-      Main.prototype.onClickTest = function() {
-        var editbox = cc.director.getScene().getChildByName("TestKey").getChildByName("editBox").getComponent(cc.EditBox);
-        this.onTestKey(editbox);
-      };
       __decorate([ property({
         type: cc.Enum(EIP),
         displayName: "IP"
       }) ], Main.prototype, "ip", void 0);
       __decorate([ property(cc.Boolean) ], Main.prototype, "showLog", void 0);
-      __decorate([ property(cc.Boolean) ], Main.prototype, "testKey", void 0);
       __decorate([ property(cc.Boolean) ], Main.prototype, "testIAP", void 0);
       __decorate([ property(cc.Boolean) ], Main.prototype, "skipLogin", void 0);
       Main = __decorate([ ccclass ], Main);
@@ -12666,10 +12798,22 @@ window.__require = function e(t, n, r) {
         this._isLock = true;
         if (this.isShow) {
           tracking.send(tracking.event.MULTI_HIDE);
-          this.content.runAction(cc.moveBy(.2, cc.v2(0, this.content.height)));
+          this.content.runAction(effect.moveOutBy({
+            time: .2,
+            direction: define.type.DIRECTION.UP,
+            distance: this.content.height,
+            sfx: true
+          }));
         } else {
           tracking.send(tracking.event.MULTI_SHOW);
-          this.content.runAction(cc.moveBy(.2, cc.v2(0, -this.content.height)));
+          this.content.y = 45;
+          this.content.opacity = 0;
+          this.content.runAction(effect.moveInBy({
+            time: .3,
+            direction: define.type.DIRECTION.UP,
+            distance: this.content.height,
+            sfx: true
+          }));
         }
         this.isShow = !this.isShow;
         this.overlay.active = this.isShow;
@@ -12683,6 +12827,7 @@ window.__require = function e(t, n, r) {
         this.listScene.forEach(function(item) {
           item.button.on("click", function() {
             tracking.send(tracking.event.MULTI_OPEN_GAME);
+            controller.sound.playButtonSFX();
             if (_this && "boolean" === typeof _this._isLock && _this._isLock) return;
             if (view.screen.slot) if (view.screen.slot.uuid != item.uuid) {
               view.screen.slot.SlotController.hideContent();
@@ -12703,6 +12848,7 @@ window.__require = function e(t, n, r) {
           return __generator(this, function(_a) {
             switch (_a.label) {
              case 0:
+              controller.sound.playSound("sfx_btn_4");
               this._isLock = true;
               return [ 4, controller.ui.deleteSlot(parseInt(data)) ];
 
@@ -12724,6 +12870,109 @@ window.__require = function e(t, n, r) {
     exports.default = MultiScene;
     cc._RF.pop();
   }, {} ],
+  NotificationComp: [ function(require, module, exports) {
+    "use strict";
+    cc._RF.push(module, "a83cc5GZptITItffWDbA2Tf", "NotificationComp");
+    Object.defineProperty(exports, "__esModule", {
+      value: true
+    });
+    var CoinLabel_1 = require("./CoinLabel");
+    var _a = cc._decorator, ccclass = _a.ccclass, property = _a.property;
+    var NotificationComp = function(_super) {
+      __extends(NotificationComp, _super);
+      function NotificationComp() {
+        var _this = null !== _super && _super.apply(this, arguments) || this;
+        _this.lbTitle = void 0;
+        _this.lbContent = void 0;
+        _this.lbCoin = void 0;
+        _this.nodeShare = void 0;
+        _this.releaseCB = void 0;
+        _this.notiCB = void 0;
+        return _this;
+      }
+      NotificationComp.prototype.start = function() {
+        this.onOpen();
+      };
+      NotificationComp.prototype.init = function(data) {
+        var _this = this;
+        return new Promise(function(res, rej) {
+          data = data || {
+            title: ""
+          };
+          _this.node.opacity = 0;
+          _this.lbTitle.string = data.title;
+          data.content || data.coin || (_this.lbTitle.lineHeight = 80);
+          "string" == typeof data.content ? _this.lbContent.string = data.content : _this.lbContent.node.active = false;
+          if ("number" == typeof data.coin) {
+            var coinControl = new CoinLabel_1.default(_this.lbCoin);
+            var subfix = data.coin > 1e7 ? "" : " COINS";
+            coinControl.updateUserBalance(data.coin, {
+              subfix: subfix
+            });
+          } else _this.lbCoin.node.active = false;
+          "boolean" == typeof data.share && data.share ? _this.nodeShare.active = true : _this.nodeShare.active = false;
+          "number" != typeof data.timeOut && (data.timeOut = 10);
+          _this.node.runAction(cc.sequence(cc.delayTime(data.timeOut), cc.callFunc(function() {
+            _this.onClose();
+          })));
+          "function" == typeof data.callback && (_this.notiCB = data.callback);
+          _this.releaseCB = function() {
+            res();
+          };
+        });
+      };
+      NotificationComp.prototype.onOpen = function() {
+        this.node.runAction(effect.moveInBy({
+          direction: define.type.DIRECTION.UP,
+          distance: this.node.height,
+          sfx: true,
+          sound: "sfx_notice"
+        }));
+      };
+      NotificationComp.prototype.onClose = function() {
+        var _this = this;
+        this.node.runAction(effect.moveOutBy({
+          direction: define.type.DIRECTION.UP,
+          distance: this.node.height,
+          sfx: true,
+          callback: function() {
+            _this.node && _this.node.destroy && _this.node.destroy();
+          }
+        }));
+      };
+      NotificationComp.prototype.onClickNotification = function() {
+        this.notiCB && this.notiCB();
+        this.onClose();
+      };
+      NotificationComp.prototype.onClickShare = function() {
+        controller.sound.playButtonSFX();
+        var title = "#gamehayvailoan";
+        if (cc.sys.isBrowser) platform.facebook.share({
+          link: document.URL,
+          title: title
+        }); else {
+          var path = platform.handle.screenshot().path;
+          platform.facebook.sharePhoto({
+            title: title,
+            image: path
+          });
+        }
+      };
+      NotificationComp.prototype.onDestroy = function() {
+        this.releaseCB && this.releaseCB();
+      };
+      __decorate([ property(cc.Label) ], NotificationComp.prototype, "lbTitle", void 0);
+      __decorate([ property(cc.Label) ], NotificationComp.prototype, "lbContent", void 0);
+      __decorate([ property(cc.Label) ], NotificationComp.prototype, "lbCoin", void 0);
+      __decorate([ property(cc.Node) ], NotificationComp.prototype, "nodeShare", void 0);
+      NotificationComp = __decorate([ ccclass ], NotificationComp);
+      return NotificationComp;
+    }(cc.Component);
+    exports.default = NotificationComp;
+    cc._RF.pop();
+  }, {
+    "./CoinLabel": "CoinLabel"
+  } ],
   PayTableResource: [ function(require, module, exports) {
     "use strict";
     cc._RF.push(module, "e8d3cYI4HFDcYNx//wgEaXN", "PayTableResource");
@@ -12913,7 +13162,6 @@ window.__require = function e(t, n, r) {
       value: true
     });
     var DefineType_1 = require("../Define/DefineType");
-    var DefineKey_1 = require("../Define/DefineKey");
     var IOSHandle_1 = require("./ios/IOSHandle");
     var AndroidHandle_1 = require("./android/AndroidHandle");
     var WebHandle_1 = require("./web/WebHandle");
@@ -12951,10 +13199,6 @@ window.__require = function e(t, n, r) {
         return this.instance;
       };
       PlatformController.prototype.init = function() {
-        if ("true" === cc.sys.localStorage.getItem(DefineKey_1.local.PLATFORM_INIT)) {
-          cc.sys.localStorage.setItem(DefineKey_1.local.PLATFORM_INIT, false);
-          return;
-        }
         this.deviceOs = util.game.getDeviceOS();
         this.deviceOsName = DefineType_1.DEVICE_OS[this.deviceOs];
         if (this.deviceOs === DefineType_1.DEVICE_OS.IOS_NAVITE) {
@@ -12998,7 +13242,6 @@ window.__require = function e(t, n, r) {
           this.firebase.init();
           this.onesignal.init();
           this.iap.init();
-          this.inited = true;
         }
       };
       PlatformController.instance = null;
@@ -13007,7 +13250,6 @@ window.__require = function e(t, n, r) {
     exports.default = PlatformController;
     cc._RF.pop();
   }, {
-    "../Define/DefineKey": "DefineKey",
     "../Define/DefineType": "DefineType",
     "./android/AndroidAdmob": "AndroidAdmob",
     "./android/AndroidFacebook": "AndroidFacebook",
@@ -13027,6 +13269,297 @@ window.__require = function e(t, n, r) {
     "./web/WebHandle": "WebHandle",
     "./web/WebIap": "WebIap",
     "./web/WebOnesignal": "WebOnesignal"
+  } ],
+  PopupAbout: [ function(require, module, exports) {
+    "use strict";
+    cc._RF.push(module, "ab03d9SXdtKh7/jYznIN1KQ", "PopupAbout");
+    Object.defineProperty(exports, "__esModule", {
+      value: true
+    });
+    var BasePopup_1 = require("../BasePopup");
+    var _a = cc._decorator, ccclass = _a.ccclass, property = _a.property;
+    var PopupAbout = function(_super) {
+      __extends(PopupAbout, _super);
+      function PopupAbout() {
+        var _this = null !== _super && _super.apply(this, arguments) || this;
+        _this.lbVer = void 0;
+        _this.lbUserID = void 0;
+        _this.lbText1 = void 0;
+        _this.lbText2 = void 0;
+        return _this;
+      }
+      PopupAbout.prototype.onLoad = function() {
+        _super.prototype.onLoad.call(this);
+        this.initialize();
+      };
+      PopupAbout.prototype.initialize = function() {
+        this.lbUserID.string = "User ID: " + game.user.id.toString();
+        this.lbVer.string = "Version: " + game.data.versionGame;
+      };
+      PopupAbout.prototype.onClickSupport = function() {
+        game.log("PopupAbout", "onClickSupport");
+      };
+      PopupAbout.prototype.onClickPolicy = function() {
+        game.log("PopupAbout", "onClickPolicy");
+      };
+      __decorate([ property(cc.Label) ], PopupAbout.prototype, "lbVer", void 0);
+      __decorate([ property(cc.Label) ], PopupAbout.prototype, "lbUserID", void 0);
+      __decorate([ property(cc.Label) ], PopupAbout.prototype, "lbText1", void 0);
+      __decorate([ property(cc.Label) ], PopupAbout.prototype, "lbText2", void 0);
+      PopupAbout = __decorate([ ccclass ], PopupAbout);
+      return PopupAbout;
+    }(BasePopup_1.default);
+    exports.default = PopupAbout;
+    cc._RF.pop();
+  }, {
+    "../BasePopup": "BasePopup"
+  } ],
+  PopupAdsReward: [ function(require, module, exports) {
+    "use strict";
+    cc._RF.push(module, "2b937clfQtPjYta2YWqMWQa", "PopupAdsReward");
+    Object.defineProperty(exports, "__esModule", {
+      value: true
+    });
+    var BasePopup_1 = require("../BasePopup");
+    var CoinLabel_1 = require("../Components/CoinLabel");
+    var _a = cc._decorator, ccclass = _a.ccclass, property = _a.property;
+    var PopupWheelClose = function(_super) {
+      __extends(PopupWheelClose, _super);
+      function PopupWheelClose() {
+        var _this = null !== _super && _super.apply(this, arguments) || this;
+        _this.lbCoin = void 0;
+        return _this;
+      }
+      PopupWheelClose.prototype.init = function(data) {
+        if (data && "number" == typeof data.coin) {
+          var coinControl = new CoinLabel_1.default(this.lbCoin);
+          coinControl.updateUserBalance(data.coin);
+        }
+      };
+      PopupWheelClose.prototype.onOpen = function(callback) {
+        controller.sound.playSound("sfx_pop_4");
+        return _super.prototype.onOpen.call(this, callback);
+      };
+      __decorate([ property(cc.Label) ], PopupWheelClose.prototype, "lbCoin", void 0);
+      PopupWheelClose = __decorate([ ccclass ], PopupWheelClose);
+      return PopupWheelClose;
+    }(BasePopup_1.default);
+    exports.default = PopupWheelClose;
+    cc._RF.pop();
+  }, {
+    "../BasePopup": "BasePopup",
+    "../Components/CoinLabel": "CoinLabel"
+  } ],
+  PopupCongratulation: [ function(require, module, exports) {
+    "use strict";
+    cc._RF.push(module, "324d5MzbRJCOIL53+/Cgyj/", "PopupCongratulation");
+    Object.defineProperty(exports, "__esModule", {
+      value: true
+    });
+    var BasePopup_1 = require("../BasePopup");
+    var CoinLabel_1 = require("../Components/CoinLabel");
+    var _a = cc._decorator, ccclass = _a.ccclass, property = _a.property;
+    var PopupCongratulation = function(_super) {
+      __extends(PopupCongratulation, _super);
+      function PopupCongratulation() {
+        var _this = null !== _super && _super.apply(this, arguments) || this;
+        _this.nodeContent = void 0;
+        _this.nodeButton = void 0;
+        _this.nodeShare = void 0;
+        _this.callback = void 0;
+        return _this;
+      }
+      PopupCongratulation.prototype.init = function(data) {
+        this.callback = void 0;
+        var contentBonus = this.nodeContent.getChildByName("bonus");
+        var contentFreeSpin = this.nodeContent.getChildByName("freespin");
+        var contentWinFreeSpin = this.nodeContent.getChildByName("winfreespin");
+        var btnBonus = this.nodeButton.getChildByName("btnBonus");
+        var btnBackToGame = this.nodeButton.getChildByName("btnBackToGame");
+        var btnPlay = this.nodeButton.getChildByName("btnPlay");
+        var nodeShare = this.nodeShare;
+        var elements = [ contentBonus, contentFreeSpin, contentWinFreeSpin, btnBonus, btnBackToGame, btnPlay, nodeShare ];
+        var elementsBonus = [ contentBonus, btnBonus ];
+        var elementsFreeSpin = [ contentFreeSpin, btnPlay ];
+        var elementsWinFreeSpin = [ contentWinFreeSpin, btnBackToGame, nodeShare ];
+        elements.forEach(function(o) {
+          o && o.active && (o.active = false);
+        });
+        data = data || {};
+        if ("bonus" == data.type) elementsBonus.forEach(function(o) {
+          o && !o.active && (o.active = true);
+        }); else if ("freespin" == data.type) {
+          elementsFreeSpin.forEach(function(o) {
+            o && !o.active && (o.active = true);
+          });
+          if ("number" == typeof data.freespin) {
+            var lbFreeSpin = contentFreeSpin.getChildByName("lbFreeSpin").getComponent(cc.Label);
+            lbFreeSpin && (lbFreeSpin.string = data.freespin.toString());
+          }
+        } else if ("winfreespin" == data.type) {
+          elementsWinFreeSpin.forEach(function(o) {
+            o && !o.active && (o.active = true);
+          });
+          if ("number" == typeof data.coin) {
+            var lbCoin = contentWinFreeSpin.getChildByName("bg_youwin2").getChildByName("lbCoin").getComponent(cc.Label);
+            var lbControl = new CoinLabel_1.default(lbCoin);
+            lbControl && lbControl.updateUserBalance(data.coin);
+          }
+          if ("number" == typeof data.freespin) {
+            var text = contentWinFreeSpin.getChildByName("text2").getComponent(cc.Label);
+            text && (text.string = "COIN\nIN " + data.freespin + " FREE SPINS");
+          }
+        }
+        data.callback && (this.callback = data.callback);
+      };
+      PopupCongratulation.prototype.openCallback = function() {
+        controller.sound.playSound("sfx_success_4");
+      };
+      PopupCongratulation.prototype.onClickButton = function(button, custom) {
+        game.log("PopupCongratulation", "onClickButton", custom);
+        custom;
+        "function" == typeof this.callback && this.callback();
+        this.onClose();
+      };
+      __decorate([ property(cc.Node) ], PopupCongratulation.prototype, "nodeContent", void 0);
+      __decorate([ property(cc.Node) ], PopupCongratulation.prototype, "nodeButton", void 0);
+      __decorate([ property(cc.Node) ], PopupCongratulation.prototype, "nodeShare", void 0);
+      PopupCongratulation = __decorate([ ccclass ], PopupCongratulation);
+      return PopupCongratulation;
+    }(BasePopup_1.default);
+    exports.default = PopupCongratulation;
+    cc._RF.pop();
+  }, {
+    "../BasePopup": "BasePopup",
+    "../Components/CoinLabel": "CoinLabel"
+  } ],
+  PopupDailyGift: [ function(require, module, exports) {
+    "use strict";
+    cc._RF.push(module, "fe48084wahG44P/FGy6w0y7", "PopupDailyGift");
+    Object.defineProperty(exports, "__esModule", {
+      value: true
+    });
+    var BasePopup_1 = require("../BasePopup");
+    var _a = cc._decorator, ccclass = _a.ccclass, property = _a.property;
+    var EDailyTypes;
+    (function(EDailyTypes) {
+      EDailyTypes[EDailyTypes["LUCY"] = 1] = "LUCY";
+      EDailyTypes[EDailyTypes["FREE_WHEEL"] = 2] = "FREE_WHEEL";
+      EDailyTypes[EDailyTypes["WATCH_ADS_GIFT"] = 3] = "WATCH_ADS_GIFT";
+      EDailyTypes[EDailyTypes["SHARE_FB"] = 4] = "SHARE_FB";
+    })(EDailyTypes = exports.EDailyTypes || (exports.EDailyTypes = {}));
+    var ItemData = function() {
+      function ItemData() {
+        this.type = EDailyTypes.WATCH_ADS_GIFT;
+        this.node = void 0;
+      }
+      __decorate([ property({
+        type: cc.Enum(EDailyTypes)
+      }) ], ItemData.prototype, "type", void 0);
+      __decorate([ property({
+        type: cc.Node
+      }) ], ItemData.prototype, "node", void 0);
+      ItemData = __decorate([ ccclass("ItemData") ], ItemData);
+      return ItemData;
+    }();
+    exports.ItemData = ItemData;
+    var PopupDailyGift = function(_super) {
+      __extends(PopupDailyGift, _super);
+      function PopupDailyGift() {
+        var _this = null !== _super && _super.apply(this, arguments) || this;
+        _this.items = [];
+        _this.list = void 0;
+        return _this;
+      }
+      PopupDailyGift.prototype.onLoad = function() {
+        _super.prototype.onLoad.call(this);
+        this.registerStore();
+      };
+      PopupDailyGift.prototype.registerStore = function() {
+        var _this = this;
+        store.register(store.key.DAILYBONUS, function(data) {
+          if (!data) return;
+          _this.list.content.removeAllChildren();
+          var lucyData = data[define.type.EDailyBonus.LUCY];
+          if (lucyData && "boolean" == typeof lucyData.isTaken && !lucyData.isTaken) {
+            var item = cc.instantiate(_this.items.find(function(o) {
+              return o.type == EDailyTypes.LUCY;
+            }).node);
+            item.x = 0;
+            item.y = 0;
+            item.parent = _this.list.content;
+            var content = item.getChildByName("content").getComponent(cc.Label);
+            content.string = "Send you " + util.string.formatMoney(lucyData.value) + " coins";
+          }
+          var adsData = data[define.type.EDailyBonus.WATCH_ADS_GIFT];
+          if (adsData && adsData.rewards && adsData.rewards.length && adsData.takenCount < adsData.rewards.length && cc.sys.isNative) {
+            var item = cc.instantiate(_this.items.find(function(o) {
+              return o.type == EDailyTypes.WATCH_ADS_GIFT;
+            }).node);
+            item.x = 0;
+            item.y = 0;
+            item.parent = _this.list.content;
+            var content = item.getChildByName("content").getComponent(cc.Label);
+            content.string = "Get " + util.string.formatMoney(adsData.rewards[adsData.takenCount]) + " coins";
+          }
+        });
+      };
+      PopupDailyGift.prototype.onClickButton = function(button, data) {
+        game.log("PopupDailyGift", "onClickButton", data);
+        switch (data) {
+         case "lucy":
+          var lucyData_1 = game.data.dailyBonus[define.type.EDailyBonus.LUCY];
+          api.sendGD({
+            e: api.key.GET_DAILY_BONUS_REWARD,
+            type: define.type.EDailyBonus.LUCY
+          }, function(err, data) {
+            if (err) return;
+            if (data.status) {
+              lucyData_1.isTaken = true;
+              controller.ui.showDialog({
+                title: "Success",
+                message: {
+                  message: "You got " + util.string.formatMoney(lucyData_1.value) + " coins"
+                },
+                buttons: [ {
+                  title: "Confirm",
+                  theme: define.type.CLASS_THEME.SUCCESS
+                } ]
+              });
+              store.emit(store.key.DAILYBONUS, game.data.dailyBonus);
+            }
+          });
+          break;
+
+         case "ads":
+          var adsData_1 = game.data.dailyBonus[define.type.EDailyBonus.WATCH_ADS_GIFT];
+          var adsReward_1 = adsData_1.rewards[adsData_1.takenCount];
+          platform.admob.showRewarded(function() {
+            api.sendGD({
+              e: api.key.GET_DAILY_BONUS_REWARD,
+              type: define.type.EDailyBonus.WATCH_ADS_GIFT
+            }, function(err, data) {
+              if (err) return;
+              if (data.status) {
+                adsData_1.takenCount++;
+                controller.ui.showPopup("adsreward", {
+                  coin: adsReward_1
+                });
+                store.emit(store.key.DAILYBONUS, game.data.dailyBonus);
+              }
+            });
+          });
+        }
+      };
+      __decorate([ property([ ItemData ]) ], PopupDailyGift.prototype, "items", void 0);
+      __decorate([ property(cc.ScrollView) ], PopupDailyGift.prototype, "list", void 0);
+      PopupDailyGift = __decorate([ ccclass ], PopupDailyGift);
+      return PopupDailyGift;
+    }(BasePopup_1.default);
+    exports.default = PopupDailyGift;
+    cc._RF.pop();
+  }, {
+    "../BasePopup": "BasePopup"
   } ],
   PopupDailyQuest: [ function(require, module, exports) {
     "use strict";
@@ -13072,6 +13605,7 @@ window.__require = function e(t, n, r) {
         _this.storeKey = [];
         _this.itemKey = "";
         _this.currentQuestIndex = void 0;
+        _this.destroyCB = void 0;
         return _this;
       }
       PopupDailyQuest.prototype.onLoad = function() {
@@ -13102,47 +13636,51 @@ window.__require = function e(t, n, r) {
       PopupDailyQuest.prototype.initiate = function() {
         var _this = this;
         var bottom = this.bottom;
-        var gift1 = bottom.getChildByName("daily-slot-icon-gift-1");
+        var gift1_unlock = bottom.getChildByName("daily-slot-icon-gift-1");
         var gift1_lock = bottom.getChildByName("daily-slot-icon-gift-1-lock");
-        var gift2 = bottom.getChildByName("daily-slot-icon-gift-2");
+        var gift2_unlock = bottom.getChildByName("daily-slot-icon-gift-2");
         var gift2_lock = bottom.getChildByName("daily-slot-icon-gift-2-lock");
         this.weeklyLabel = new CoinLabel_1.default(this.lablePointBottom);
         this.barWeekly.lerpRatio = -1;
         this.barWeekly.setListener(function(percent) {
           if (percent >= 70) {
-            if (!gift1.active) {
-              gift1.active = true;
-              gift1.runAction(effect.jelly());
+            if (!gift1_unlock.active) {
+              gift1_unlock.active = true;
+              gift1_unlock.runAction(effect.jelly({
+                sfx: true
+              }));
               gift1_lock.active = false;
               if (0 == game.data.weeklyAccumilation.takenRewards) {
                 var eventHandler = new cc.Component.EventHandler();
                 eventHandler.target = _this.node;
                 eventHandler.component = "PopupDailyQuest";
                 eventHandler.handler = "onClickWeeklyItem";
-                var button = gift1.getComponent(cc.Button);
+                var button = gift1_unlock.getComponent(cc.Button);
                 button.clickEvents.push(eventHandler);
-              } else gift1.stopAllActions();
+              } else gift1_unlock.stopAllActions();
             }
-          } else if (gift1.active) {
-            gift1.active = false;
+          } else if (gift1_unlock.active) {
+            gift1_unlock.active = false;
             gift1_lock.active = true;
           }
           if (percent >= 100) {
-            if (!gift2.active) {
-              gift2.active = true;
-              gift2.runAction(effect.jelly());
+            if (!gift2_unlock.active) {
+              gift2_unlock.active = true;
+              gift2_unlock.runAction(effect.jelly({
+                sfx: true
+              }));
               gift2_lock.active = false;
               if (game.data.weeklyAccumilation.takenRewards <= 1) {
                 var eventHandler = new cc.Component.EventHandler();
                 eventHandler.target = _this.node;
                 eventHandler.component = "PopupDailyQuest";
                 eventHandler.handler = "onClickWeeklyItem";
-                var button = gift2.getComponent(cc.Button);
+                var button = gift2_unlock.getComponent(cc.Button);
                 button.clickEvents.push(eventHandler);
-              } else gift2.stopAllActions();
+              } else gift2_unlock.stopAllActions();
             }
-          } else if (gift2.active) {
-            gift2.active = false;
+          } else if (gift2_unlock.active) {
+            gift2_unlock.active = false;
             gift2_lock.active = true;
           }
         });
@@ -13172,6 +13710,7 @@ window.__require = function e(t, n, r) {
         setInterval(function() {
           if (!this || !this.time) return;
           this.time.getComponent(cc.Label).string = util.string.formatTime(util.game.timeToNextday()) + " Left";
+          controller.sound.playSound("sfx_clock");
         }.bind(this), 1e3);
       };
       PopupDailyQuest.prototype.renderItem = function() {
@@ -13185,11 +13724,13 @@ window.__require = function e(t, n, r) {
           return object;
         });
         var item = void 0;
+        var items = [];
         this.listContent.content.removeAllChildren();
         if (game.data.dailyQuest.completeAll) for (var i = 0; i < data.length; i++) {
           item = cc.instantiate(this.item.complete);
           this.listContent.content.addChild(item);
           item.setPosition(0, 0);
+          items.push(item);
         } else data.forEach(function(data) {
           if (data.status == STATUS.DOING) {
             store.unRegister(_this.itemKey);
@@ -13219,7 +13760,9 @@ window.__require = function e(t, n, r) {
               if (100 == percent) {
                 giftDaily_lock_1.active = false;
                 giftDaily_1.active = true;
-                giftDaily_1.runAction(effect.jelly());
+                giftDaily_1.runAction(effect.jelly({
+                  sfx: true
+                }));
                 var eventHandler = new cc.Component.EventHandler();
                 eventHandler.target = _this.node;
                 eventHandler.component = "PopupDailyQuest";
@@ -13235,16 +13778,28 @@ window.__require = function e(t, n, r) {
               progress_1 && progress_1.updateProgress(data.currentProgress / quest.goal);
               if (3 == quest.requireType) {
                 percentLabel_1 && (percentLabel_1.getComponent(cc.Label).string = util.string.formatMoney(data.currentProgress) + " coins");
+                "number" != typeof data.currentCount && (data.currentCount = quest.require.times);
                 labelForItemPlus_1 && (labelForItemPlus_1.string = data.currentCount + " " + (data.currentCount > 1 ? "times" : "time") + " left");
               }
             });
           } else if (data.status == STATUS.LOCK) {
             item = cc.instantiate(_this.item.lock);
             var lockItem = item.getChildByName("iconLock");
-            lockItem.runAction(effect.shake());
+            lockItem.runAction(effect.shake({
+              sfx: true
+            }));
           } else data.status == STATUS.COMPLETE && (item = cc.instantiate(_this.item.complete));
           item.setPosition(0, 0);
           _this.listContent.content.addChild(item);
+          items.push(item);
+        });
+        items.forEach(function(o, i) {
+          o.opacity = 0;
+          o.runAction(cc.sequence(cc.delayTime(.2 + .1 * i), effect.bouceIn({
+            time: .3,
+            sfx: true,
+            sound: "sfx_pop_1"
+          })));
         });
       };
       PopupDailyQuest.prototype.effectIn = function() {
@@ -13257,10 +13812,12 @@ window.__require = function e(t, n, r) {
         });
       };
       PopupDailyQuest.prototype.onClickDailyItem = function() {
+        var _this = this;
         game.log("PopupDailyQuest", "onClickDailyItem");
         if (!game.data.dailyQuest.doneThisQuest) return;
         var dailyQuest = game.data.dailyQuest;
         var currentQuest = dailyQuest.missions[dailyQuest.currentQuest];
+        controller.sound.playButtonSFX();
         api.sendGD({
           e: api.key.DAILYQUEST_REWARD
         }, function(err, data) {
@@ -13278,6 +13835,12 @@ window.__require = function e(t, n, r) {
             controller.ui.playPrefabAnimation("dailyReward", {
               coin: currentQuest.rewards
             });
+            _this.destroyCB = function() {
+              controller.ui.pushNotification({
+                title: "Misson complete",
+                share: true
+              });
+            };
           } else game.warn("PopupDailyQuest", "onClickDailyItem", "Data error", data);
         });
       };
@@ -13309,6 +13872,7 @@ window.__require = function e(t, n, r) {
           return store.unRegister(key);
         });
         store.unRegister(this.itemKey);
+        "function" == typeof this.destroyCB && this.destroyCB();
       };
       __decorate([ property(cc.Node) ], PopupDailyQuest.prototype, "time", void 0);
       __decorate([ property(Item) ], PopupDailyQuest.prototype, "item", void 0);
@@ -13324,6 +13888,51 @@ window.__require = function e(t, n, r) {
   }, {
     "../BasePopup": "BasePopup",
     "../Components/AccumulatedBar": "AccumulatedBar",
+    "../Components/CoinLabel": "CoinLabel"
+  } ],
+  PopupFacebookConnect: [ function(require, module, exports) {
+    "use strict";
+    cc._RF.push(module, "449c6uamHVIlY9N5Rv0dB4h", "PopupFacebookConnect");
+    Object.defineProperty(exports, "__esModule", {
+      value: true
+    });
+    var BasePopup_1 = require("../BasePopup");
+    var CoinLabel_1 = require("../Components/CoinLabel");
+    var _a = cc._decorator, ccclass = _a.ccclass, property = _a.property;
+    var PoppupFacebookConnect = function(_super) {
+      __extends(PoppupFacebookConnect, _super);
+      function PoppupFacebookConnect() {
+        var _this = null !== _super && _super.apply(this, arguments) || this;
+        _this.lbCoin = void 0;
+        return _this;
+      }
+      PoppupFacebookConnect.prototype.init = function(data) {
+        var coinControl = new CoinLabel_1.default(this.lbCoin);
+        coinControl.updateUserBalance(1e5, {
+          subfix: " Test"
+        });
+      };
+      PoppupFacebookConnect.prototype.onOpen = function(callback) {
+        controller.sound.playSound("sfx_pop_4");
+        return _super.prototype.onOpen.call(this, callback);
+      };
+      PoppupFacebookConnect.prototype.onClickConnect = function() {
+        var _this = this;
+        platform.facebook.login().then(function(dat) {
+          _this.onClose();
+        });
+      };
+      PoppupFacebookConnect.prototype.onClickNoThank = function() {
+        this.onClose();
+      };
+      __decorate([ property(cc.Label) ], PoppupFacebookConnect.prototype, "lbCoin", void 0);
+      PoppupFacebookConnect = __decorate([ ccclass ], PoppupFacebookConnect);
+      return PoppupFacebookConnect;
+    }(BasePopup_1.default);
+    exports.default = PoppupFacebookConnect;
+    cc._RF.pop();
+  }, {
+    "../BasePopup": "BasePopup",
     "../Components/CoinLabel": "CoinLabel"
   } ],
   PopupSetting: [ function(require, module, exports) {
@@ -13386,24 +13995,30 @@ window.__require = function e(t, n, r) {
       PopupSetting.prototype.onToggleSound = function(toggle) {
         game.log("Popup Setting", "onToggleSound", toggle.isChecked);
         tracking.send(toggle.isChecked ? tracking.event.SOUND_ON : tracking.event.SOUND_OFF);
+        controller.sound.playButtonSFX();
         controller.sound.setSoundStatus(toggle.isChecked);
       };
       PopupSetting.prototype.onToggleMusic = function(toggle) {
         game.log("Popup Setting", "onToggleMusic", toggle.isChecked);
         tracking.send(toggle.isChecked ? tracking.event.MUSIC_ON : tracking.event.MUSIC_OFF);
+        controller.sound.playButtonSFX();
         controller.sound.setMusicStatus(toggle.isChecked);
       };
       PopupSetting.prototype.onToggleGift = function(toggle) {
         game.log("Popup Setting", "onToggleGift", toggle.isChecked);
+        controller.sound.playButtonSFX();
       };
       PopupSetting.prototype.onToggleNotification = function(toggle) {
         game.log("Popup Setting", "onToggleNotification", toggle.isChecked);
+        controller.sound.playButtonSFX();
       };
       PopupSetting.prototype.onClickInviteSMS = function(button) {
         game.log("Popup Setting", "onClickInviteSMS", button);
+        controller.sound.playButtonSFX();
       };
       PopupSetting.prototype.onClickInviteEmail = function(button) {
         game.log("Popup Setting", "onClickInviteEmail", button);
+        controller.sound.playButtonSFX();
       };
       __decorate([ property(cc.ScrollView) ], PopupSetting.prototype, "listSetting", void 0);
       PopupSetting = __decorate([ ccclass ], PopupSetting);
@@ -13536,12 +14151,14 @@ window.__require = function e(t, n, r) {
         bg.node.opacity = 0;
         bg.node.runAction(cc.sequence(cc.delayTime(.07 * index), effect.moveInBy({
           time: .5,
-          direction: define.type.DIRECTION.DOWN
+          direction: define.type.DIRECTION.DOWN,
+          sfx: true
         })));
         return item;
       };
       PopupShop.prototype.onClickBuy = function(button, customData) {
         game.log("PopupShop", "onClickBuy", customData);
+        controller.sound.playButtonSFX();
         var item = JSON.parse(customData);
         platform.iap.itemBuying = item;
         tracking.send(tracking.event.IAP_PURCHASE_ITEM, item);
@@ -13563,6 +14180,60 @@ window.__require = function e(t, n, r) {
   }, {
     "../BasePopup": "BasePopup",
     "../Define/DefineType": "DefineType"
+  } ],
+  PopupWheelClose: [ function(require, module, exports) {
+    "use strict";
+    cc._RF.push(module, "22fcevGWyhCHKcIaksEndk9", "PopupWheelClose");
+    Object.defineProperty(exports, "__esModule", {
+      value: true
+    });
+    var BasePopup_1 = require("../BasePopup");
+    var CoinLabel_1 = require("../Components/CoinLabel");
+    var _a = cc._decorator, ccclass = _a.ccclass, property = _a.property;
+    var PopupWheelClose = function(_super) {
+      __extends(PopupWheelClose, _super);
+      function PopupWheelClose() {
+        var _this = null !== _super && _super.apply(this, arguments) || this;
+        _this.lbCoin = void 0;
+        _this.lbPrice = void 0;
+        _this.clickedClose = false;
+        return _this;
+      }
+      PopupWheelClose.prototype.init = function(data) {
+        if (game.data.megaWheel && game.data.megaWheel.array) {
+          var coinControl = new CoinLabel_1.default(this.lbCoin);
+          var maxCoin = game.data.megaWheel.array.reduce(function(r, o) {
+            return o > r ? o : r;
+          }, 0);
+          coinControl.updateUserBalance(maxCoin);
+        }
+        game.data.shop[define.type.ESHOP.MEGA_WHEEL] && (this.lbPrice.string = "COINS FOR ONLY $" + game.data.shop[define.type.ESHOP.MEGA_WHEEL].price.toFixed(2));
+      };
+      PopupWheelClose.prototype.onOpen = function(callback) {
+        controller.sound.playSound("sfx_pop_4");
+        return _super.prototype.onOpen.call(this, callback);
+      };
+      PopupWheelClose.prototype.onSpinNow = function() {
+        if (this.clickedClose) return;
+        view.screen.wheelBonus && view.screen.wheelBonus.onClickSpin();
+        this.onClose();
+      };
+      PopupWheelClose.prototype.onClickClose = function(event) {
+        if (this.clickedClose) return;
+        this.clickedClose = true;
+        view.screen.wheelBonus && controller.ui.closeWheelBonus();
+        this.onClose();
+      };
+      __decorate([ property(cc.Label) ], PopupWheelClose.prototype, "lbCoin", void 0);
+      __decorate([ property(cc.Label) ], PopupWheelClose.prototype, "lbPrice", void 0);
+      PopupWheelClose = __decorate([ ccclass ], PopupWheelClose);
+      return PopupWheelClose;
+    }(BasePopup_1.default);
+    exports.default = PopupWheelClose;
+    cc._RF.pop();
+  }, {
+    "../BasePopup": "BasePopup",
+    "../Components/CoinLabel": "CoinLabel"
   } ],
   ResourceController1: [ function(require, module, exports) {
     "use strict";
@@ -13600,10 +14271,22 @@ window.__require = function e(t, n, r) {
             wildBorder: "img/item/wild-border",
             bg: "img/bg-big"
           },
-          payTable: {}
+          payTable: {
+            "slot-egyt-pay-1": "paytable/slot-egyt-pay-1",
+            "slot-egyt-pay-2": "paytable/slot-egyt-pay-2",
+            "slot-egyt-pay-3": "paytable/slot-egyt-pay-3",
+            "slot-egyt-pay-4": "paytable/slot-egyt-pay-4",
+            "slot-egyt-pay-bg": "paytable/slot-egyt-pay-bg",
+            "slot-egyt-pay-btn-back-to-game": "paytable/slot-egyt-pay-btn-back-to-game",
+            "slot-egyt-pay-btn-back": "paytable/slot-egyt-pay-btn-back"
+          }
         };
         _this.audioListName = {
-          "01": "background.mp3"
+          wellcome: "sfx_wellcome",
+          background: "background",
+          realStop: "sfx_reel_stop",
+          result: "sfx_result",
+          startSpin: "sfx_start_spin"
         };
         _this.storageBase = "game-slot/1_Slot1/";
         _this.resourcePath = "4_gameScene/1_Slot1/";
@@ -13660,7 +14343,19 @@ window.__require = function e(t, n, r) {
             coin: "img/item/game-dra-item-coin-gold",
             wildBorder: "img/item/game-dra-item-wild-bg"
           },
-          payTable: {}
+          payTable: {
+            paytable_24: "paytable/paytable_24",
+            "slot-dragon-paytable-bg": "paytable/slot-dragon-paytable-bg",
+            "slot-dragon-paytable-btn-back": "paytable/slot-dragon-paytable-btn-back",
+            "slot-dragon-paytable-img-1": "paytable/slot-dragon-paytable-img-1",
+            "slot-dragon-paytable-img-2": "paytable/slot-dragon-paytable-img-2",
+            "slot-dragon-paytable-img-3": "paytable/slot-dragon-paytable-img-3",
+            "slot-dragon-paytable-img-4": "paytable/slot-dragon-paytable-img-4",
+            "slot-dragon-paytable-img-5": "paytable/slot-dragon-paytable-img-5"
+          }
+        };
+        _this.audioListName = {
+          background: "background"
         };
         _this.storageBase = "game-slot/2_Slot2/";
         _this.resourcePath = "4_gameScene/2_Slot2/";
@@ -13704,7 +14399,22 @@ window.__require = function e(t, n, r) {
           subItem: {
             bg: "img/bg-big"
           },
-          minigame: [ "minigame/bap_cai_dark", "minigame/cu_hanh_dark", "minigame/huong_duong_dark", "minigame/ca_rot_dark", "minigame/snake", "minigame/gold_bap_cai", "minigame/gold_cu_hanh", "minigame/gold_huong_duong", "minigame/gold_ca_rot", "minigame/bap_cai_alpha", "minigame/cu_hanh_alpha", "minigame/huong_duong_alpha", "minigame/ca_rot_alpha" ]
+          minigame: [ "minigame/bap_cai_dark", "minigame/cu_hanh_dark", "minigame/huong_duong_dark", "minigame/ca_rot_dark", "minigame/snake", "minigame/gold_bap_cai", "minigame/gold_cu_hanh", "minigame/gold_huong_duong", "minigame/gold_ca_rot", "minigame/bap_cai_alpha", "minigame/cu_hanh_alpha", "minigame/huong_duong_alpha", "minigame/ca_rot_alpha" ],
+          paytable: {
+            arrow: "paytable/arrow",
+            backtogame_left: "paytable/backtogame_left",
+            backtogame_right: "paytable/backtogame_right",
+            backtogame: "paytable/backtogame",
+            bg: "paytable/bg",
+            game_rules: "paytable/game_rules",
+            item_score_2: "paytable/item_score_2",
+            item_score_3: "paytable/item_score_3",
+            item_score: "paytable/item_score",
+            outline_bg: "paytable/outline_bg"
+          }
+        };
+        _this.audioListName = {
+          background: "background"
         };
         _this.storageBase = "game-slot/3_Slot3/";
         _this.resourcePath = "4_gameScene/3_Slot3/";
@@ -13779,6 +14489,9 @@ window.__require = function e(t, n, r) {
           borderWinItem: [ "img/casino-slot-stroke-win" ],
           borderBet: [ "img/borderBet" ]
         };
+        _this.audioListName = {
+          background: "background"
+        };
         return _this;
       }
       ResourceController4.prototype.getListItemBorder = function() {
@@ -13838,7 +14551,19 @@ window.__require = function e(t, n, r) {
           subItem: {
             bg: "img/bg-big"
           },
-          minigame: [ "minigame/gem_minigame_bonus_item_01", "minigame/gem_minigame_bonus_item_02", "minigame/gem_minigame_bonus_item_03", "minigame/gem_minigame_bonus_item_04", "minigame/gem_minigame_bonus_item_05", "minigame/gem_minigame_bonus_item_06", "minigame/gem_minigame_bonus_item_07", "minigame/gem_minigame_bonus_item_08", "minigame/gem_minigame_bonus_item_09", "minigame/gem_minigame_bonus_item_10", "minigame/gem_minigame_bonus_item_11", "minigame/gem_minigame_bonus_item_12", "minigame/gem_minigame_bonus_item_13", "minigame/gem_minigame_bonus_item_14", "minigame/gem_minigame_bonus_item_15", "minigame/gem_minigame_bonus_item_fail_01", "minigame/gem_minigame_bonus_item_fail_02", "minigame/gem_minigame_bonus_item_total", "minigame/gem_minigame_bonus_item_white_01", "minigame/gem_minigame_bonus_item_white_02", "minigame/gem_minigame_bonus_item_white_03", "minigame/gem_minigame_bonus_item_white_04", "minigame/gem_minigame_bonus_item_white_05", "minigame/gem_minigame_bonus_item_white_06", "minigame/gem_minigame_bonus_item_white_07", "minigame/gem_minigame_bonus_item_white_08", "minigame/gem_minigame_bonus_item_white_09", "minigame/gem_minigame_bonus_item_white_10", "minigame/gem_minigame_bonus_item_white_11", "minigame/gem_minigame_bonus_item_white_12", "minigame/gem_minigame_bonus_item_white_13", "minigame/gem_minigame_bonus_item_white_14", "minigame/gem_minigame_bonus_item_white_15", "minigame/gem_minigame_bonus_item_white_fail" ]
+          minigame: [ "minigame/gem_minigame_bonus_item_01", "minigame/gem_minigame_bonus_item_02", "minigame/gem_minigame_bonus_item_03", "minigame/gem_minigame_bonus_item_04", "minigame/gem_minigame_bonus_item_05", "minigame/gem_minigame_bonus_item_06", "minigame/gem_minigame_bonus_item_07", "minigame/gem_minigame_bonus_item_08", "minigame/gem_minigame_bonus_item_09", "minigame/gem_minigame_bonus_item_10", "minigame/gem_minigame_bonus_item_11", "minigame/gem_minigame_bonus_item_12", "minigame/gem_minigame_bonus_item_13", "minigame/gem_minigame_bonus_item_14", "minigame/gem_minigame_bonus_item_15", "minigame/gem_minigame_bonus_item_fail_01", "minigame/gem_minigame_bonus_item_fail_02", "minigame/gem_minigame_bonus_item_total", "minigame/gem_minigame_bonus_item_white_01", "minigame/gem_minigame_bonus_item_white_02", "minigame/gem_minigame_bonus_item_white_03", "minigame/gem_minigame_bonus_item_white_04", "minigame/gem_minigame_bonus_item_white_05", "minigame/gem_minigame_bonus_item_white_06", "minigame/gem_minigame_bonus_item_white_07", "minigame/gem_minigame_bonus_item_white_08", "minigame/gem_minigame_bonus_item_white_09", "minigame/gem_minigame_bonus_item_white_10", "minigame/gem_minigame_bonus_item_white_11", "minigame/gem_minigame_bonus_item_white_12", "minigame/gem_minigame_bonus_item_white_13", "minigame/gem_minigame_bonus_item_white_14", "minigame/gem_minigame_bonus_item_white_15", "minigame/gem_minigame_bonus_item_white_fail" ],
+          paytable: {
+            "slot-gem-pay-btn-backtogame": "paytable/slot-gem-pay-btn-backtogame",
+            "slot-gem-pay-btn-back": "paytable/slot-gem-pay-btn-back",
+            "slot-gem-pay-bg": "paytable/slot-gem-pay-bg",
+            "slot-gem-pay-4": "paytable/slot-gem-pay-4",
+            "slot-gem-pay-3": "paytable/slot-gem-pay-3",
+            "slot-gem-pay-2": "paytable/slot-gem-pay-2",
+            "slot-gem-pay-1": "paytable/slot-gem-pay-1"
+          }
+        };
+        _this.audioListName = {
+          background: "background"
         };
         _this.storageBase = "game-slot/5_Slot5/";
         _this.resourcePath = "4_gameScene/5_Slot5/";
@@ -13886,9 +14611,21 @@ window.__require = function e(t, n, r) {
           subItem: {
             bg: "img/bg-big"
           },
-          minigame: []
+          minigame: [],
+          paytable: {
+            backtogame_left: "paytable/backtogame_left",
+            backtogame_right: "paytable/backtogame_right",
+            backtogame: "paytable/backtogame",
+            bg_game: "paytable/bg_game",
+            bg_paytable: "paytable/bg_paytable",
+            game_rules: "paytable/game_rules",
+            item_score_2: "paytable/item_score_2",
+            item_score: "paytable/item_score"
+          }
         };
-        _this.audioListName = {};
+        _this.audioListName = {
+          background: "background"
+        };
         _this.storageBase = "game-slot/6_Slot6/";
         _this.resourcePath = "4_gameScene/6_Slot6/";
         return _this;
@@ -13957,6 +14694,9 @@ window.__require = function e(t, n, r) {
             wheel_spins_tx: "paytable/wheel_spins_txt"
           }
         };
+        _this.audioListName = {
+          background: "background"
+        };
         _this.storageBase = "game-slot/7_Slot7/";
         _this.resourcePath = "4_gameScene/7_Slot7/";
         return _this;
@@ -13996,6 +14736,9 @@ window.__require = function e(t, n, r) {
             paytable3: "paytable/paytable3",
             paytable4: "paytable/paytable4"
           }
+        };
+        _this.audioListName = {
+          background: "background"
         };
         _this.storageBase = "game-slot/8_Slot8/";
         _this.resourcePath = "4_gameScene/8_Slot8/";
@@ -15057,7 +15800,9 @@ window.__require = function e(t, n, r) {
               };
               this.accumilatedBar.updateProgress(this.dataStatus.collect.c / this.dataStatus.collect.tc);
               this.coinBonus = this.dataStatus.collect.w;
-              this.coinBonusController.updateUserBalance(this.coinBonus);
+              this.coinBonusController.updateUserBalance(this.coinBonus, {
+                sfxTag: this.getSoundTag()
+              });
               if (this.dataStatus.freeSpin.c > 0) {
                 this.accumilatedBar.node.runAction(cc.sequence([ cc.delayTime(.2), cc.fadeOut(.4) ]));
                 this.handleStickyWild(this.dataStatus.lastmat);
@@ -15128,12 +15873,19 @@ window.__require = function e(t, n, r) {
                     })));
                   })));
                 });
+                this.node.runAction(cc.sequence(cc.delayTime(.6), cc.callFunc(function() {
+                  _this.playSound("sfx_coin_flip");
+                }), cc.delayTime(1.2), cc.callFunc(function() {
+                  _this.playSound("sfx_coin_hit");
+                })));
                 return [ 4, util.game.delay(2e3, this.node, res) ];
 
                case 1:
                 _a.sent();
                 this.accumilatedBar.updateProgress(collect.c / collect.tc);
-                this.coinBonusController.updateUserBalance(collect.w);
+                this.coinBonusController.updateUserBalance(collect.w, {
+                  sfxTag: this.getSoundTag()
+                });
                 this.coinBonusController.coinLabel.node.runAction(cc.sequence(cc.scaleTo(.2, 1.2), cc.scaleTo(.2, 1)));
                 return [ 3, 4 ];
 
@@ -15327,7 +16079,8 @@ window.__require = function e(t, n, r) {
                 _this.accumilatedBar.updateProgress(_this.dataStatus.collect.c / _this.dataStatus.collect.tc);
                 _this.coinBonus = _this.dataStatus.collect.w;
                 _this.coinBonusController.updateUserBalance(_this.coinBonus, {
-                  lerpRatio: 10
+                  lerpRatio: 10,
+                  sfxTag: _this.getSoundTag()
                 });
                 if (_this.dataStatus.freeSpin.c > 0) {
                   setTimeout(function() {
@@ -15402,7 +16155,8 @@ window.__require = function e(t, n, r) {
             setTimeout(function() {
               _this.accumilatedBar.updateProgress(collect.c / collect.tc);
               _this.coinBonusController.updateUserBalance(collect.w, {
-                lerpRatio: 10
+                lerpRatio: 10,
+                sfxTag: _this.getSoundTag()
               });
               _this.coinBonusController.coinLabel.node.runAction(cc.sequence(cc.callFunc(function() {
                 _this.lightCoin.getComponent(cc.Animation).play();
@@ -15910,10 +16664,18 @@ window.__require = function e(t, n, r) {
         this.majorLabel.string = util.string.formatMoney(this.listJP[1]);
         this.minorLabel.string = util.string.formatMoney(this.listJP[2]);
         this.miniLabel.string = util.string.formatMoney(this.listJP[3]);
-        this.coinGrand.updateUserBalance(this.listJP[0]);
-        this.coinMajor.updateUserBalance(this.listJP[1]);
-        this.coinMinor.updateUserBalance(this.listJP[2]);
-        this.coinMini.updateUserBalance(this.listJP[3]);
+        this.coinGrand.updateUserBalance(this.listJP[0], {
+          sfxTag: this.getSoundTag()
+        });
+        this.coinMajor.updateUserBalance(this.listJP[1], {
+          sfxTag: this.getSoundTag()
+        });
+        this.coinMinor.updateUserBalance(this.listJP[2], {
+          sfxTag: this.getSoundTag()
+        });
+        this.coinMini.updateUserBalance(this.listJP[3], {
+          sfxTag: this.getSoundTag()
+        });
       };
       SlotController4.prototype.updateActiveGold = function(bet) {
         var atri = new AtributeStatic_1.default();
@@ -16686,7 +17448,9 @@ window.__require = function e(t, n, r) {
                   });
                   _this.coinController = new CoinLabel_1.default(_this.rewardWin.children[3].getComponent(cc.Label), 8);
                   _this.rewardWin.children[3].addComponent(cc.LabelOutline);
-                  _this.coinController.updateUserBalance(_this.reward[_this.reels - 1][indexBonus] * _this.totalB);
+                  _this.coinController.updateUserBalance(_this.reward[_this.reels - 1][indexBonus] * _this.totalB, {
+                    sfxTag: _this.getSoundTag()
+                  });
                   setTimeout(function() {
                     if (!view.screen.slot) return;
                     _this.rewardWin.active = false;
@@ -16848,12 +17612,6 @@ window.__require = function e(t, n, r) {
     var LinesController_1 = require("./LinesController");
     var DefineType_1 = require("../Define/DefineType");
     var _a = cc._decorator, ccclass = _a.ccclass, property = _a.property;
-    var SoundKey;
-    (function(SoundKey) {
-      SoundKey[SoundKey["INTRO"] = 0] = "INTRO";
-      SoundKey[SoundKey["BACKGROUND"] = 1] = "BACKGROUND";
-      SoundKey[SoundKey["WIN"] = 2] = "WIN";
-    })(SoundKey = exports.SoundKey || (exports.SoundKey = {}));
     var SlotController = function(_super) {
       __extends(SlotController, _super);
       function SlotController() {
@@ -16967,6 +17725,7 @@ window.__require = function e(t, n, r) {
         this.initState();
         this.initializeItem();
         this.checkFreeSpin();
+        this.addTableSwipe();
       };
       SlotController.prototype.importData = function() {
         this.betArray = this.dataStatus.betArr;
@@ -16986,7 +17745,8 @@ window.__require = function e(t, n, r) {
       SlotController.prototype.loadItemSelectRes = function() {};
       SlotController.prototype.initState = function() {
         var _this = this;
-        this.playSound(SoundKey.INTRO);
+        this.playSound("wellcome");
+        this.playMusic();
         this.animationController = this.node.getComponent(AnimationController_1.default);
         var realScreenSize = cc.view.getFrameSize();
         var realScreenRatio = realScreenSize.width / realScreenSize.height;
@@ -17053,6 +17813,20 @@ window.__require = function e(t, n, r) {
         });
         return sortedList;
       };
+      SlotController.prototype.addTableSwipe = function() {
+        var _this = this;
+        var spos = void 0;
+        var epos = void 0;
+        this.tableView.on(cc.Node.EventType.TOUCH_START, function(e) {
+          spos = e.getLocation();
+        });
+        this.tableView.on(cc.Node.EventType.TOUCH_END, function(e) {
+          epos = e.getLocation();
+          var xdis = Math.abs(epos.x - spos.x);
+          var ydis = Math.abs(epos.y - spos.y);
+          ydis >= 200 && ydis >= 2 * xdis && (_this.isSpin || _this.isAutoSpin || _this.spin());
+        });
+      };
       SlotController.prototype.checkFreeSpin = function() {
         if (this.dataStatus.freeSpin.c > 0) {
           this.freeSpin = this.dataStatus.freeSpin.c;
@@ -17081,12 +17855,14 @@ window.__require = function e(t, n, r) {
       };
       SlotController.prototype.timeManager = function() {
         return __awaiter(this, void 0, void 0, function() {
-          var _a, dataSpin, spinResult, winType, _b, tw, b, rate, error_1;
+          var soundSpinID, _a, dataSpin, spinResult, error_1;
           var _this = this;
-          return __generator(this, function(_c) {
-            switch (_c.label) {
+          return __generator(this, function(_b) {
+            switch (_b.label) {
              case 0:
-              _c.trys.push([ 0, 24, , 25 ]);
+              _b.trys.push([ 0, 27, , 28 ]);
+              controller.sound.setMusicVolume(.3);
+              soundSpinID = this.playSound("startSpin");
               view.multi.loadContent();
               if (!this.isReFresh) {
                 this.animationController && this.animationController.refreshSlotAnimation();
@@ -17096,7 +17872,6 @@ window.__require = function e(t, n, r) {
               this.reelController.forEach(function(item) {
                 return _this.animationController.spinItems(item._listItem);
               });
-              this.playSound(SoundKey.BACKGROUND);
               if (this.freeSpin > 0) {
                 this.freeSpin--;
                 if (view.screen.slot && this.gameId == view.screen.slot.SlotController.gameId) {
@@ -17110,41 +17885,43 @@ window.__require = function e(t, n, r) {
               return [ 4, util.game.delay(3e3, this.node) ];
 
              case 1:
-              _c.sent();
-              if (!(this.isReceivedData && this.dataSpin && this.dataSpin.spinResult)) return [ 3, 23 ];
+              _b.sent();
+              if (!(this.isReceivedData && this.dataSpin && this.dataSpin.spinResult)) return [ 3, 26 ];
               _a = this, dataSpin = _a.dataSpin, spinResult = _a.dataSpin.spinResult;
+              controller.sound.setMusicVolume(1);
+              soundSpinID && controller.sound.stopSound(soundSpinID);
               if (!this.node || !this.handleCollectCoin) return [ 2 ];
               return [ 4, this.handleCollectCoin(dataSpin) ];
 
              case 2:
-              _c.sent();
+              _b.sent();
               if (!this.node || !this.animationController) return [ 2 ];
               return [ 4, this.animationController.setAnimationData(dataSpin) ];
 
              case 3:
-              _c.sent();
+              _b.sent();
               if (!this.node) return [ 2 ];
-              if (!(this.dataSpin.spinResult.score.winType && !this.dataSpin.freeSpin.c && (define.type[this.dataSpin.spinResult.score.winType] == define.type.WIN_TYPE.BIGWIN || define.type[this.dataSpin.spinResult.score.winType] == define.type.WIN_TYPE.MEGAWIN))) return [ 3, 5 ];
+              if (!(this.dataSpin.spinResult.score.winType && !this.dataSpin.freeSpin.c && ("BIGWIN" == this.dataSpin.spinResult.score.winType || "MEGAWIN" == this.dataSpin.spinResult.score.winType))) return [ 3, 5 ];
               return [ 4, this.showWinType(this.dataSpin.spinResult.score.winType, this.dataSpin.spinResult.score.reward) ];
 
              case 4:
-              _c.sent();
-              _c.label = 5;
+              _b.sent();
+              _b.label = 5;
 
              case 5:
               this.spinDoneCallback && this.spinDoneCallback.status && this.spinDoneCallback.status();
               if (!(spinResult.score.reward > 0)) return [ 3, 7 ];
-              this.playSound(SoundKey.WIN);
+              this.playSound("result");
               this.animationController.showWinAmount();
               return [ 4, this.animationController.showAllLines() ];
 
              case 6:
-              _c.sent();
+              _b.sent();
               return [ 3, 8 ];
 
              case 7:
               view.bar.bottom.gameBar.resetWinAmount();
-              _c.label = 8;
+              _b.label = 8;
 
              case 8:
               if (!this.node) return [ 2 ];
@@ -17152,7 +17929,7 @@ window.__require = function e(t, n, r) {
               return [ 4, util.game.delay(500, this.node) ];
 
              case 9:
-              _c.sent();
+              _b.sent();
               if (!this.node || !this.handleBonus) return [ 2 ];
               game.log("You get a bonus");
               this.bonus = true;
@@ -17166,36 +17943,68 @@ window.__require = function e(t, n, r) {
               return [ 4, this.handleFreeSpin(dataSpin) ];
 
              case 11:
-              _c.sent();
+              _b.sent();
               this.isSpin = false;
               this.isReFresh = false;
-              if (!(this.dataSpin.freeSpin.t > 0 && 0 == this.dataSpin.freeSpin.c)) return [ 3, 13 ];
-              winType = "BIGWIN";
-              _b = this.dataSpin.freeSpin, tw = _b.tw, b = _b.b;
-              rate = tw / b;
-              rate >= 50 && (winType = "MEGAWIN");
-              return [ 4, this.showWinType(winType, this.dataSpin.freeSpin.tw) ];
+              if (!(this.dataSpin.freeSpin.t > 0 && this.dataSpin.freeSpin.c == this.dataSpin.freeSpin.t)) return [ 3, 13 ];
+              if (!(view.screen.slot && view.screen.slot.SlotController.gameId == this.gameId)) return [ 3, 13 ];
+              return [ 4, new Promise(function(res, rej) {
+                controller.ui.showPopup("congratulation", {
+                  type: "freespin",
+                  freespin: _this.dataSpin.freeSpin.t,
+                  callback: function() {
+                    res();
+                  }
+                });
+              }) ];
 
              case 12:
-              _c.sent();
-              _c.label = 13;
+              _b.sent();
+              _b.label = 13;
 
              case 13:
+              if (!(this.dataSpin.freeSpin.t > 0 && 0 == this.dataSpin.freeSpin.c)) return [ 3, 16 ];
+              if (!(view.screen.slot && view.screen.slot.SlotController.gameId == this.gameId)) return [ 3, 15 ];
+              return [ 4, new Promise(function(res, rej) {
+                controller.ui.showPopup("congratulation", {
+                  type: "winfreespin",
+                  coin: _this.dataSpin.freeSpin.tw,
+                  freespin: _this.dataSpin.freeSpin.t,
+                  callback: function() {
+                    res();
+                  }
+                });
+              }) ];
+
+             case 14:
+              _b.sent();
+              return [ 3, 16 ];
+
+             case 15:
+              controller.ui.pushNotification({
+                title: "Congratulations",
+                content: "Freespin result",
+                coin: this.dataSpin.freeSpin.tw,
+                share: true
+              });
+              _b.label = 16;
+
+             case 16:
               view.multi.loadContent();
               if (!this.isAutoSpin && view.screen.slot) {
                 if (dataSpin.spinResult.id != view.screen.slot.SlotController.gameId) return [ 2 ];
                 view.bar.bottom.gameBar.bottomBarEvent(define.type.BottomBar.active);
                 view.bar.bottom.gameBar.updateSpinFrame(define.type.SpinButton.normal);
               }
-              if (!this.isAutoSpin) return [ 3, 16 ];
-              if (!(this.autoSpinTimes >= 0)) return [ 3, 15 ];
+              if (!this.isAutoSpin) return [ 3, 19 ];
+              if (!(this.autoSpinTimes >= 0)) return [ 3, 18 ];
               return [ 4, util.game.delay(200) ];
 
-             case 14:
-              _c.sent();
-              _c.label = 15;
+             case 17:
+              _b.sent();
+              _b.label = 18;
 
-             case 15:
+             case 18:
               if (0 == this.autoSpinTimes) {
                 this.isAutoSpin = false;
                 setTimeout(function() {
@@ -17206,52 +18015,52 @@ window.__require = function e(t, n, r) {
                 this.autoSpinTimes < 0 && true == this.bonus && view.bar.bottom.gameBar.updateSpinFrame(define.type.SpinButton.normal);
                 this.autoSpin(this.autoSpinTimes);
               }
-              _c.label = 16;
-
-             case 16:
-              if (!(0 == Object.keys(dataSpin.freeSpin).length)) return [ 3, 20 ];
-              if (!(spinResult.score.sum[1].c > 0)) return [ 3, 20 ];
-              _c.label = 17;
-
-             case 17:
-              if (!(!this.isSpin && !this.isAutoSpin && this.animationController)) return [ 3, 20 ];
-              return [ 4, this.animationController.showEachLine() ];
-
-             case 18:
-              _c.sent();
-              return [ 4, this.animationController.showAllLines(1) ];
+              _b.label = 19;
 
              case 19:
-              _c.sent();
-              return [ 3, 17 ];
+              if (!(0 == Object.keys(dataSpin.freeSpin).length)) return [ 3, 23 ];
+              if (!(spinResult.score.sum[1].c > 0)) return [ 3, 23 ];
+              _b.label = 20;
 
              case 20:
-              if (!(dataSpin.freeSpin && dataSpin.freeSpin.c > 0)) return [ 3, 22 ];
+              if (!(!this.isSpin && !this.isAutoSpin && this.animationController)) return [ 3, 23 ];
+              return [ 4, this.animationController.showEachLine() ];
+
+             case 21:
+              _b.sent();
+              return [ 4, this.animationController.showAllLines(1) ];
+
+             case 22:
+              _b.sent();
+              return [ 3, 20 ];
+
+             case 23:
+              if (!(dataSpin.freeSpin && dataSpin.freeSpin.c > 0)) return [ 3, 25 ];
               game.log("free spin", this.dataSpin.freeSpin);
               return [ 4, util.game.delay(200) ];
 
-             case 21:
-              _c.sent();
+             case 24:
+              _b.sent();
               this.clickSpin();
               view.bar.bottom.gameBar.bottomBarEvent(define.type.BottomBar.lock);
               view.bar.bottom.gameBar.updateSpinFrame(define.type.SpinButton.stopNormalSpin);
-              _c.label = 22;
+              _b.label = 25;
 
-             case 22:
-              return [ 3, 23 ];
+             case 25:
+              return [ 3, 26 ];
 
-             case 23:
-              return [ 3, 25 ];
+             case 26:
+              return [ 3, 28 ];
 
-             case 24:
-              error_1 = _c.sent();
+             case 27:
+              error_1 = _b.sent();
               this.isSpin = false;
               this.isReFresh = false;
               this.isAutoSpin = false;
               game.log("Time manager error:", error_1);
-              return [ 3, 25 ];
+              return [ 3, 28 ];
 
-             case 25:
+             case 28:
               return [ 2 ];
             }
           });
@@ -17293,6 +18102,7 @@ window.__require = function e(t, n, r) {
       };
       SlotController.prototype.spin = function(data) {
         tracking.send(tracking.event.SPIN_SLOT);
+        this.playSound("sfx_coin_push");
         this.isAutoSpin ? view.screen.slot && view.screen.slot.SlotController.autoSpinTimes > 0 && view.bar.bottom.gameBar.bottomBarEvent(define.type.BottomBar.lock) : view.bar.bottom.gameBar.bottomBarEvent(define.type.BottomBar.active);
         if (this.currentBet > game.user.balance) {
           this.autoSpinTimes = 0;
@@ -17307,7 +18117,7 @@ window.__require = function e(t, n, r) {
           totalbet: this.currentBet
         }, function(err, res) {
           game.log("callback", res);
-        });
+        }, false);
         this.timeManager();
       };
       SlotController.prototype.strMatrixToArray = function(str, x, y) {
@@ -17350,55 +18160,70 @@ window.__require = function e(t, n, r) {
       SlotController.prototype.handleBonus = function(data) {};
       SlotController.prototype.checkShowBonusDialog = function(cb) {
         var _this = this;
-        if (!this.bonus || !this.bonusNode || !view.screen.slot || view.screen.slot.SlotController.gameId !== this.gameId) return;
-        controller.ui.showDialog({
+        if (!this.bonus || !this.bonusNode) return;
+        view.screen.slot && view.screen.slot.SlotController.gameId === this.gameId ? controller.ui.showPopup("congratulation", {
+          type: "bonus",
+          callback: function() {
+            view.screen.bonus = _this.bonusNode;
+            _this.bonusNode.x = 0;
+            _this.bonusNode.parent = controller.ui.canvas;
+            _this.bonusNode.runAction(cc.fadeIn(.5));
+            controller.ui.hideBar();
+            cb && cb();
+          }
+        }) : controller.ui.pushNotification({
           title: "You got a bonus",
-          type: define.type.DIALOG_TYPE.HIGH,
-          allowClose: false,
-          name: "check_show_bonus_dialog",
-          message: {
-            message: "You got a bonus.\nPress OK to play"
-          },
-          buttons: [ {
-            title: "OK",
-            theme: define.type.CLASS_THEME.INFO,
-            callback: function() {
-              view.screen.bonus = _this.bonusNode;
-              _this.bonusNode.x = 0;
-              _this.bonusNode.parent = controller.ui.canvas;
-              _this.bonusNode.runAction(cc.fadeIn(.5));
-              controller.ui.hideBar();
-              cb && cb();
-            }
-          } ]
+          callback: function() {
+            var data = Object.values(view.slot).find(function(o) {
+              return o && o.gameId == _this.gameId;
+            });
+            data && controller.ui.resumeSlot(data.uuid, data.id);
+          }
         });
       };
       SlotController.prototype.handleCollectCoin = function(dataSpin) {};
-      SlotController.prototype.playSound = function(name) {
-        var sound;
-        switch (name) {
-         case SoundKey.INTRO:
-          sound = this.resourceController.getAudio(this.resourceController.audioListName.intro);
-          controller.sound.playSound(sound, {
-            tag: this.gameId
-          });
-          return;
-
-         case SoundKey.BACKGROUND:
-          sound = this.resourceController.getAudio(this.resourceController.audioListName.background);
-          controller.sound.playSound(sound, {
-            tag: this.gameId
-          });
-          return;
-
-         case SoundKey.WIN:
-          sound = this.resourceController.getAudio(this.resourceController.audioListName.win);
-          controller.sound.playSound(sound, {
-            tag: this.gameId,
-            volume: .5
-          });
-          return;
+      SlotController.prototype.playMusic = function() {
+        var resCtrl = this.resourceController;
+        var sound = resCtrl.getAudio(resCtrl.audioListName["background"]);
+        sound && controller.sound.playMusic(sound);
+      };
+      SlotController.prototype.playSound = function(name, loop) {
+        var resCtrl = this.resourceController;
+        var sound = resCtrl.getAudio(resCtrl.audioListName[name]);
+        var listDefaultSFX = [ {
+          name: "wellcome",
+          sound: "sfx_wellcome"
+        }, {
+          name: "background",
+          sound: "background"
+        }, {
+          name: "realStop",
+          sound: "sfx_reel_stop"
+        }, {
+          name: "result",
+          sound: "sfx_result"
+        }, {
+          name: "startSpin",
+          sound: "sfx_start_spin"
+        } ];
+        var option = {
+          tags: this.getSoundTag(),
+          loop: loop
+        };
+        if (sound) return controller.sound.playSound(sound, option);
+        if (listDefaultSFX.find(function(o) {
+          return o.name == name;
+        })) {
+          name = listDefaultSFX.find(function(o) {
+            return o.name == name;
+          }).sound;
+          return controller.sound.playSound(name, option);
         }
+        if (controller.sound.isExist(name)) return controller.sound.playSound(name, option);
+        game.warn("SlotController", "playSound", "sound name wasn`t defined", name, resCtrl);
+      };
+      SlotController.prototype.getSoundTag = function() {
+        return [ this.gameId, define.type.VIEW.GAME.toString() ];
       };
       SlotController.prototype.updateStatus = function(data) {
         var _this = this;
@@ -17812,6 +18637,7 @@ window.__require = function e(t, n, r) {
         _this.x = 0;
         _this.y = 0;
         _this.count = 0;
+        _this.endCall = void 0;
         return _this;
       }
       SlotItem.prototype.onLoad = function() {
@@ -17866,13 +18692,18 @@ window.__require = function e(t, n, r) {
       };
       SlotItem.prototype.move = function() {
         var _this = this;
-        var self = this;
-        this.node.runAction(cc.sequence(cc.moveTo(.3, cc.v2(this.node.x, (this.y + .6) * this.slotsController.distanceItemY)), cc.callFunc(function() {
-          _this.isMove = true;
-          _this.time = 0;
-          _this.y0 = self.node.y;
-          _this.count = 0;
-        })));
+        return new Promise(function(res, rej) {
+          var self = _this;
+          _this.node.runAction(cc.sequence(cc.moveTo(.3, cc.v2(_this.node.x, (_this.y + .6) * _this.slotsController.distanceItemY)), cc.callFunc(function() {
+            _this.isMove = true;
+            _this.time = 0;
+            _this.y0 = self.node.y;
+            _this.count = 0;
+          })));
+          _this.endCall = function() {
+            res();
+          };
+        });
       };
       SlotItem.prototype.setMatrixEnd = function(data) {
         this.arrResult = data;
@@ -17931,6 +18762,7 @@ window.__require = function e(t, n, r) {
             var action = cc.moveTo(.2, cc.v2(this.node.x, (this.y + .5) * this.slotsController.distanceItemY)).easing(cc.easeBackOut());
             this.node.runAction(cc.sequence([ action, cc.callFunc(function() {}) ]));
             this.reallyStop = false;
+            this.endCall && this.endCall();
           }
         }
       };
@@ -18030,15 +18862,18 @@ window.__require = function e(t, n, r) {
         this.soundOn = false;
         this.musicOn = false;
         this.listSounds = [];
-        this.buttonSFXName = "click";
-        this.popupSFXName = "slide";
-        this.dialogSFXName = "pop";
+        this.buttonSFXName1 = "sfx_btn_1";
+        this.buttonSFXName2 = "sfx_btn_2";
+        this.popupSFXName = "sfx_pop_2";
+        this.dialogSFXName = "sfx_notice";
+        this.tagData = [];
       }
       SoundController.ins = function() {
         this.instance || (this.instance = new SoundController());
         return this.instance;
       };
       SoundController.prototype.init = function() {
+        this.sounds = resource.sounds;
         if (null === cc.sys.localStorage.getItem(define.key.CONFIG_SOUND)) {
           this.soundOn = true;
           cc.sys.localStorage.setItem(define.key.CONFIG_SOUND, this.soundOn);
@@ -18050,6 +18885,10 @@ window.__require = function e(t, n, r) {
         }
         this.musicOn = "true" === cc.sys.localStorage.getItem(define.key.CONFIG_MUSIC);
         this.listSounds = [];
+      };
+      SoundController.prototype.isExist = function(name) {
+        if (this.sounds[name]) return true;
+        return false;
       };
       SoundController.prototype.toggleSound = function() {
         this.soundOn = "true" === cc.sys.localStorage.getItem(define.key.CONFIG_SOUND);
@@ -18099,52 +18938,126 @@ window.__require = function e(t, n, r) {
       SoundController.prototype.getSoundVolume = function() {
         return cc.audioEngine.getEffectsVolume();
       };
-      SoundController.prototype.playMusic = function(name, loop) {
+      SoundController.prototype.playMusic = function(name, loop, option) {
         if (!this.musicOn) return;
+        game.log("SoundController", "playMusic");
         "undefined" === typeof loop && (loop = true);
+        option = option || {};
         var id = void 0;
-        "string" === typeof name ? this.sounds && this.sounds[name] ? id = cc.audioEngine.playMusic(this.sounds[name], loop) : cc.warn("SoundController", "playMusic", "music " + name + " not defined in resource", this.sounds) : this.sounds && this.sounds["music"] && (id = cc.audioEngine.playMusic(this.sounds["music"], loop));
+        if (name instanceof cc.AudioClip) id = cc.audioEngine.playMusic(name, loop); else if ("string" === typeof name) this.sounds && this.sounds[name] ? id = cc.audioEngine.playMusic(this.sounds[name], loop) : cc.warn("SoundController", "playMusic", "music " + name + " not defined in resource", this.sounds); else if (this.sounds && this.sounds["music"]) {
+          this.stopSoundByTag("music");
+          id = cc.audioEngine.playMusic(this.sounds["music"], loop);
+        }
+        if (option.fade) {
+          cc.audioEngine.setVolume(id, 0);
+          this.fadeInSound(id);
+        }
         return id;
       };
       SoundController.prototype.pauseMusic = function() {
+        game.log("SoundController", "pauseMusic");
         cc.audioEngine.pauseMusic();
       };
       SoundController.prototype.resumeMusic = function() {
+        game.log("SoundController", "resumeMusic");
         if (!this.musicOn) return;
         cc.audioEngine.resumeMusic();
       };
       SoundController.prototype.stopMusic = function() {
+        game.log("SoundController", "stopMusic");
         cc.audioEngine.stopMusic();
       };
       SoundController.prototype.isMusicPlaying = function() {
         return cc.audioEngine.isMusicPlaying();
       };
       SoundController.prototype.playSound = function(source, option) {
-        if (!source) return game.warn("Audio source is not available.");
-        if (!this.soundOn) return;
+        if (!source) {
+          game.warn("Audio source is not available.");
+          return;
+        }
+        if (!this.soundOn) return -1;
         option || (option = {});
         "undefined" === typeof option.loop && (option.loop = false);
+        if (option.tags) {
+          var _loop_1 = function(i) {
+            var tag = option.tags[i];
+            var tagData = this_1.tagData.find(function(o) {
+              return o.name == tag;
+            });
+            if (!tagData) {
+              tagData = {
+                name: tag,
+                enable: true
+              };
+              this_1.tagData.push(tagData);
+            }
+            if (false == tagData.enable) return {
+              value: -1
+            };
+          };
+          var this_1 = this;
+          for (var i = 0; i < option.tags.length; i++) {
+            var state_1 = _loop_1(i);
+            if ("object" === typeof state_1) return state_1.value;
+          }
+        }
         var id = void 0;
         var name = "";
         name = source instanceof cc.AudioClip ? source.name : source;
-        "string" === typeof source && this.sounds && this.sounds[name] ? id = cc.audioEngine.playEffect(this.sounds[name], option.loop) : source instanceof cc.AudioClip ? id = cc.audioEngine.playEffect(source, option.loop) : cc.warn("SoundController", "playSound", "sound " + name + " not defined in resource", this.sounds);
+        "string" === typeof source && this.sounds && this.sounds[name] ? id = cc.audioEngine.playEffect(this.sounds[name], option.loop) : source instanceof cc.AudioClip && (id = cc.audioEngine.playEffect(source, option.loop));
         cc.audioEngine.setVolume(id, option.volume || 1);
+        if (option.fade) {
+          cc.audioEngine.setVolume(id, 0);
+          this.fadeInSound(id);
+        }
         "number" === typeof id && this.listSounds.push({
           name: name,
           id: id,
-          tag: option.tag || "default"
+          tags: option.tags || []
         });
         return id;
+      };
+      SoundController.prototype.setVolume = function(id, volume) {
+        if (volume > 1 || volume < 0) return false;
+        cc.audioEngine.setVolume(id, volume);
+        return true;
       };
       SoundController.prototype.setVolumeByTag = function(tag, volume) {
         if (volume > 1 || volume < 0) return false;
         this.listSounds.forEach(function(item) {
-          item.tag === tag && cc.audioEngine.setVolume(item.id, volume);
+          item.tags.find(function(o) {
+            return o == tag;
+          }) && cc.audioEngine.setVolume(item.id, volume);
         });
         return true;
       };
       SoundController.prototype.disableAudioByTag = function(tag) {
+        var tagData = this.tagData.find(function(o) {
+          return o.name == tag;
+        });
+        if (!tagData) {
+          tagData = {
+            name: tag,
+            enable: false
+          };
+          this.tagData.push(tagData);
+        }
+        tagData.enable = false;
         return this.setVolumeByTag(tag, 0);
+      };
+      SoundController.prototype.enableAudioByTag = function(tag) {
+        var tagData = this.tagData.find(function(o) {
+          return o.name == tag;
+        });
+        if (!tagData) {
+          tagData = {
+            name: tag,
+            enable: true
+          };
+          this.tagData.push(tagData);
+        }
+        tagData.enable = true;
+        return this.setVolumeByTag(tag, 1);
       };
       SoundController.prototype.pauseSound = function(name) {
         var list = this.listSounds.filter(function(o) {
@@ -18154,6 +19067,14 @@ window.__require = function e(t, n, r) {
           var sound = list_1[_i];
           cc.audioEngine.pauseEffect(sound.id);
         }
+      };
+      SoundController.prototype.pauseSoundByTag = function(tag) {
+        this.listSounds.forEach(function(item) {
+          item.tags.find(function(o) {
+            return o == tag;
+          }) && cc.audioEngine.pause(item.id);
+        });
+        return true;
       };
       SoundController.prototype.pauseAllSounds = function() {
         cc.audioEngine.pauseAllEffects();
@@ -18165,23 +19086,90 @@ window.__require = function e(t, n, r) {
         });
         sound && cc.audioEngine.resumeEffect(sound.id);
       };
+      SoundController.prototype.resumeSoundByTag = function(tag) {
+        this.listSounds.forEach(function(item) {
+          item.tags.find(function(o) {
+            return o == tag;
+          }) && cc.audioEngine.resume(item.id);
+        });
+        return true;
+      };
       SoundController.prototype.resumeAllSounds = function() {
         if (!this.soundOn) return;
         cc.audioEngine.resumeAllEffects();
       };
-      SoundController.prototype.stopSound = function(name) {
+      SoundController.prototype.stopSound = function(name, option) {
+        option = option || {};
+        var fade = option.fade;
+        "boolean" != typeof fade && (fade = true);
         if ("string" === typeof name) {
           var list = this.listSounds.filter(function(o) {
             return o.name === name && cc.audioEngine.getState(o.id) === cc.audioEngine.AudioState.PLAYING;
           });
+          var _loop_2 = function(sound) {
+            fade ? this_2.fadeOutSound(sound.id).then(function() {
+              cc.audioEngine.stopEffect(sound.id);
+            }) : cc.audioEngine.stopEffect(sound.id);
+          };
+          var this_2 = this;
           for (var _i = 0, list_2 = list; _i < list_2.length; _i++) {
             var sound = list_2[_i];
-            cc.audioEngine.stopEffect(sound.id);
+            _loop_2(sound);
           }
-        } else "number" === typeof name && cc.audioEngine.stopEffect(name);
+        } else "number" === typeof name && (fade ? this.fadeOutSound(name).then(function() {
+          cc.audioEngine.stopEffect(name);
+        }) : cc.audioEngine.stopEffect(name));
+      };
+      SoundController.prototype.stopSoundByTag = function(tag) {
+        this.listSounds.forEach(function(item) {
+          item.tags.find(function(o) {
+            return o == tag;
+          }) && cc.audioEngine.stop(item.id);
+        });
+        return true;
       };
       SoundController.prototype.stopAllSounds = function() {
         cc.audioEngine.stopAllEffects();
+      };
+      SoundController.prototype.fadeOutSound = function(id, time) {
+        return new Promise(function(res, rej) {
+          time = time || .8;
+          var volume = cc.audioEngine.getVolume(name);
+          var per = time / 10 * 1e3;
+          var func = function() {
+            setTimeout(function() {
+              volume -= .1;
+              if (volume > 0) {
+                cc.audioEngine.setVolume(id, volume);
+                func();
+              } else {
+                cc.audioEngine.setVolume(id, 0);
+                res();
+              }
+            }, per);
+          };
+          func();
+        });
+      };
+      SoundController.prototype.fadeInSound = function(id, time) {
+        return new Promise(function(res, rej) {
+          time = time || .8;
+          var volume = cc.audioEngine.getVolume(name);
+          var per = time / 10 * 1e3;
+          var func = function() {
+            setTimeout(function() {
+              volume += .1;
+              if (volume < 1) {
+                cc.audioEngine.setVolume(id, volume);
+                func();
+              } else {
+                cc.audioEngine.setVolume(id, 1);
+                res();
+              }
+            }, per);
+          };
+          func();
+        });
       };
       SoundController.prototype.isSoundsPlaying = function(name) {
         var list = this.listSounds.filter(function(o) {
@@ -18202,11 +19190,17 @@ window.__require = function e(t, n, r) {
         this.stopMusic();
         this.stopAllSounds();
       };
-      SoundController.prototype.playButtonSFX = function() {
-        this.isSoundsPlaying(this.popupSFXName) || this.isSoundsPlaying(this.dialogSFXName) || this.playSound(this.buttonSFXName);
+      SoundController.prototype.playButtonSFX = function(option) {
+        option = option || {};
+        this.isSoundsPlaying(this.popupSFXName) || this.isSoundsPlaying(this.dialogSFXName) || (Math.random() < .5 ? this.playSound(this.buttonSFXName1, {
+          tags: option.tags
+        }) : this.playSound(this.buttonSFXName2, {
+          tags: option.tags
+        }));
       };
       SoundController.prototype.stopButtonSFX = function() {
-        this.stopSound(this.buttonSFXName);
+        this.stopSound(this.buttonSFXName1);
+        this.stopSound(this.buttonSFXName2);
       };
       SoundController.prototype.playPopupSFX = function() {
         this.stopButtonSFX();
@@ -18226,6 +19220,42 @@ window.__require = function e(t, n, r) {
       return SoundController;
     }();
     exports.default = SoundController;
+    cc._RF.pop();
+  }, {} ],
+  StartScene: [ function(require, module, exports) {
+    "use strict";
+    cc._RF.push(module, "b140cE3vPxMK6nWCXwhXP5w", "StartScene");
+    Object.defineProperty(exports, "__esModule", {
+      value: true
+    });
+    var _a = cc._decorator, ccclass = _a.ccclass, property = _a.property;
+    var StartScene = function(_super) {
+      __extends(StartScene, _super);
+      function StartScene() {
+        return null !== _super && _super.apply(this, arguments) || this;
+      }
+      StartScene.prototype.onLoad = function() {
+        controller.ui.hideBackground(false);
+      };
+      StartScene.prototype.start = function() {
+        return __awaiter(this, void 0, void 0, function() {
+          return __generator(this, function(_a) {
+            switch (_a.label) {
+             case 0:
+              return [ 4, controller.ui.openHomeScene() ];
+
+             case 1:
+              _a.sent();
+              game.data.megaWheel && "number" == typeof game.data.megaWheel.result && controller.ui.openWheelBonus(define.type.WHEEL_BONUS.GOLD);
+              return [ 2 ];
+            }
+          });
+        });
+      };
+      StartScene = __decorate([ ccclass ], StartScene);
+      return StartScene;
+    }(cc.Component);
+    exports.default = StartScene;
     cc._RF.pop();
   }, {} ],
   Store: [ function(require, module, exports) {
@@ -18358,8 +19388,8 @@ window.__require = function e(t, n, r) {
         _this.nodeBuyFull = void 0;
         _this.lbDeal = void 0;
         _this.menu = void 0;
+        _this.notification = void 0;
         _this.barType = BAR_TYPE.NONE;
-        _this.lerpOn = false;
         return _this;
       }
       TopBarController.prototype.onLoad = function() {
@@ -18369,6 +19399,18 @@ window.__require = function e(t, n, r) {
         this.resgisterEvent();
         this.lbStatusTitle = this.nodeStatus.getChildByName("title").getComponent(cc.Label);
         this.lbStatus = this.nodeStatus.getChildByName("status").getComponent(cc.Label);
+        var menu = this.menu.getChildByName("mask").getChildByName("bg");
+        menu.children.map(function(o) {
+          o.on(cc.Node.EventType.MOUSE_ENTER, function() {
+            o.stopAllActions();
+            o.runAction(cc.scaleTo(.15, 1.075).easing(cc.easeIn(.6)));
+            controller.sound.playSound("sfx_btn_2");
+          });
+          o.on(cc.Node.EventType.MOUSE_LEAVE, function() {
+            o.stopAllActions();
+            o.runAction(cc.scaleTo(.05, 1).easing(cc.easeOut(.6)));
+          });
+        });
       };
       TopBarController.prototype.initialize = function() {};
       TopBarController.prototype.resgisterEvent = function() {
@@ -18376,7 +19418,6 @@ window.__require = function e(t, n, r) {
         var keyCoin = store.register(store.key.UPDATE_USER_BALANCE, function(amount, option) {
           return __awaiter(_this, void 0, void 0, function() {
             return __generator(this, function(_a) {
-              if (!this.lerpOn) return [ 2 ];
               this.coinController.updateUserBalance(amount, option);
               return [ 2 ];
             });
@@ -18387,7 +19428,6 @@ window.__require = function e(t, n, r) {
           return __awaiter(_this, void 0, void 0, function() {
             var currentExp, requiredExp, currentLevel, percent;
             return __generator(this, function(_a) {
-              if (!this.lerpOn) return [ 2 ];
               currentExp = data.currentExp, requiredExp = data.requiredExp, currentLevel = data.currentLevel;
               percent = currentExp <= requiredExp ? currentExp / requiredExp : 1;
               this.barExp.setProgress(percent);
@@ -18428,13 +19468,6 @@ window.__require = function e(t, n, r) {
           }
         });
         this.keyList.push(keyShop);
-      };
-      TopBarController.prototype.updateBarData = function() {
-        this.coinController.updateUserBalance(game.user.balance);
-        var _a = game.user.level, currentExp = _a.currentExp, requiredExp = _a.requiredExp, currentLevel = _a.currentLevel;
-        var percent = currentExp <= requiredExp ? currentExp / requiredExp : 1;
-        this.barExp.setProgress(percent);
-        this.lbLevel.string = currentLevel.toString();
       };
       TopBarController.prototype.hide = function(effect) {
         var _this = this;
@@ -18487,6 +19520,12 @@ window.__require = function e(t, n, r) {
         if (controller.ui.onView === define.type.VIEW.GAME) {
           this.barType = BAR_TYPE.GAME;
           this.updateViewGame();
+        } else if (controller.ui.onView === define.type.VIEW.HOME) {
+          this.barType = BAR_TYPE.HOME;
+          this.updateViewHome();
+        } else if (controller.ui.onView === define.type.VIEW.WHEEL) {
+          this.barType = BAR_TYPE.HOME;
+          this.updateViewHome();
         } else {
           this.barType = BAR_TYPE.HOME;
           this.updateViewHome();
@@ -18581,7 +19620,8 @@ window.__require = function e(t, n, r) {
         menu.runAction(effect.moveInBy({
           time: .4,
           direction: define.type.DIRECTION.UP,
-          distance: menu.height
+          distance: menu.height,
+          sfx: true
         }));
         var btnMenu = this.node.getChildByName("btnMenu");
         var menuAct = cc.scaleTo(.25, 0).easing(cc.easeBackIn());
@@ -18598,6 +19638,7 @@ window.__require = function e(t, n, r) {
           time: .2,
           direction: define.type.DIRECTION.UP,
           distance: menu.height,
+          sfx: true,
           callback: function() {
             menu && (menu.active = false);
           }
@@ -18609,12 +19650,13 @@ window.__require = function e(t, n, r) {
         btnMenu.runAction(cc.sequence(cc.delayTime(closeAct.getDuration()), cc.scaleTo(.15, 1)));
       };
       TopBarController.prototype.onClickBuy = function() {
-        game.log("TopBarController", "onClickBuy");
         game.log(this.tag, "onClickBuy");
+        controller.sound.playButtonSFX();
         controller.ui.showPopup("shop");
       };
       TopBarController.prototype.onClickDeal = function() {
         game.log(this.tag, "onClickDeal");
+        controller.sound.playButtonSFX();
         var data = game.data.shop.DEAL_SHOP;
         if (!data || new Date(data.expire) <= util.game.date() || data.isTaken || !data.productId) return;
         controller.ui.showDialog({
@@ -18644,15 +19686,18 @@ window.__require = function e(t, n, r) {
       };
       TopBarController.prototype.onClickMulti = function() {
         game.log("TopBarController", "onClickMulti");
+        controller.sound.playButtonSFX();
         game.log(this.tag, "onClickMulti");
         view.multi.toggleButton();
       };
       TopBarController.prototype.onClickMenu = function() {
         game.log("TopBarController", "onClickMenu");
+        controller.sound.playButtonSFX();
         this.showMenu();
       };
       TopBarController.prototype.onClickBack = function() {
         game.log("TopBarController", "onClickBack");
+        controller.sound.playButtonSFX();
         if (view.screen.slot) {
           tracking.send(tracking.event.BACK_GAME);
           controller.ui.deleteSlot();
@@ -18660,6 +19705,7 @@ window.__require = function e(t, n, r) {
       };
       TopBarController.prototype.onClickFullScreen = function() {
         game.log("TopBarController", "onClickFullScreen");
+        controller.sound.playButtonSFX();
         var menu = this.menu.getChildByName("mask").getChildByName("bg");
         var fullScreen = menu.getChildByName("fullScreen");
         var text = fullScreen.getChildByName("text").getComponent(cc.Label);
@@ -18669,10 +19715,12 @@ window.__require = function e(t, n, r) {
       };
       TopBarController.prototype.onClickPayTable = function() {
         game.log("TopBarController", "onClickPayTable");
+        controller.sound.playButtonSFX();
         view.screen.slot && view.screen.slot.SlotController && view.screen.slot.SlotController.showPayTable();
       };
       TopBarController.prototype.onClickRateUs = function() {
         game.log("TopBarController", "onClickRateUs");
+        controller.sound.playButtonSFX();
         tracking.send(tracking.event.RATE_GAME);
         var link = "";
         game.data.deviceOs === define.type.DEVICE_OS.ANDROID_NAVITE ? link = define.string.URL_STORE_ANDROID.replace("PACKAGE_NAME", game.data.packageName) : game.data.deviceOs === define.type.DEVICE_OS.IOS_NAVITE && (link = define.string.URL_STORE_IOS);
@@ -18680,29 +19728,60 @@ window.__require = function e(t, n, r) {
       };
       TopBarController.prototype.onClickShare = function() {
         game.log("TopBarController", "onClickShare");
+        controller.sound.playButtonSFX();
+        var cb = function() {
+          api.sendGD({
+            e: api.key.GET_DAILY_BONUS_REWARD,
+            type: define.type.EDailyBonus.SHARE_FB
+          }, function(err, data) {
+            if (err) return;
+            if (data.status) {
+              var shareData = game.data.dailyBonus[define.type.EDailyBonus.SHARE_FB];
+              var shareReward = shareData.rewards[shareData.takenCount];
+              shareData.takenCount++;
+              controller.ui.showDialog({
+                title: "Success",
+                message: {
+                  message: "You got " + util.string.formatMoney(shareReward) + " coins"
+                },
+                buttons: [ {
+                  title: "Confirm",
+                  theme: define.type.CLASS_THEME.SUCCESS
+                } ]
+              });
+              store.emit(store.key.DAILYBONUS, game.data.dailyBonus);
+            }
+          });
+        };
         var title = "#gamehayvailoan";
         if (cc.sys.isBrowser) platform.facebook.share({
           link: document.URL,
-          title: title
+          title: title,
+          callback: cb
         }); else {
           var path = platform.handle.screenshot().path;
           platform.facebook.sharePhoto({
             title: title,
-            image: path
+            image: path,
+            callback: cb
           });
         }
       };
       TopBarController.prototype.onClickSetting = function() {
         game.log("TopBarController", "onClickSetting");
+        controller.sound.playButtonSFX();
         controller.ui.showPopup("setting");
       };
       TopBarController.prototype.onClickAbout = function() {
         game.log("TopBarController", "onClickAbout");
+        controller.sound.playButtonSFX();
+        controller.ui.showPopup("about");
       };
       TopBarController.prototype.onDestroy = function() {
         this.keyList.forEach(function(key) {
           return store.unRegister(key);
         });
+        controller.sound.playButtonSFX();
       };
       __decorate([ property(Avatar_1.default) ], TopBarController.prototype, "avt", void 0);
       __decorate([ property(cc.Node) ], TopBarController.prototype, "btnBack", void 0);
@@ -18714,6 +19793,7 @@ window.__require = function e(t, n, r) {
       __decorate([ property(cc.Node) ], TopBarController.prototype, "nodeBuyFull", void 0);
       __decorate([ property(cc.Label) ], TopBarController.prototype, "lbDeal", void 0);
       __decorate([ property(cc.Node) ], TopBarController.prototype, "menu", void 0);
+      __decorate([ property(cc.Node) ], TopBarController.prototype, "notification", void 0);
       TopBarController = __decorate([ ccclass ], TopBarController);
       return TopBarController;
     }(cc.Component);
@@ -18845,7 +19925,10 @@ window.__require = function e(t, n, r) {
     }();
     exports.AnimationPrefab = AnimationPrefab;
     var Component = function() {
-      function Component() {}
+      function Component() {
+        this.notification = null;
+      }
+      __decorate([ property(cc.Prefab) ], Component.prototype, "notification", void 0);
       Component = __decorate([ ccclass("Component") ], Component);
       return Component;
     }();
@@ -18898,15 +19981,26 @@ window.__require = function e(t, n, r) {
         var _this = null !== _super && _super.apply(this, arguments) || this;
         _this.prefab = new GamePrefab();
         _this.slot = [];
+        _this.bgShow = false;
         _this.onView = null;
         _this.canvas = null;
         _this.animPromise = new Promise(function(res, rej) {
+          res();
+        });
+        _this.notiPromise = new Promise(function(res, rej) {
           res();
         });
         return _this;
       }
       UIController.prototype.onLoad = function() {
         this.canvas = cc.director.getScene().getChildByName("Canvas");
+        controller.ui = this;
+        view.bar.node = this.canvas.getChildByName("bar");
+        view.bar.top = view.bar.node.getChildByName("topBar").getComponent("TopBarController");
+        view.bar.bottom = view.bar.node.getChildByName("bottomBar").getComponent("BottomBarController");
+        view.screen.model = this.canvas.getChildByName("Model");
+        view.background = this.canvas.getChildByName("bg");
+        view.multi = this.canvas.getChildByName("multiSlot").getComponent("MultiScene");
         this.initialize();
       };
       UIController.prototype.initialize = function() {
@@ -18917,6 +20011,69 @@ window.__require = function e(t, n, r) {
         var _a = cc.view.getFrameSize(), width = _a.width, height = _a.height;
         var screenRatio = width / height;
         screenRatio > 2 ? game.data.deviceKind = define.type.Device.IPHONEX : screenRatio < 1.5 && (game.data.deviceKind = define.type.Device.IPAD);
+      };
+      UIController.prototype.resetView = function() {
+        this.destroyAllPopup();
+        this.destroyAllDialog();
+        this.destroyAllSlot();
+        this.destroyGame();
+        this.destroyWheel();
+        this.destroyAnimation();
+        this.openHomeScene();
+        view.multi.isShow && view.multi.toggleButton();
+        view.multi.loadContent();
+        view.bar.bottom.updateBarView();
+        view.bar.top.hideMenu();
+      };
+      UIController.prototype.showBackground = function(effect) {
+        var _this = this;
+        void 0 === effect && (effect = true);
+        return new Promise(function(res, rej) {
+          var bg = view.background;
+          if (effect) bg.runAction(cc.sequence(cc.moveTo(.3, cc.v2(0, 0)).easing(cc.easeOut(.7)), cc.callFunc(function() {
+            _this.bgShow = true;
+            res();
+          }))); else {
+            _this.bgShow = true;
+            bg.y = 0;
+            res();
+          }
+        });
+      };
+      UIController.prototype.hideBackground = function(effect) {
+        var _this = this;
+        void 0 === effect && (effect = true);
+        return new Promise(function(res, rej) {
+          var bg = view.background;
+          if (effect) bg.runAction(cc.sequence(cc.moveTo(.2, cc.v2(0, -bg.height)).easing(cc.easeOut(.7)), cc.callFunc(function() {
+            _this.bgShow = false, res();
+          }))); else {
+            _this.bgShow = false;
+            bg.y = -bg.height;
+            res();
+          }
+        });
+      };
+      UIController.prototype.setCurrentView = function(curView) {
+        this.onView = curView;
+        if (curView != DefineType_1.VIEW.HOME) {
+          view.bar.top.hideMenu();
+          view.multi.isShow && view.multi.toggleButton();
+        }
+        Object.values(DefineType_1.VIEW).forEach(function(o) {
+          o !== curView && controller.sound.disableAudioByTag(o.toString());
+        });
+        controller.sound.enableAudioByTag(curView.toString());
+        if (curView == DefineType_1.VIEW.HOME) {
+          controller.sound.setMusicVolume(1);
+          controller.sound.playMusic();
+          if (game.user.loginType != define.type.LOGIN_TYPE.FACEBOOK) if (cc.sys.localStorage.getItem(define.key.local.FACEBOOK_BANNER_SHOW)) Math.random() <= .06 && controller.ui.showPopup("facebookConnect"); else {
+            cc.sys.localStorage.setItem(define.key.local.FACEBOOK_BANNER_SHOW, true);
+            setTimeout(function() {
+              controller.ui.showPopup("facebookConnect");
+            }, 1e3);
+          }
+        } else curView == DefineType_1.VIEW.GAME || curView == DefineType_1.VIEW.WHEEL && controller.sound.playMusic("wheel", true);
       };
       UIController.prototype.openLoadingScene = function() {
         game.log("UIController", "openLoadingScene");
@@ -18934,11 +20091,19 @@ window.__require = function e(t, n, r) {
               game.log("UIController", "openHomeScene");
               tracking.send(tracking.event.OPEN_HOME);
               view.screen.loading && view.screen.loading.onRelease();
-              this.onView = DefineType_1.VIEW.HOME;
+              this.setCurrentView(DefineType_1.VIEW.HOME);
               this.updateBar();
-              return [ 4, this.showBar() ];
+              if (!!this.bgShow) return [ 3, 2 ];
+              return [ 4, controller.ui.showBackground() ];
 
              case 1:
+              _a.sent();
+              _a.label = 2;
+
+             case 2:
+              return [ 4, this.showBar() ];
+
+             case 3:
               _a.sent();
               if (!view.screen.home) {
                 view.screen.home = cc.instantiate(this.prefab.homeScene).getComponent("HomeScene");
@@ -18957,6 +20122,22 @@ window.__require = function e(t, n, r) {
              case 0:
               game.log("UIController", "openGame");
               tracking.send(tracking.event.OPEN_GAME);
+              if (!view.slot[id] && Object.values(view.slot).filter(function(o) {
+                return "undefined" !== typeof o;
+              }).length >= 4) {
+                controller.ui.showDialog({
+                  title: "Message",
+                  type: define.type.DIALOG_TYPE.HIGH,
+                  message: {
+                    message: "You can only play 4 games at a time"
+                  },
+                  buttons: [ {
+                    title: "Confirm",
+                    theme: define.type.CLASS_THEME.INFO
+                  } ]
+                });
+                return [ 2 ];
+              }
               if (view.screen.game) {
                 util.game.showNode(view.screen.game.node, define.zIndex.GAME);
                 view.screen.game.node.position = cc.v2(0, 0);
@@ -18965,7 +20146,7 @@ window.__require = function e(t, n, r) {
                 view.screen.game.node.zIndex = define.zIndex.GAME;
                 view.screen.game.node.parent = this.canvas;
               }
-              this.onView = DefineType_1.VIEW.GAME;
+              this.setCurrentView(DefineType_1.VIEW.GAME);
               return [ 4, this.openSlot(slotIcon, id) ];
 
              case 1:
@@ -18989,8 +20170,13 @@ window.__require = function e(t, n, r) {
         slotNode.zIndex = 0;
         slotNode.runAction(cc.fadeIn(.5));
         view.multi.loadContent();
-        this.onView = DefineType_1.VIEW.GAME;
+        this.setCurrentView(DefineType_1.VIEW.GAME);
         this.updateBar();
+      };
+      UIController.prototype.destroyGame = function() {
+        if (!view.screen.game) return;
+        view.screen.game.node.destroy();
+        view.screen.game = void 0;
       };
       UIController.prototype.minimizeGameScene = function() {
         var _this = this;
@@ -19001,7 +20187,7 @@ window.__require = function e(t, n, r) {
           return;
         }
         var gameView = view.screen.game;
-        this.onView = DefineType_1.VIEW.HOME;
+        this.setCurrentView(DefineType_1.VIEW.HOME);
         this.updateBar();
         view.screen.slot.SlotNode.runAction(cc.sequence(cc.callFunc(function() {
           var multi = view.multi;
@@ -19028,6 +20214,7 @@ window.__require = function e(t, n, r) {
           return;
         }
         tracking.send(tracking.event.OPEN_WHEEL);
+        this.setCurrentView(DefineType_1.VIEW.WHEEL);
         var pre = void 0;
         var com = "";
         if (type === DefineType_1.WHEEL_BONUS.GOLD) {
@@ -19053,6 +20240,7 @@ window.__require = function e(t, n, r) {
               game.log("UIController", "closeWheelBonus");
               bonus = view.screen.wheelBonus;
               if (!bonus) return [ 2 ];
+              this.setCurrentView(DefineType_1.VIEW.HOME);
               return [ 4, bonus.onClose() ];
 
              case 1:
@@ -19064,6 +20252,11 @@ window.__require = function e(t, n, r) {
             }
           });
         });
+      };
+      UIController.prototype.destroyWheel = function() {
+        if (!view.screen.wheelBonus) return;
+        view.screen.wheelBonus.node.destroy();
+        view.screen.wheelBonus = void 0;
       };
       UIController.prototype.openSlot = function(slotIcon, id) {
         return __awaiter(this, void 0, void 0, function() {
@@ -19092,7 +20285,7 @@ window.__require = function e(t, n, r) {
               game.log("INTANTIATED SLOT", Date.now() - date);
               resourceReady = slotScene.SlotController.checkResources();
               if (!!resourceReady) return [ 3, 3 ];
-              this.onView = DefineType_1.VIEW.HOME;
+              this.setCurrentView(DefineType_1.VIEW.HOME);
               util.game.hideNode(view.screen.game.node);
               view.screen.game.hideBg(.01);
               progressFunc = slotIcon.initDownloadProgress();
@@ -19207,7 +20400,7 @@ window.__require = function e(t, n, r) {
             }
             if (!id || view.screen.slot && id === view.screen.slot.id) {
               id = view.screen.slot.id;
-              this.onView = DefineType_1.VIEW.HOME;
+              this.setCurrentView(DefineType_1.VIEW.HOME);
               view.slot[id] && (view.slot[id] = void 0);
               view.screen.slot.SlotController.hideContent();
               view.screen.game.onClose();
@@ -19247,6 +20440,14 @@ window.__require = function e(t, n, r) {
             slotNode.parent = gameView.center;
             return [ 2, slotScene ];
           });
+        });
+      };
+      UIController.prototype.destroyAllSlot = function() {
+        Object.keys(view.slot).forEach(function(k) {
+          if ("undefined" != typeof view.slot[k]) {
+            view.slot[k].SlotNode.destroy();
+            view.slot[k] = void 0;
+          }
         });
       };
       UIController.prototype.hideBar = function(effect) {
@@ -19339,6 +20540,12 @@ window.__require = function e(t, n, r) {
         var popup = view.popup[name];
         popup ? popup.onClose() : cc.warn("UIController", "closePopup", "Can't find popup name " + name);
       };
+      UIController.prototype.destroyAllPopup = function() {
+        Object.keys(view.popup).forEach(function(k) {
+          "undefined" != typeof view.popup[k] && view.popup[k].node.destroy();
+        });
+        view.popup = {};
+      };
       UIController.prototype.showDialog = function(option) {
         if (option && option.name && view.dialog[option.name]) {
           game.log("UIController", "showDialog", "popup existed");
@@ -19355,6 +20562,12 @@ window.__require = function e(t, n, r) {
       UIController.prototype.closeDialog = function(name) {
         var dialog = view.dialog[name];
         dialog ? dialog.onClose() : cc.warn("UIController", "closeDialog", "Can't find dialog name " + name);
+      };
+      UIController.prototype.destroyAllDialog = function() {
+        Object.keys(view.dialog).forEach(function(k) {
+          "undefined" != typeof view.dialog[k] && view.dialog[k].node.destroy();
+        });
+        view.dialog = {};
       };
       UIController.prototype.playAnimation = function(option) {
         return __awaiter(this, void 0, void 0, function() {
@@ -19444,6 +20657,10 @@ window.__require = function e(t, n, r) {
           });
         });
       };
+      UIController.prototype.destroyAnimation = function() {
+        view.animation && view.animation.destroy && view.animation.destroy();
+        view.animation = void 0;
+      };
       UIController.prototype.openShortLoading = function() {
         if (view.progress) return;
         view.progress = cc.instantiate(this.prefab.shortLoading);
@@ -19454,10 +20671,51 @@ window.__require = function e(t, n, r) {
       };
       UIController.prototype.closeShortLoading = function() {
         if (!view.progress) return;
-        view.progress.runAction(cc.sequence([ cc.fadeOut(.1), cc.callFunc(function() {
-          view.progress.destroy();
-          view.progress = void 0;
+        view.progress.runAction(cc.sequence([ cc.fadeOut(.2), cc.callFunc(function() {
+          if (view.progress && view.progress.destroy) {
+            view.progress.destroy();
+            view.progress = void 0;
+          }
         }) ]));
+      };
+      UIController.prototype.pushNotification = function(data) {
+        return __awaiter(this, void 0, void 0, function() {
+          var notiPromise;
+          var _this = this;
+          return __generator(this, function(_a) {
+            switch (_a.label) {
+             case 0:
+              notiPromise = this.notiPromise;
+              this.notiPromise = new Promise(function(res, rej) {
+                return __awaiter(_this, void 0, void 0, function() {
+                  var noti;
+                  return __generator(this, function(_a) {
+                    switch (_a.label) {
+                     case 0:
+                      return [ 4, notiPromise ];
+
+                     case 1:
+                      _a.sent();
+                      noti = cc.instantiate(this.prefab.component.notification).getComponent("NotificationComp");
+                      noti.node.parent = view.bar.top.notification;
+                      return [ 4, noti.init(data) ];
+
+                     case 2:
+                      _a.sent();
+                      res();
+                      return [ 2 ];
+                    }
+                  });
+                });
+              });
+              return [ 4, this.notiPromise ];
+
+             case 1:
+              _a.sent();
+              return [ 2 ];
+            }
+          });
+        });
       };
       __decorate([ property(GamePrefab) ], UIController.prototype, "prefab", void 0);
       __decorate([ property([ SlotGameData ]) ], UIController.prototype, "slot", void 0);
@@ -19534,6 +20792,7 @@ window.__require = function e(t, n, r) {
       function WebAdmob() {
         this.tag = "WebAdmob";
         this.isBannerShow = false;
+        this.successCallback = void 0;
       }
       WebAdmob.getIns = function() {
         this.intance || (this.intance = new WebAdmob());
@@ -19612,6 +20871,7 @@ window.__require = function e(t, n, r) {
         this.userID = "";
         this.accessToken = "";
         this.loginCallback = void 0;
+        this.shareSuccessCallback = void 0;
       }
       WebFacebook.getIns = function() {
         this.intance || (this.intance = new WebFacebook());
@@ -19688,8 +20948,9 @@ window.__require = function e(t, n, r) {
         if (!option) return;
         if (!option.type) return;
         tracking.send(tracking.event.FACEBOOK_SHARE_CLICK);
-        var image = option.image, type = option.type, link = option.link, text = option.text, title = option.title;
+        var image = option.image, type = option.type, link = option.link, text = option.text, title = option.title, callback = option.callback;
         game.log(this.tag, "facebook", "share handle", option);
+        "function" == typeof callback && (this.shareSuccessCallback = callback);
         FB.ui({
           method: "share",
           href: link,
@@ -19771,6 +21032,7 @@ window.__require = function e(t, n, r) {
             switch (data.code) {
              case 402:
               game.log(_this.tag, "Login FB success", "need merge facebook", data);
+              _this.loginCallback();
               controller.ui.showDialog({
                 title: "Account already exists",
                 name: "facebook_accout_exists",
@@ -19792,7 +21054,7 @@ window.__require = function e(t, n, r) {
                       if ("success" === data) {
                         game.log(_this.tag, "Login FB success", "merge facebook success");
                         setNewLoginData(function() {
-                          cc.game.restart();
+                          util.game.restartGame();
                         });
                       } else game.error("Cai nay chua lam");
                     });
@@ -19853,6 +21115,10 @@ window.__require = function e(t, n, r) {
          case define.type.FACEBOOK_LISTENNER.SHARED_SUCCESS:
           game.log(this.tag, "facebook listenner", "SHARED_SUCCESS", "data: " + data.data);
           tracking.send(tracking.event.FACEBOOK_SHARE_SUCCESS);
+          if ("function" == typeof this.shareSuccessCallback) {
+            this.shareSuccessCallback();
+            this.shareSuccessCallback = void 0;
+          }
           break;
 
          case define.type.FACEBOOK_LISTENNER.SHARED_FAILED:
@@ -19863,6 +21129,7 @@ window.__require = function e(t, n, r) {
          case define.type.FACEBOOK_LISTENNER.SHARED_CANCEL:
           game.log(this.tag, "facebook listenner", "SHARED_CANCEL");
           tracking.send(tracking.event.FACEBOOK_SHARE_CANCELED);
+          this.shareSuccessCallback = void 0;
           break;
 
          case define.type.FACEBOOK_LISTENNER.PERMISSON:
@@ -20032,6 +21299,7 @@ window.__require = function e(t, n, r) {
         url && "string" === typeof url ? cc.sys.openURL(url) : game.error(this.tag, "handle", "url is not useable");
       };
       WebHandle.prototype.screenshot = function() {
+        controller.sound.playSound("sfx_capture");
         var node = new cc.Node();
         node.parent = cc.director.getScene();
         node.x = .5 * cc.winSize.width;
@@ -20103,6 +21371,7 @@ window.__require = function e(t, n, r) {
           onSuccess: function(product) {
             tracking.send(tracking.event.IAP_PURCHASE_SUCCESS, this.itemBuying);
             tracking.purchase(product.id, product.priceValue);
+            controller.sound.playSound("sfx_done");
             game.log("platform.iap", "iap listenner", "on success", "product: " + JSON.stringify(product));
             game.log("platform.iap", "iap listenner", "send game data");
             this.itemBuying.type === define.type.ESHOP.GENERAL_SHOP ? api.sendGD({
@@ -20177,19 +21446,21 @@ window.__require = function e(t, n, r) {
               method: "IAP_ANDROID",
               receipt: JSON.parse(product.receipt)
             }, function(err, data) {
-              1 == err && (err = "Error");
-              controller.ui.showDialog({
-                title: "Message",
-                type: define.type.DIALOG_TYPE.HIGH,
-                name: "iap_msg",
-                message: {
-                  message: err
-                },
-                buttons: [ {
-                  title: "OK",
-                  theme: define.type.CLASS_THEME.DANGER
-                } ]
-              });
+              if (err) {
+                1 == err && (err = "Error");
+                controller.ui.showDialog({
+                  title: "Message",
+                  type: define.type.DIALOG_TYPE.HIGH,
+                  name: "iap_msg",
+                  message: {
+                    message: err
+                  },
+                  buttons: [ {
+                    title: "OK",
+                    theme: define.type.CLASS_THEME.DANGER
+                  } ]
+                });
+              }
               if (data) {
                 game.data.shop[define.type.ESHOP.DEAL_SHOP] = void 0;
                 store.emit(store.key.UPDATE_SHOP_DATA, game.data.shop);
@@ -20212,6 +21483,7 @@ window.__require = function e(t, n, r) {
           }.bind(this),
           onFailure: function(product, msg) {
             tracking.send(tracking.event.IAP_PURCHASE_FAILED);
+            controller.sound.playSound("sfx_fail");
             game.error("platform.iap", "iap listenner", "on failure", "product: " + JSON.stringify(product) + " - msg: " + JSON.stringify(msg));
             controller.ui.showDialog({
               type: define.type.DIALOG_TYPE.HIGH,
@@ -20227,6 +21499,7 @@ window.__require = function e(t, n, r) {
           },
           onCanceled: function(product) {
             tracking.send(tracking.event.IAP_PURCHASE_CANCELED);
+            controller.sound.playSound("sfx_fail");
             game.warn("platform.iap", "iap listenner", "on canceled", "product: " + JSON.stringify(product));
             controller.ui.showDialog({
               type: define.type.DIALOG_TYPE.HIGH,
@@ -20449,6 +21722,27 @@ window.__require = function e(t, n, r) {
     exports.default = WebOnesignal;
     cc._RF.pop();
   }, {} ],
+  WheelArrow: [ function(require, module, exports) {
+    "use strict";
+    cc._RF.push(module, "25f151Kq1hLr79LncryqQTK", "WheelArrow");
+    Object.defineProperty(exports, "__esModule", {
+      value: true
+    });
+    var _a = cc._decorator, ccclass = _a.ccclass, property = _a.property;
+    var WheelArrow = function(_super) {
+      __extends(WheelArrow, _super);
+      function WheelArrow() {
+        return null !== _super && _super.apply(this, arguments) || this;
+      }
+      WheelArrow.prototype.onBeginContact = function(contact, selfCollider, otherCollider) {
+        controller.sound.playSound("sfx_wheel_arrow");
+      };
+      WheelArrow = __decorate([ ccclass ], WheelArrow);
+      return WheelArrow;
+    }(cc.Component);
+    exports.default = WheelArrow;
+    cc._RF.pop();
+  }, {} ],
   WheelBonus: [ function(require, module, exports) {
     "use strict";
     cc._RF.push(module, "c971aFRCxlDkL9PfVJH+TzS", "WheelBonus");
@@ -20456,7 +21750,6 @@ window.__require = function e(t, n, r) {
       value: true
     });
     var WheelComp_1 = require("../Components/WheelComp");
-    var CoinLabel_1 = require("../Components/CoinLabel");
     var _a = cc._decorator, ccclass = _a.ccclass, property = _a.property;
     var WheelBonus = function(_super) {
       __extends(WheelBonus, _super);
@@ -20467,6 +21760,8 @@ window.__require = function e(t, n, r) {
         _this.nodeModel = void 0;
         _this.nodeTable = void 0;
         _this.nodeLight = void 0;
+        _this.nodeYouWin = void 0;
+        _this.nodeWinUpTo = void 0;
         _this.lbReward = void 0;
         _this.btnClose = void 0;
         _this.coinControl = void 0;
@@ -20476,6 +21771,7 @@ window.__require = function e(t, n, r) {
         };
         _this.isOnReward = false;
         _this.isSpinning = false;
+        _this.isLockSpin = true;
         return _this;
       }
       WheelBonus.prototype.onLoad = function() {
@@ -20484,23 +21780,7 @@ window.__require = function e(t, n, r) {
       WheelBonus.prototype.start = function() {
         this.onOpen();
       };
-      WheelBonus.prototype.initialize = function() {
-        var _this = this;
-        this.wheel.node.opacity = 0;
-        this.nodeModel.opacity = 0;
-        this.nodeTable.opacity = 0;
-        this.btnClose.node.opacity = 0;
-        this.btnClose.node.scale = 0;
-        this.bg.opacity = 0;
-        this.bg.setContentSize(cc.winSize);
-        this.coinControl = new CoinLabel_1.default(this.lbReward, 0, "", "COIN");
-        this.flicker(.3);
-        this.wheel.setEndSpinCallback(function() {
-          _this.flicker(.3);
-          _this.onReward();
-          _this.isSpinning = false;
-        });
-      };
+      WheelBonus.prototype.initialize = function() {};
       WheelBonus.prototype.init = function(data) {
         "number" === typeof data.result && (this.data.result = data.result);
         this.data.items = data.items;
@@ -20515,6 +21795,11 @@ window.__require = function e(t, n, r) {
       WheelBonus.prototype.onSpin = function() {
         this.isSpinning = true;
         this.btnClose.node.runAction(effect.bouceOut());
+        if (0 == this.nodeYouWin.opacity) {
+          this.nodeYouWin.runAction(effect.bouceIn());
+          this.nodeWinUpTo.runAction(effect.bouceOut());
+        }
+        this.coinControl.updateUserBalance(0);
         this.resetReward();
         this.wheel.spin();
         this.flicker(.1);
@@ -20583,7 +21868,7 @@ window.__require = function e(t, n, r) {
                   if (data.status) {
                     _this.isOnReward = false;
                     store.emit(store.key.UPDATE_USER_BALANCE, data.userBalance);
-                    game.data.dailyBonus.freeWheel.isTaken = true;
+                    game.data.dailyBonus[define.type.EDailyBonus.FREE_WHEEL].isTaken = true;
                     store.emit(store.key.DAILYBONUS, game.data.dailyBonus);
                     res();
                   }
@@ -20623,6 +21908,8 @@ window.__require = function e(t, n, r) {
       __decorate([ property(cc.Node) ], WheelBonus.prototype, "nodeModel", void 0);
       __decorate([ property(cc.Node) ], WheelBonus.prototype, "nodeTable", void 0);
       __decorate([ property(cc.Node) ], WheelBonus.prototype, "nodeLight", void 0);
+      __decorate([ property(cc.Node) ], WheelBonus.prototype, "nodeYouWin", void 0);
+      __decorate([ property(cc.Node) ], WheelBonus.prototype, "nodeWinUpTo", void 0);
       __decorate([ property(cc.Label) ], WheelBonus.prototype, "lbReward", void 0);
       __decorate([ property(cc.Button) ], WheelBonus.prototype, "btnClose", void 0);
       WheelBonus = __decorate([ ccclass ], WheelBonus);
@@ -20631,7 +21918,6 @@ window.__require = function e(t, n, r) {
     exports.default = WheelBonus;
     cc._RF.pop();
   }, {
-    "../Components/CoinLabel": "CoinLabel",
     "../Components/WheelComp": "WheelComp"
   } ],
   WheelComp: [ function(require, module, exports) {
@@ -20720,6 +22006,10 @@ window.__require = function e(t, n, r) {
             _this.onSpin = false;
           })));
         }
+        controller.sound.setMusicVolume(0);
+        controller.sound.playSound("sfx_funky", {
+          loop: true
+        });
       };
       WheelComp.prototype.lock = function() {
         this.lockSpin = true;
@@ -20756,10 +22046,15 @@ window.__require = function e(t, n, r) {
             this.nodeTrans.opacity = 0;
             this.nodeTrans.rotation = this.getItemAng(this.resultNum);
             this.nodeTrans.runAction(cc.sequence(cc.delayTime(.7 * tAct), cc.fadeIn(.3 * tAct)));
-            this.node.runAction(cc.sequence(cc.delayTime(tAct), cc.callFunc(function() {
+            this.node.runAction(cc.sequence(cc.delayTime(tAct - 10), cc.callFunc(function() {
+              controller.sound.playSound("sfx_nervous");
+            }), cc.delayTime(10), cc.callFunc(function() {
               if (!_this || !_this.node) return;
               _this.flicker(.3);
               _this.endSpinCallBack && _this.endSpinCallBack();
+              controller.sound.playSound("sfx_success_8");
+              controller.sound.setMusicVolume(1);
+              controller.sound.stopSound("sfx_funky");
             })));
           }
         }
@@ -20840,6 +22135,8 @@ window.__require = function e(t, n, r) {
         this.nodeTable.opacity = 0;
         this.btnClose.node.opacity = 0;
         this.btnClose.node.scale = 0;
+        this.nodeWinUpTo.opacity = 255;
+        this.nodeYouWin.opacity = 0;
         this.bg.opacity = 0;
         this.bg.setContentSize(cc.winSize);
         this.coinControl = new CoinLabel_1.default(this.lbReward, 0, "", "\nCOIN");
@@ -20852,7 +22149,7 @@ window.__require = function e(t, n, r) {
       };
       WheelGold.prototype.onOpen = function() {
         return __awaiter(this, void 0, void 0, function() {
-          var tBg, tEff;
+          var tBg, tEff, max;
           var _this = this;
           return __generator(this, function(_a) {
             switch (_a.label) {
@@ -20865,6 +22162,7 @@ window.__require = function e(t, n, r) {
                 _this.bg.runAction(cc.sequence(cc.moveTo(tBg, cc.v2(0, 0)).easing(cc.easeIn(.7)), cc.callFunc(function() {
                   res();
                 })));
+                controller.sound.playSound("sfx_slide_2");
               }) ];
 
              case 1:
@@ -20874,14 +22172,18 @@ window.__require = function e(t, n, r) {
               this.nodeModel.runAction(effect.moveInBy({
                 time: tEff,
                 direction: define.type.DIRECTION.LEFT,
-                distance: 300
+                distance: 300,
+                sfx: true
               }));
               if (!this.nodeTable) return [ 2 ];
               this.nodeTable.runAction(effect.moveInBy({
                 time: tEff,
                 direction: define.type.DIRECTION.RIGHT,
-                distance: 300
+                distance: 300,
+                sfx: true
               }));
+              max = Math.max.apply(Math, this.data.items);
+              max && this.coinControl.updateUserBalance(max);
               if (!this.wheel) return [ 2 ];
               this.wheel.node.opacity = 0;
               this.wheel.node.runAction(cc.fadeIn(tEff));
@@ -20903,6 +22205,7 @@ window.__require = function e(t, n, r) {
 
              case 3:
               _a.sent();
+              this.isLockSpin = false;
               return [ 2 ];
             }
           });
@@ -20944,25 +22247,20 @@ window.__require = function e(t, n, r) {
         }
       };
       WheelGold.prototype.showDialogClose = function() {
-        var _this = this;
-        controller.ui.showDialog({
-          title: "Mega Wheel",
-          type: define.type.DIALOG_TYPE.HIGH,
-          name: "iap_msg",
-          message: {
-            message: "All wedges are worth X20 the mega bonus!\n Win up to 400,000 Coins\nFor only " + this.shopItem.price.toFixed(2) + "$"
-          },
-          buttons: [ {
-            title: "Spin Now",
-            theme: define.type.CLASS_THEME.SUCCESS
-          }, {
-            title: "Quit",
-            theme: define.type.CLASS_THEME.DANGER,
-            callback: function() {
-              _this.onClickClose();
-            }
-          } ]
-        });
+        controller.ui.showPopup("wheelClose");
+      };
+      WheelGold.prototype.onReward = function() {
+        var data = this.data;
+        this.wheel.unLock();
+        this.isOnReward = true;
+        this.coinControl.updateUserBalance(data.items[data.result]);
+        var sub = this.nodeTable.getChildByName("sub");
+        var main = this.nodeTable.getChildByName("main");
+        sub.stopAllActions();
+        sub.runAction(cc.moveTo(.4, cc.v2(0, -100)).easing(cc.easeIn(.7)));
+        main.stopAllActions();
+        main.runAction(cc.moveTo(.4, cc.v2(0, 67)).easing(cc.easeIn(.7)));
+        controller.sound.playSound("sfx_success_1");
       };
       WheelGold.prototype.onClickCollect = function() {
         return __awaiter(this, void 0, void 0, function() {
@@ -21007,6 +22305,7 @@ window.__require = function e(t, n, r) {
                     res();
                   }
                 }));
+                controller.sound.playSound("sfx_slide_2");
               }) ];
 
              case 2:
@@ -21027,10 +22326,11 @@ window.__require = function e(t, n, r) {
         });
       };
       WheelGold.prototype.onClickSpin = function() {
-        if (this.isOnReward || this.isSpinning) {
+        if (this.isOnReward || this.isSpinning || this.isLockSpin) {
           game.log("WheelSilver", "onClickSpin", "can't spin on this time");
           return;
         }
+        controller.sound.playButtonSFX();
         if ("number" !== typeof game.data.megaWheel.result) {
           platform.iap.itemBuying = this.shopItem;
           tracking.send(tracking.event.IAP_PURCHASE_WHEEL, this.shopItem);
@@ -21078,15 +22378,26 @@ window.__require = function e(t, n, r) {
         _this.spfCollectInactive = void 0;
         return _this;
       }
+      WheelSilver.prototype.init = function() {
+        var _a = game.data.dailyBonus[define.type.EDailyBonus.FREE_WHEEL], array = _a.array, result = _a.result;
+        "number" === typeof result && (this.data.result = result);
+        this.data.items = array;
+        this.wheel.init({
+          result: result,
+          items: array
+        });
+      };
       WheelSilver.prototype.initialize = function() {
         var _this = this;
         this.wheel.node.opacity = 0;
         this.nodeModel.opacity = 0;
         this.nodeTable.opacity = 0;
-        this.nodeLogo.opacity = 0;
-        this.btnCollect.node.opacity = 0;
         this.btnClose.node.opacity = 0;
         this.btnClose.node.scale = 0;
+        this.nodeLogo.opacity = 0;
+        this.btnCollect.node.opacity = 0;
+        this.nodeWinUpTo.opacity = 255;
+        this.nodeYouWin.opacity = 0;
         this.bg.opacity = 0;
         this.bg.setContentSize(cc.winSize);
         this.coinControl = new CoinLabel_1.default(this.lbReward, 0, "", " COIN");
@@ -21097,7 +22408,7 @@ window.__require = function e(t, n, r) {
       };
       WheelSilver.prototype.onOpen = function() {
         return __awaiter(this, void 0, void 0, function() {
-          var tBg, tEff;
+          var tBg, tEff, max;
           var _this = this;
           return __generator(this, function(_a) {
             switch (_a.label) {
@@ -21110,6 +22421,7 @@ window.__require = function e(t, n, r) {
                 _this.bg.runAction(cc.sequence(cc.moveTo(tBg, cc.v2(0, 0)).easing(cc.easeIn(.7)), cc.callFunc(function() {
                   res();
                 })));
+                controller.sound.playSound("sfx_slide_2");
               }) ];
 
              case 1:
@@ -21119,19 +22431,25 @@ window.__require = function e(t, n, r) {
               this.nodeModel.runAction(effect.moveInBy({
                 time: tEff,
                 direction: define.type.DIRECTION.LEFT,
-                distance: 300
+                distance: 300,
+                sfx: true
               }));
               if (!this.nodeTable) return [ 2 ];
               this.nodeTable.runAction(cc.sequence(cc.delayTime(tEff), effect.moveInBy({
                 time: .25,
                 easing: false,
                 direction: define.type.DIRECTION.LEFT,
-                distance: 300
+                distance: 300,
+                sfx: true
               })));
               if (!this.nodeLogo) return [ 2 ];
-              this.nodeLogo.runAction(effect.bouceIn());
+              this.nodeLogo.runAction(effect.bouceIn({
+                sfx: true
+              }));
               if (!this.btnCollect) return [ 2 ];
-              this.btnCollect.node.runAction(effect.bouceIn());
+              this.btnCollect.node.runAction(effect.bouceIn({
+                sfx: true
+              }));
               if (!this.wheel) return [ 2 ];
               this.wheel.node.opacity = 0;
               this.wheel.node.runAction(cc.fadeIn(tEff));
@@ -21143,6 +22461,8 @@ window.__require = function e(t, n, r) {
 
              case 2:
               _a.sent();
+              max = Math.max.apply(Math, this.data.items);
+              max && this.coinControl.updateUserBalance(max);
               return [ 4, new Promise(function(res, rej) {
                 _this.btnClose ? _this.btnClose.node.runAction(effect.bouceIn({
                   callback: function() {
@@ -21153,6 +22473,7 @@ window.__require = function e(t, n, r) {
 
              case 3:
               _a.sent();
+              this.isLockSpin = false;
               return [ 2 ];
             }
           });
@@ -21164,20 +22485,27 @@ window.__require = function e(t, n, r) {
         var tTable = .25;
         var tEff = .5;
         this.bg.runAction(cc.sequence(cc.delayTime(tTable + tEff), cc.moveTo(tBg, cc.v2(0, -cc.winSize.height)).easing(cc.easeOut(.7))));
+        controller.sound.playSound("sfx_slide_1");
         this.nodeModel.runAction(cc.sequence(cc.delayTime(tTable), effect.moveOutBy({
           time: tEff,
           direction: define.type.DIRECTION.LEFT,
-          distance: 300
+          distance: 300,
+          sfx: true
         })));
         this.nodeTable.runAction(effect.moveOutBy({
           time: tTable,
           easing: false,
           direction: define.type.DIRECTION.LEFT,
-          distance: 300
+          distance: 300,
+          sfx: true
         }));
         this.wheel.node.runAction(cc.sequence(cc.delayTime(tTable), cc.fadeOut(tEff)));
-        this.nodeLogo.runAction(cc.sequence(cc.delayTime(tTable), effect.bouceOut()));
-        this.btnCollect.node.runAction(cc.sequence(cc.delayTime(tTable), effect.bouceOut()));
+        this.nodeLogo.runAction(cc.sequence(cc.delayTime(tTable), effect.bouceOut({
+          sfx: true
+        })));
+        this.btnCollect.node.runAction(cc.sequence(cc.delayTime(tTable), effect.bouceOut({
+          sfx: true
+        })));
         this.btnClose.node.runAction(effect.bouceOut());
         return new Promise(function(res, rej) {
           _this.node.runAction(cc.sequence(cc.delayTime(tEff + tBg + tTable), cc.callFunc(function() {
@@ -21198,10 +22526,11 @@ window.__require = function e(t, n, r) {
         this.btnCollect.getComponent(cc.Sprite).spriteFrame = this.spfCollectInactive;
       };
       WheelSilver.prototype.onClickSpin = function() {
-        if (this.isOnReward || this.isSpinning || game.data.dailyBonus.freeWheel.isTaken) {
+        if (this.isOnReward || this.isSpinning || this.isLockSpin || game.data.dailyBonus[define.type.EDailyBonus.FREE_WHEEL].isTaken) {
           game.log("WheelSilver", "onClickSpin", "can't spin on this time");
           return;
         }
+        controller.sound.playButtonSFX();
         this.onSpin();
       };
       WheelSilver.prototype.onClickCollect = function() {
@@ -21224,7 +22553,7 @@ window.__require = function e(t, n, r) {
                   if (data.status) {
                     _this.isOnReward = false;
                     store.emit(store.key.UPDATE_USER_BALANCE, data.userBalance);
-                    game.data.dailyBonus.freeWheel.isTaken = true;
+                    game.data.dailyBonus[define.type.EDailyBonus.FREE_WHEEL].isTaken = true;
                     store.emit(store.key.DAILYBONUS, game.data.dailyBonus);
                     res();
                   }
@@ -21302,6 +22631,7 @@ window.__require = function e(t, n, r) {
                 this.effectLayout.animData.skeletonData = this.skeletonDataMegaWin;
                 this.effectLayout.animData.animation = "megawin";
               }
+              this.data.type == DefineType_1.WIN_TYPE.BIGWIN ? controller.sound.playSound("sfx_success_long_2") : this.data.type == DefineType_1.WIN_TYPE.MEGAWIN && controller.sound.playSound("sfx_success_long_1");
               return [ 4, this.onOpen() ];
 
              case 1:
@@ -21427,4 +22757,4 @@ window.__require = function e(t, n, r) {
     exports.AuthEngine = AuthEngine;
     cc._RF.pop();
   }, {} ]
-}, {}, [ "AccumulatedBar1", "AnimationController1", "MinigameController1", "ResourceMinigame1", "ResourceController1", "SlotController1", "SlotItem1", "AccumulatedBar2", "AnimationController2", "MinigameController2", "ResourceMinigame2", "ResourceController2", "SlotController2", "SlotItem2", "AnimationController3", "ItemSkeleton", "MinigameController3", "ResourceMinigame3", "ResourceController3", "SlotController3", "SlotItem3", "AnimationController4", "AtributeStatic", "ResourceController4", "SlotController4", "SlotItem4", "MinigameController4", "ResourceMinigame4", "AnimationController5", "MinigameController5", "ResourceMiniGame5", "ResourceController5", "SlotController5", "SlotItem5", "AnimationController6", "MinigameController6", "ResourceMiniGame6", "ResourceController6", "SlotController6", "SlotItem6", "AnimationController7", "MinigameController7", "ResourceMiniGame7", "ResourceController7", "SlotController7", "SlotItem7", "AnimationController8", "MinigameController8", "ResourceMiniGame8", "ResourceController8", "SlotController8", "SlotItem8", "CoinAnimation", "DailyRewardAnimation", "ItemAnimation", "LevelUpAnimation", "WinAnimation", "Api", "BottomBarController", "BottomGameBarController", "BottomHomeBarController", "MultiScene", "TopBarController", "BasePopup", "AccumulatedBar", "Avatar", "CoinLabel", "WheelComp", "DefineColor", "DefineInterface", "DefineKey", "DefineString", "DefineType", "DefineZIndex", "Dialog", "DownloadCtr", "Effect", "EffectLayout", "GameConfig", "GameDefine", "GameScene", "HomeScene", "ItemGame", "UserInfoController", "Loading", "LoadingScene", "Main", "PlatformController", "AndroidAdmob", "AndroidFacebook", "AndroidFirebase", "AndroidHandle", "AndroidIap", "AndroidOnesignal", "IOSAdmob", "IOSFacebook", "IOSFireBase", "IOSHandle", "IOSIap", "IOSOnesignal", "WebAdmob", "WebFacebook", "WebFirebase", "WebHandle", "WebIap", "WebOnesignal", "PopupDailyQuest", "PopupSetting", "PopupShop", "AutoFitCanvas", "ImageScale", "MarginWithIphoneX", "AnimationController", "Item", "LinesController", "PayTable", "PayTableResource", "ResourceController", "ResourcePrefab", "SlotController", "SlotItem", "SlotSkeleton", "SoundController", "Store", "Tracking", "UIController", "GameUtil", "StringUtil", "WheelBonus", "WheelGold", "WheelSilver", "auth" ]);
+}, {}, [ "AccumulatedBar1", "AnimationController1", "MinigameController1", "ResourceMinigame1", "ResourceController1", "SlotController1", "SlotItem1", "AccumulatedBar2", "AnimationController2", "MinigameController2", "ResourceMinigame2", "ResourceController2", "SlotController2", "SlotItem2", "AnimationController3", "ItemSkeleton", "MinigameController3", "ResourceMinigame3", "ResourceController3", "SlotController3", "SlotItem3", "AnimationController4", "AtributeStatic", "BetChoosing", "ResourceController4", "SlotController4", "SlotItem4", "MinigameController4", "ResourceMinigame4", "AnimationController5", "MinigameController5", "ResourceMiniGame5", "ResourceController5", "SlotController5", "SlotItem5", "AnimationController6", "MinigameController6", "ResourceMiniGame6", "ResourceController6", "SlotController6", "SlotItem6", "AnimationController7", "MinigameController7", "ResourceMiniGame7", "ResourceController7", "SlotController7", "SlotItem7", "AnimationController8", "MinigameController8", "ResourceMiniGame8", "ResourceController8", "SlotController8", "SlotItem8", "CoinAnimation", "DailyRewardAnimation", "ItemAnimation", "LevelUpAnimation", "WinAnimation", "Api", "BottomBarController", "BottomGameBarController", "BottomHomeBarController", "MultiScene", "TopBarController", "BasePopup", "AccumulatedBar", "Avatar", "CoinLabel", "NotificationComp", "WheelArrow", "WheelComp", "DefineColor", "DefineInterface", "DefineKey", "DefineString", "DefineType", "DefineZIndex", "Dialog", "DownloadCtr", "Effect", "EffectLayout", "GameConfig", "GameDefine", "GameScene", "HomeScene", "ItemGame", "UserInfoController", "LoadingScene", "Main", "PlatformController", "AndroidAdmob", "AndroidFacebook", "AndroidFirebase", "AndroidHandle", "AndroidIap", "AndroidOnesignal", "IOSAdmob", "IOSFacebook", "IOSFireBase", "IOSHandle", "IOSIap", "IOSOnesignal", "WebAdmob", "WebFacebook", "WebFirebase", "WebHandle", "WebIap", "WebOnesignal", "PopupAbout", "PopupAdsReward", "PopupCongratulation", "PopupDailyGift", "PopupDailyQuest", "PopupFacebookConnect", "PopupSetting", "PopupShop", "PopupWheelClose", "AutoFitCanvas", "ImageScale", "MarginWithIphoneX", "AnimationController", "Item", "LinesController", "PayTable", "PayTableResource", "ResourceController", "ResourcePrefab", "SlotController", "SlotItem", "SlotSkeleton", "SoundController", "StartScene", "Store", "Tracking", "UIController", "GameUtil", "StringUtil", "WheelBonus", "WheelGold", "WheelSilver", "auth" ]);

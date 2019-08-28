@@ -1,0 +1,27 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "gem_bonus_minigame_txt",
+    "texture": "e4yk9oE8lPnqsImXX0B5bZ",
+    "rect": [
+      1,
+      1,
+      797,
+      50
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      799,
+      52
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

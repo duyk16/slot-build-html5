@@ -1,0 +1,27 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "slot-gem-pay-btn-backtogame",
+    "texture": "23gcYWwJ5KpKnPBmUwYJlk",
+    "rect": [
+      0,
+      0,
+      255,
+      71
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      255,
+      71
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

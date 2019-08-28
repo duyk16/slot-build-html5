@@ -1,0 +1,27 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "casino-slot-bg-minor-money",
+    "texture": "12iL7m7KxPv4YszpyPWxNI",
+    "rect": [
+      0,
+      0,
+      321,
+      44
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      321,
+      44
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

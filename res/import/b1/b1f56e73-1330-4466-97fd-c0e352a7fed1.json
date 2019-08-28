@@ -1,0 +1,27 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "Item-Recovered_cutitem_15",
+    "texture": "b5H1u+rS9G3IxNcN3p91mf",
+    "rect": [
+      3,
+      6,
+      874,
+      519
+    ],
+    "offset": [
+      -0.5,
+      0
+    ],
+    "originalSize": [
+      881,
+      531
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

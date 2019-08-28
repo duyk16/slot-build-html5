@@ -1,0 +1,27 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "casino-select-bet-right-1",
+    "texture": "da7mB00EBD7rfNFfd6kZbF",
+    "rect": [
+      0,
+      0,
+      209,
+      198
+    ],
+    "offset": [
+      0,
+      0.5
+    ],
+    "originalSize": [
+      209,
+      199
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

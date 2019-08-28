@@ -1,0 +1,27 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "khien",
+    "texture": "a1Q5hvBt9DxKswNkfdvCam",
+    "rect": [
+      0,
+      1,
+      162,
+      164
+    ],
+    "offset": [
+      0,
+      -0.5
+    ],
+    "originalSize": [
+      162,
+      165
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "gem_minigame_bonus_item_fail_01",
+    "texture": "ebPQl+DjdATqUTdf7CJGce",
+    "rect": [
+      0,
+      0,
+      79,
+      72
+    ],
+    "offset": [
+      0,
+      1
+    ],
+    "originalSize": [
+      79,
+      74
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

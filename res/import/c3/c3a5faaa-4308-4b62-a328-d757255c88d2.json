@@ -1,0 +1,27 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "sach_green",
+    "texture": "48SykvPU1FXpRjYOuj8e9/",
+    "rect": [
+      1,
+      4,
+      326,
+      252
+    ],
+    "offset": [
+      -1,
+      -1
+    ],
+    "originalSize": [
+      330,
+      258
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

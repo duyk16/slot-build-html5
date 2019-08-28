@@ -1,0 +1,27 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "game_rules",
+    "texture": "3fvna+/ENEmoLj9kMGOfws",
+    "rect": [
+      0,
+      0,
+      805,
+      424
+    ],
+    "offset": [
+      -2,
+      2
+    ],
+    "originalSize": [
+      809,
+      428
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

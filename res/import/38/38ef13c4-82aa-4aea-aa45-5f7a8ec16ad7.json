@@ -1,0 +1,27 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "outline_bg",
+    "texture": "30VKeyaMZGELNpGFVe5A12",
+    "rect": [
+      5,
+      0,
+      933,
+      577
+    ],
+    "offset": [
+      1,
+      0
+    ],
+    "originalSize": [
+      941,
+      577
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

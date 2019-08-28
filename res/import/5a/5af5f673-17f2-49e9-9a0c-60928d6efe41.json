@@ -1,0 +1,27 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "slot-gem-pay-4",
+    "texture": "9fW1yVfCRE/5W4jX1g29Yv",
+    "rect": [
+      43,
+      56,
+      931,
+      348
+    ],
+    "offset": [
+      1,
+      4
+    ],
+    "originalSize": [
+      1015,
+      468
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

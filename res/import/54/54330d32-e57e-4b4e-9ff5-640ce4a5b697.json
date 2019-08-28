@@ -1,0 +1,27 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "egypt-bonus-paper-money",
+    "texture": "fa8FJAyUpL4oee7jJ1PjJi",
+    "rect": [
+      0,
+      0,
+      372,
+      236
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      372,
+      236
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

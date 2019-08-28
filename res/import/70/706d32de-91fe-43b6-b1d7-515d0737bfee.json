@@ -1,0 +1,27 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "bg-line-game-egypt",
+    "texture": "55BBPgDGlPRbPTuWR4XHT2",
+    "rect": [
+      0,
+      0,
+      800,
+      44
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      800,
+      44
+    ],
+    "capInsets": [
+      25,
+      0,
+      194,
+      0
+    ]
+  }
+}

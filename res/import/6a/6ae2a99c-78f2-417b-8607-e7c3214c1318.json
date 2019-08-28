@@ -1,0 +1,27 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "backtogame",
+    "texture": "2aeNLxVZNB34cJvgfnvCqA",
+    "rect": [
+      0,
+      0,
+      393,
+      132
+    ],
+    "offset": [
+      0,
+      1
+    ],
+    "originalSize": [
+      393,
+      134
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

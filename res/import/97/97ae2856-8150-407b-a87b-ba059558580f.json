@@ -1,0 +1,27 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "btn-dragon",
+    "texture": "efpXy4TjdCp5Jvl5Y4W7l9",
+    "rect": [
+      0,
+      0,
+      234,
+      72
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      234,
+      72
+    ],
+    "capInsets": [
+      25,
+      0,
+      25,
+      0
+    ]
+  }
+}

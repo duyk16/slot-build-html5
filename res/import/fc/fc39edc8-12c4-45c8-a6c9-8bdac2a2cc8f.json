@@ -1,0 +1,27 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "slot-egyt-pay-3",
+    "texture": "483p4lWhtP9oRDpKCkWNKg",
+    "rect": [
+      76,
+      10,
+      882,
+      503
+    ],
+    "offset": [
+      -1.5,
+      -5
+    ],
+    "originalSize": [
+      1037,
+      513
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "slot-dragon-paytable-img-2",
+    "texture": "8atL1/+KxFu54jfBry/dho",
+    "rect": [
+      124,
+      23,
+      730,
+      375
+    ],
+    "offset": [
+      -0.5,
+      8.5
+    ],
+    "originalSize": [
+      979,
+      438
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

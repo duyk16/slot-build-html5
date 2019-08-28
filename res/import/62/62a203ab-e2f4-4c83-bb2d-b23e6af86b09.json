@@ -1,0 +1,27 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "Casino-bg-congrat-txt-coin",
+    "texture": "3a9TIdMulJYoigKgxMq5Ri",
+    "rect": [
+      0,
+      0,
+      141,
+      45
+    ],
+    "offset": [
+      -0.5,
+      0
+    ],
+    "originalSize": [
+      142,
+      45
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

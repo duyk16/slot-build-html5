@@ -1,0 +1,27 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "bg_power_win",
+    "texture": "62RmY+cyxCRZiG+dYyoPcc",
+    "rect": [
+      0,
+      1,
+      812,
+      32
+    ],
+    "offset": [
+      -2,
+      -0.5
+    ],
+    "originalSize": [
+      816,
+      33
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

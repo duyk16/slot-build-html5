@@ -1,0 +1,27 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "title_free_spins",
+    "texture": "33FzkL8WVJw419/IPEvZjR",
+    "rect": [
+      16,
+      1,
+      142,
+      21
+    ],
+    "offset": [
+      -0.5,
+      0
+    ],
+    "originalSize": [
+      175,
+      23
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

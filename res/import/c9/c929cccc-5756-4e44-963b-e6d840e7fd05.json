@@ -1,0 +1,27 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "golden_pumpkin",
+    "texture": "1a3E/X1SVNIbkPmWEBdOq4",
+    "rect": [
+      0,
+      0,
+      365,
+      169
+    ],
+    "offset": [
+      -0.5,
+      0
+    ],
+    "originalSize": [
+      366,
+      169
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

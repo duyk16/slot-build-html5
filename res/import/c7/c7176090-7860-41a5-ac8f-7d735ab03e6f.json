@@ -1,0 +1,27 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "egypt-bonus-bg-ingame",
+    "texture": "a7+vTgS5NLKJjpbZVft/c+",
+    "rect": [
+      0,
+      0,
+      1043,
+      648
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      1043,
+      648
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

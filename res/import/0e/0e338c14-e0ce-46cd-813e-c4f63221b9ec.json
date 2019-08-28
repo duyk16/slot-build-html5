@@ -1,0 +1,27 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "casino-slot-bg-play-game",
+    "texture": "b3CcWyAgVE4pSobpvWtvfc",
+    "rect": [
+      0,
+      0,
+      948,
+      564
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      948,
+      564
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "backtogame_right",
+    "texture": "6ejLsBShRL07mO/anSfH6g",
+    "rect": [
+      0,
+      3,
+      95,
+      131
+    ],
+    "offset": [
+      0,
+      -1.5
+    ],
+    "originalSize": [
+      95,
+      134
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "__type__": "cc.SpriteFrame",
+  "content": {
+    "name": "bonus_active_and_total",
+    "texture": "2f6WuaCTRLsa1wbp6FsMfZ",
+    "rect": [
+      0,
+      0,
+      1119,
+      552
+    ],
+    "offset": [
+      0,
+      0
+    ],
+    "originalSize": [
+      1119,
+      552
+    ],
+    "capInsets": [
+      0,
+      0,
+      0,
+      0
+    ]
+  }
+}
