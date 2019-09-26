@@ -1,0 +1,48 @@
+
+skeleton.png
+size: 2048,1024
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+popup-level-bg-1
+  rotate: false
+  xy: 2, 2
+  size: 455, 462
+  orig: 455, 462
+  offset: 0, 0
+  index: -1
+popup-level-bg-2
+  rotate: true
+  xy: 459, 38
+  size: 426, 155
+  orig: 426, 155
+  offset: 0, 0
+  index: -1
+popup-level-circle
+  rotate: true
+  xy: 672, 466
+  size: 287, 288
+  orig: 287, 288
+  offset: 0, 0
+  index: -1
+popup-level-light
+  rotate: true
+  xy: 672, 755
+  size: 221, 626
+  orig: 221, 626
+  offset: 0, 0
+  index: -1
+popup-level-light-flare
+  rotate: false
+  xy: 2, 466
+  size: 668, 510
+  orig: 668, 510
+  offset: 0, 0
+  index: -1
+popup-level-logo
+  rotate: false
+  xy: 1300, 846
+  size: 219, 130
+  orig: 219, 130
+  offset: 0, 0
+  index: -1
